@@ -1,0 +1,35 @@
+All assets in this folder are LPC assets
+
+License
+-------
+
+CC-BY-SA 3.0:
+ - http://creativecommons.org/licenses/by-sa/3.0/
+ - See the file: cc-by-sa-3.0.txt
+GNU GPL 3.0:
+ - http://www.gnu.org/licenses/gpl-3.0.html
+ - See the file: gpl-3.0.txt
+
+Note the file is based on the LCP contest readme so don't expect the exact little pieces used like the base one.
+
+
+Additional license information
+------------------------------
+
+misc.png - Lanea Zimmerman "Sharm"
+http://opengameart.org/content/lpc-misc
+
+wateranimate.png - ZaPaper
+http://opengameart.org/content/lpc-animated-water-and-waterfalls
+
+goblin.png (and sword) - Stephen "Redshrike" Challener
+http://opengameart.org/content/lpc-goblin
+
+pathandobjects.png - Zabin, Daneeklu, Jetrel, Hyptosis, Redshrike, Bertram
+http://opengameart.org/content/rpg-tiles-cobble-stone-paths-town-objects
+
+castle.png - Zabin, Hyptosis, and Danial Cook
+http://opengameart.org/content/castle-tiles-for-rpgs
+
+campfire.png - Zabin and Jetrel
+http://opengameart.org/content/camp-fire-animation-for-rpgs-finished
