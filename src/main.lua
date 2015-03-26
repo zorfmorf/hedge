@@ -1,9 +1,10 @@
 
 -- require libraries
 Gamestate = require "lib.hump.gamestate"
-Class = require "hump.class"
+Class = require "lib.hump.class"
+Gui = require "lib.quickie"
 
--- load helper
+-- require everything in the given subdirectory
 local function requireDirectory( dir )
     dir = dir or ""
     local entities = love.filesystem.getDirectoryItems(dir)
@@ -17,19 +18,20 @@ end
 
 requireDirectory( 'state' )
 requireDirectory( 'misc' )
-requireDirectory( 'class' )
+requireDirectory( 'map' )
     
 
 -- load hook. executed once on startup
 function love.load()
     Gamestate.registerEvents()
-    Gamestate.switch(st_menu_main)
+    --Gamestate.switch(st_menu_main)
+    Gamestate.switch(st_edit)
 end
 
 
 -- draw hook
 function love.draw()
-    love.graphics.rectangle("line", 20, 20, 100, 100)
+    -- contains nothing -> draw operations are found in state files
 end
 
 
