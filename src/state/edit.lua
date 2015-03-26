@@ -15,5 +15,5 @@ end
 
 
 function st_edit:draw()
-    love.graphics.rectangle("line", 10, 10, 200, 20)
+    map:draw()
 end

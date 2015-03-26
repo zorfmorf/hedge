@@ -2,7 +2,7 @@
 maploader = {}
 
 function maploader:read()
-    -- TODO: actual read existing map file
+    -- TODO: actual read existing map file(s)
     return Map()
 end
 
