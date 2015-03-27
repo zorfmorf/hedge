@@ -15,7 +15,7 @@ function Block:init(x, y)
     for i = 0, C_BLOCK_SIZE - 1 do
         self.tiles[i] = {}
         for j = 0, C_BLOCK_SIZE - 1 do
-            self.tiles[i][j] = 1
+            self.tiles[i][j] = { 1, math.random(0, 24), math.random(0, 24) }
         end
     end
 end
@@ -28,13 +28,11 @@ end
 
 function Block:draw()
     
-    local xo = self.x * C_BLOCK_SIZE * C_TILE_SIZE
-    local yo = self.y * C_BLOCK_SIZE * C_TILE_SIZE
+    local at = tilesetreader:getAtlanti()
     
     for i,row in pairs(self.tiles) do
-        for j,tile in pairs(self.tiles) do
-            love.graphics.rectangle("line", xo + i * C_TILE_SIZE, 
-                yo + j * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE)
+        for j,tile in pairs(row) do
+            at[tile[1]]:addQuad(tile[2], tile[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
         end
     end
 end

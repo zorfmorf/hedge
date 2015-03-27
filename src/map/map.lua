@@ -7,7 +7,11 @@ Map = Class{}
 
 function Map:init()
     self.blocks = {}
-    self:createBlock(0, 0)
+    for i = 0,1 do
+        for j = 0,1 do
+            self:createBlock(i, j)
+        end
+    end
 end
 
 
