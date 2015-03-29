@@ -13,3 +13,8 @@ C_TILE_SIZE = 32
 
 -- camera tile speed per second/click
 C_CAM_SPEED = 4 * C_TILE_SIZE
+
+
+-- Gui settings
+G_TOPBAR_HEIGHT = 30
+G_TOPBAR_PAD = 5
