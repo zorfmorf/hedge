@@ -22,11 +22,14 @@ end
 
 function st_edit:draw()
     
+    -- take into account if the screen has changed
+    screen:update()
+    
     -- clear spritebatches and draw tiles to batch
     for i,atlas in pairs(atlanti) do
         atlas.batch:clear()
     end
-    map:draw()
+    map:draw(camera)
     
     -- draw stored spritebatch operations by camera offset
     camera:attach()
@@ -45,4 +48,12 @@ function st_edit:mousepressed(x, y, button)
         local wx, wy = camera:worldCoords(x, y)
         map:setTile(math.floor(wx / C_TILE_SIZE), math.floor(wy / C_TILE_SIZE), 1, 22, 5)
     end
+end
+
+
+function st_edit:keypressed(key, isrepeat)
+    if key == "left" then camera:move(-C_CAM_SPEED, 0) end
+    if key == "up" then camera:move(0, -C_CAM_SPEED) end
+    if key == "right" then camera:move(C_CAM_SPEED, 0) end
+    if key == "down" then camera:move(0, C_CAM_SPEED) end
 end

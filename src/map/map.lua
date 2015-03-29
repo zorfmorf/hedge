@@ -24,23 +24,34 @@ function Map:update(dt)
 end
 
 
--- 
-function Map:draw()
-    for x,row in pairs(self.blocks) do
-        for y,block in pairs(row) do
-            -- TODO: only draw if on screen
-            block:draw()
+-- Draw all blocks that are at least partially on the screen
+function Map:draw(camera)
+    
+    local wx, wy = camera:worldCoords(0, 0)
+    local bx = math.floor((wx / C_BLOCK_SIZE) / C_TILE_SIZE)
+    local by = math.floor((wy / C_BLOCK_SIZE) / C_TILE_SIZE)
+    local bxe = math.floor(((wx + screen.w) / C_BLOCK_SIZE) / C_TILE_SIZE)
+    local bye = math.floor(((wy + screen.h) / C_BLOCK_SIZE) / C_TILE_SIZE)
+    
+    for x = bx, bxe do
+        for y = by, bye do
+            if self.blocks[x] and self.blocks[x][y] then
+                self.blocks[x][y]:draw()
+            end
         end
     end
+    
 end
 
 
 function Map:setTile(x, y, ai, ax, ay)
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
-    if self.blocks[bx] and self.blocks[bx][by] then
-        local tx = x % C_BLOCK_SIZE
-        local ty = y % C_BLOCK_SIZE
-        self.blocks[bx][by]:set(tx, ty, ai, ax, ay)
-    end
+    
+    if not self.blocks[bx] then self.blocks[bx] = {} end
+    if not self.blocks[bx][by] then self.blocks[bx][by] = Block(bx, by) end
+    
+    local tx = x % C_BLOCK_SIZE
+    local ty = y % C_BLOCK_SIZE
+    self.blocks[bx][by]:set(tx, ty, ai, ax, ay)
 end
