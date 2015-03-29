@@ -7,11 +7,7 @@ Map = Class{}
 
 function Map:init()
     self.blocks = {}
-    for i = 0,1 do
-        for j = 0,1 do
-            self:createBlock(i, j)
-        end
-    end
+    self:createBlock(0, 0)
 end
 
 
@@ -32,7 +28,19 @@ end
 function Map:draw()
     for x,row in pairs(self.blocks) do
         for y,block in pairs(row) do
+            -- TODO: only draw if on screen
             block:draw()
         end
+    end
+end
+
+
+function Map:setTile(x, y, ai, ax, ay)
+    local bx = math.floor(x / C_BLOCK_SIZE)
+    local by = math.floor(y / C_BLOCK_SIZE)
+    if self.blocks[bx] and self.blocks[bx][by] then
+        local tx = x % C_BLOCK_SIZE
+        local ty = y % C_BLOCK_SIZE
+        self.blocks[bx][by]:set(tx, ty, ai, ax, ay)
     end
 end
