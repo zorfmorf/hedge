@@ -28,6 +28,24 @@ function Brush:init(id)
 end
 
 
+function Brush:addTile(at, tx, ty)
+    if not self.tiles then self.tiles = {} end
+    table.insert(self.tiles, {at, tx, ty})
+end
+
+
+function Brush:addObject(at, tx, ty)
+    if not self.objects then self.objects = {} end
+    table.insert(self.objects, {at, tx, ty})
+end
+
+
+function Brush:addOverlay(at, tx, ty)
+    if not self.overlays then self.overlays = {} end
+    table.insert(self.overlays, {at, tx, ty})
+end
+
+
 function Brush:getTile()
     if self.tiles then
         return self.tiles[math.random(1, #self.tiles)]

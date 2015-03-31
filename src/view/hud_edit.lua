@@ -5,7 +5,8 @@ hud_edit = {}
 
 -- list of all menu dialogs
 local menus = { }
-menus.brush = false
+menus.brush = false -- brush configurator
+menus.tiles = false -- tile for brush selector
 
 
 -- topbar with options, brush, exit buttons
@@ -20,29 +21,72 @@ local function topbar()
 end
 
 
+-- creates a customized draw function for the brush menu
+local function brushTile_drawFunction(tile)
+    return  function(state, text, align, x,y,w,h)
+                local atlas = game.atlanti[tile[1]]
+                local quad = love.graphics.newQuad(tile[2] * C_TILE_SIZE, 
+                    tile[3] * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, 
+                    atlas.img:getWidth(), atlas.img:getHeight())
+                love.graphics.draw(atlas.img, quad, x, y) 
+            end
+end
+
+
 -- menu where you can edit existing brushes
 local function brushmenu()
     Gui.group.push{ grow = "down", pos = { screen.w * 0.1, screen.h * 0.25 }, size = {screen.w * 0.5}, pad = 10, bkg = true, border = 1 }
         Gui.Label{ text = "Currently defined brushes:" }
         
-        Gui.group.push{ grow = "right", size = {130} }
-            Gui.Label{ text = "Name" }
-            Gui.Label{ text = "Walkable" }
-            Gui.Label{ text = "Floor" }
-            Gui.Label{ text = "Objects" }
-            Gui.Label{ text = "Overlay" }
-        Gui.group.pop{}
         for i,brush in ipairs(game.brushes) do
-            Gui.group.push{ grow = "right", size = {130} }
-                Gui.Input{ info = {text = brush.name} }
-                if Gui.Checkbox{ checked = not brush.blocked } then brush.blocked = not brush.blocked end
-                if Gui.Button{ text = "X", size = {'tight'} } then table.remove(game.brushes, i) i = i - 1 end
+            Gui.group.push{ grow = "right", size = {130}, spacing = 10 }
                 
+                -- brush name
+                Gui.Input{ info = {text = brush.name} }
+                
+                -- brush walkable
+                if Gui.Checkbox{ checked = not brush.blocked, text = "isWalkable", size = { "tight" } } then brush.blocked = not brush.blocked end
+                
+                -- brush tiles
+                Gui.Label{ text = "Floor:", size = { "tight" } }
+                if brush.tiles then
+                    for i,tile in ipairs(brush.tiles) do
+                        Gui.Label{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) }
+                    end
+                end
+                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = "tiles" end
+                
+                -- object tiles
+                Gui.Label{ text = "Object:", size = { "tight" } }
+                if brush.objects then
+                    for i,tile in ipairs(brush.objects) do
+                        Gui.Label{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) }
+                    end
+                end
+                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = "objects" end
+                
+                -- overlay tiles
+                Gui.Label{ text = "Overlay:", size = { "tight" } }
+                if brush.overlays then
+                    for i,tile in ipairs(brush.overlays) do
+                        Gui.Label{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) }
+                    end
+                end
+                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = "overlays" end
+                
+                -- delete brush
+                if Gui.Button{ text = "-", size = {'tight'} } then table.remove(game.brushes, i) i = i - 1 end
             Gui.group.pop{}
         end
         if Gui.Button{ text = "Add new brush" } then table.insert(game.brushes, Brush(#game.brushes + 1)) end
         
     Gui.group.pop{}
+end
+
+
+local function tileselector()
+    local atlas = game.atlanti[1]
+    Gui.Label{ text = "", draw = function() love.graphics.draw(atlas.img) end}
 end
 
 
@@ -58,11 +102,16 @@ end
 
 function hud_edit:update(dt)
     
-    topbar()
+    if menus.tiles then
+        tileselector()
+    else
     
-    if menus.brush then brushmenu() end
-    
-    tools()
+        topbar()
+        
+        if menus.brush then brushmenu() end
+        
+        tools()
+    end
 end
 
 
@@ -72,4 +121,26 @@ function hud_edit:menuIsOpen()
         if item == true then return true end
     end
     return false
+end
+
+
+function hud_edit:mousepressed(x, y, button)
+    if button == "l" and menus.tiles then
+        
+        local tx = math.floor(x / C_TILE_SIZE)
+        local ty = math.floor(y / C_TILE_SIZE)
+        local at = 1
+        
+        if menus.tiles == "tiles" then
+            game:getCurrentBrush():addTile(at, tx, ty)
+        end
+        if menus.tiles == "objects" then
+            game:getCurrentBrush():addObject(at, tx, ty)
+        end
+        if menus.tiles == "overlays" then
+            game:getCurrentBrush():addOverlay(at, tx, ty)
+        end
+        
+        menus.tiles = false
+    end
 end

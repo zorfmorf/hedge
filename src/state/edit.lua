@@ -54,7 +54,7 @@ end
 
 
 function st_edit:mousepressed(x, y, button)
-    
+    hud_edit:mousepressed(x, y, button)
 end
 
 
