@@ -44,7 +44,7 @@ function Map:draw(camera)
 end
 
 
-function Map:setTile(x, y, ai, ax, ay)
+function Map:setTile(x, y, tile, object, overlay)
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
     
@@ -53,5 +53,5 @@ function Map:setTile(x, y, ai, ax, ay)
     
     local tx = x % C_BLOCK_SIZE
     local ty = y % C_BLOCK_SIZE
-    self.blocks[bx][by]:set(tx, ty, ai, ax, ay)
+    self.blocks[bx][by]:set(tx, ty, tile, object, overlay)
 end

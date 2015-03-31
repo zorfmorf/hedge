@@ -42,3 +42,8 @@ function love.keypressed(key, isrepeat)
         love.event.push("quit")
     end
 end
+
+
+function love.textinput(str)
+    Gui.keyboard.textinput(str)
+end

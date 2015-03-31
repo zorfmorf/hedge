@@ -2,6 +2,8 @@
 --  A block describes a nxn tile block of map
 --  It contains texture, collision, actor and trigger information
 --  Blocks are loaded and unloaded dynamically on player movement.
+--  Each block has a 2d array of tiles, each tile has up to three textures:
+--  floor, object, overlay
 --]]
 
 Block = Class{}
@@ -15,8 +17,7 @@ function Block:init(x, y)
     for i = 0, C_BLOCK_SIZE - 1 do
         self.tiles[i] = {}
         for j = 0, C_BLOCK_SIZE - 1 do
-            --self.tiles[i][j] = { 1, math.random(0, 24), math.random(0, 24) }
-            self.tiles[i][j] = { }
+            self.tiles[i][j] = { floor = nil, object = nil, overlay = nil, block = false }
         end
     end
 end
@@ -27,8 +28,13 @@ function Block:update(dt)
 end
 
 
-function Block:set(x, y, a, tx, ty)
-    self.tiles[x][y] = { a, tx, ty }
+-- set the tile to the defined value
+-- floor : { textureatlas_index, texture_x, texture_y }
+-- object : { textureatlas_index, texture_x, texture_y }
+-- overlay : { textureatlas_index, texture_x, texture_y }
+-- block : if the tile blocks movement
+function Block:set(x, y, floor, object, overlay, block)
+    self.tiles[x][y] = { floor = floor, object = object, overlay = overlay, block = block }
 end
 
 
@@ -38,8 +44,14 @@ function Block:draw()
     
     for i,row in pairs(self.tiles) do
         for j,tile in pairs(row) do
-            if tile[1] then
-                at[tile[1]]:addQuad(tile[2], tile[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+            if tile.floor then 
+                at[tile.floor[1]]:addQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+            end
+            if tile.object then 
+                at[tile.object[1]]:addQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+            end
+            if tile.overlay then 
+                at[tile.overlay[1]]:addQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
         end
     end
