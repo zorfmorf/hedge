@@ -54,7 +54,7 @@ local function brushmenu()
                         Gui.Label{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) }
                     end
                 end
-                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = "tiles" end
+                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = { "tiles", i } end
                 
                 -- object tiles
                 Gui.Label{ text = "Object:", size = { "tight" } }
@@ -63,7 +63,7 @@ local function brushmenu()
                         Gui.Label{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) }
                     end
                 end
-                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = "objects" end
+                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = { "objects", i } end
                 
                 -- overlay tiles
                 Gui.Label{ text = "Overlay:", size = { "tight" } }
@@ -72,7 +72,7 @@ local function brushmenu()
                         Gui.Label{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) }
                     end
                 end
-                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = "overlays" end
+                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = { "overlays", } end
                 
                 -- delete brush
                 if Gui.Button{ text = "-", size = {'tight'} } then table.remove(game.brushes, i) i = i - 1 end
@@ -86,7 +86,7 @@ end
 
 local function tileselector()
     local atlas = game.atlanti[1]
-    Gui.Label{ text = "", draw = function() love.graphics.draw(atlas.img) end}
+    Gui.Label{ text = "", draw = function() love.graphics.clear() love.graphics.draw(atlas.img) end}
 end
 
 
@@ -131,14 +131,14 @@ function hud_edit:mousepressed(x, y, button)
         local ty = math.floor(y / C_TILE_SIZE)
         local at = 1
         
-        if menus.tiles == "tiles" then
-            game:getCurrentBrush():addTile(at, tx, ty)
+        if menus.tiles[1] == "tiles" then
+            game.brushes[menus.tiles[2]]:addTile(at, tx, ty)
         end
-        if menus.tiles == "objects" then
-            game:getCurrentBrush():addObject(at, tx, ty)
+        if menus.tiles[1] == "objects" then
+            game.brushes[menus.tiles[2]]:addObject(at, tx, ty)
         end
-        if menus.tiles == "overlays" then
-            game:getCurrentBrush():addOverlay(at, tx, ty)
+        if menus.tiles[1] == "overlays" then
+            game.brushes[menus.tiles[2]]:addOverlay(at, tx, ty)
         end
         
         menus.tiles = false
