@@ -7,12 +7,12 @@ Map = Class{}
 
 function Map:init()
     self.blocks = {}
-    self:createBlock(0, 0)
 end
 
 
 -- create/overwrite block at given position
 function Map:createBlock(x, y)
+    print( "Creating block", x, y )
     if not self.blocks[x] then self.blocks[x] = {} end
     self.blocks[x][y] = Block(x, y)
 end

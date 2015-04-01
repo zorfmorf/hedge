@@ -3,49 +3,55 @@ maploader = {}
 
 
 function maploader:read()
-    local file = love.filesystem.newFile( C_FILE_MAP )
-    file:open( "r" )
     
     local map = Map()
     
-    local bx, by = nil
-    local linex = 0
+    if love.filesystem.isFile( C_FILE_MAP ) then
     
-    for line in file:lines( ) do
-        if line:sub(1, 8) == "# Tiles" then
+        local file = love.filesystem.newFile( C_FILE_MAP )
+        file:open( "r" )
         
-        elseif line:sub(1, 8) == "# Block " then 
-            bx, by = line:sub(9):match("([^,]+) ([^,]+)")
-            bx = tonumber(bx)
-            by = tonumber(by)
-            linex = 0
-        else
-            local y = 0
-            for i,entry in ipairs(line:split(";")) do
-                if entry:len() > 0 then
-                    local params = {}
-                    for k,value in ipairs(entry:split("|")) do
-                        if value == "nil" then 
-                            params[k] = nil
-                        elseif value:len() == 1 then
-                            params[k] = tonumber(value)
-                        else
-                            params[k] = {}
-                            for l,number in ipairs(value:split(",")) do
-                                table.insert(params[k], tonumber(number))
+        local bx, by = nil
+        local linex = 0
+        
+        for line in file:lines( ) do
+            if line:sub(1, 8) == "# Tiles" then
+            
+            elseif line:sub(1, 8) == "# Block " then 
+                bx, by = line:sub(9):match("([^,]+) ([^,]+)")
+                bx = tonumber(bx)
+                by = tonumber(by)
+                linex = -1
+            else
+                local y = 0
+                for i,entry in ipairs(line:split(";")) do
+                    if entry:len() > 0 then
+                        local params = {}
+                        for k,value in ipairs(entry:split("|")) do
+                            if value == "nil" then 
+                                params[k] = nil
+                            elseif value:len() == 1 then
+                                params[k] = tonumber(value)
+                            else
+                                params[k] = {}
+                                for l,number in ipairs(value:split(",")) do
+                                    table.insert(params[k], tonumber(number))
+                                end
                             end
                         end
+                        map:setTile(bx * C_BLOCK_SIZE + linex, 
+                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4] == 1)
                     end
-                    map:setTile(bx * C_BLOCK_SIZE + linex, 
-                        by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4])
+                    y = y + 1
                 end
-                y = y + 1
             end
+            linex = linex + 1
         end
-        linex = linex + 1
+        
+        file:close()
+    else
+        map:createBlock(0, 0)
     end
-    
-    file:close()
     return map
 end
 
@@ -55,9 +61,11 @@ function maploader:save(map)
     local file = love.filesystem.newFile( C_FILE_MAP )
     file:open( "w" )
     file:write( "# Tiles\n" )
+    local blkcntr = 0
     for i, row in pairs(map.blocks) do
         for j,entry in pairs(row) do
             file:write( "# Block " .. i .. " " .. j .. "\n" )
+            blkcntr = blkcntr + 1
             for x = 0, C_BLOCK_SIZE - 1 do
                 for y = 0, C_BLOCK_SIZE - 1 do
                     
@@ -106,4 +114,5 @@ function maploader:save(map)
         end
     end
     local result = file:close( )
+    print( "Wrote", blkcntr, "blocks" )
 end

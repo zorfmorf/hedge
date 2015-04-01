@@ -25,7 +25,7 @@ function st_edit:update(dt)
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
         local brush = game:getCurrentBrush()
-        if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush:getBlocking()) end
+        if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
     end
 end
 
