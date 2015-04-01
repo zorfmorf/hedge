@@ -45,6 +45,7 @@ end
 
 
 function Map:setTile(x, y, tile, object, overlay)
+    
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
     

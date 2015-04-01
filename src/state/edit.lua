@@ -59,9 +59,18 @@ end
 
 
 function st_edit:keypressed(key, isrepeat)
+    
     Gui.keyboard.pressed(key)
-    if key == "left" then camera:move(-C_CAM_SPEED, 0) end
-    if key == "up" then camera:move(0, -C_CAM_SPEED) end
-    if key == "right" then camera:move(C_CAM_SPEED, 0) end
-    if key == "down" then camera:move(0, C_CAM_SPEED) end
+    
+    if not hud_edit:catchKey(key, isrepeat) then
+        if key == "left" then camera:move(-C_CAM_SPEED, 0) end
+        if key == "up" then camera:move(0, -C_CAM_SPEED) end
+        if key == "right" then camera:move(C_CAM_SPEED, 0) end
+        if key == "down" then camera:move(0, C_CAM_SPEED) end
+    end
+end
+
+
+function love.textinput(str)
+    Gui.keyboard.textinput(str)
 end

@@ -34,7 +34,11 @@ end
 -- overlay : { textureatlas_index, texture_x, texture_y }
 -- block : if the tile blocks movement
 function Block:set(x, y, floor, object, overlay, block)
-    self.tiles[x][y] = { floor = floor, object = object, overlay = overlay, block = block }
+    local tile = self.tiles[x][y]
+    if floor then tile.floor = floor end
+    if object then tile.object = object end
+    if overlay then tile.overlay = overlay end
+    tile.block = block
 end
 
 
