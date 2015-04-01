@@ -68,3 +68,7 @@ function Brush:getOverlay()
     end
     return nil
 end
+
+function Brush:getBlocking()
+    if self.blocking then else return 0 end
+end

@@ -25,7 +25,7 @@ function st_edit:update(dt)
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
         local brush = game:getCurrentBrush()
-        if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay()) end
+        if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush:getBlocking()) end
     end
 end
 
@@ -71,6 +71,13 @@ function st_edit:keypressed(key, isrepeat)
 end
 
 
-function love.textinput(str)
-    Gui.keyboard.textinput(str)
+-- called when leaving state
+function st_edit:leave()
+    maploader:save(game.map)
+end
+
+
+-- called when state active and game exits
+function st_edit:quit()
+    st_edit:leave()
 end

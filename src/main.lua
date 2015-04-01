@@ -38,7 +38,7 @@ end
 
 -- catches keyboard events
 function love.keypressed(key, isrepeat)
-    if key == "escape" then
+    if key == "escape" then        
         love.event.push("quit")
     end
 end
