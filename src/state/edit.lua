@@ -1,9 +1,10 @@
 
 require "view.hud_edit"
+require "view.drawHelper"
 
 st_edit = {}
 
-local camera = nil
+camera = nil
 
 
 function st_edit:enter()
@@ -39,21 +40,28 @@ function st_edit:draw()
     for i,atlas in pairs(game.atlanti) do
         atlas.batch:clear()
     end
-    game.map:draw(camera)
+    game.map:draw()
     
     -- draw stored spritebatch operations by camera offset
     camera:attach()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch)
     end
-    camera:detach()
+    
+    -- draw walkable tiles if enabled
+    if hud_edit:showWalkable() then 
+        drawHelper:drawWalkable()
+    end
+    camera:detach() 
     
     -- draw hud
     Gui.core.draw()
 end
 
 
-function st_edit:mousepressed(x, y, button)
+-- released instead of pressed to avoid an issue where
+-- gui elements where clicked that appeared after the click
+function st_edit:mousereleased(x, y, button)
     hud_edit:mousepressed(x, y, button)
 end
 

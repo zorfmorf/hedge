@@ -18,7 +18,7 @@ function Block:init(x, y)
     for i = 0, C_BLOCK_SIZE - 1 do
         self.tiles[i] = {}
         for j = 0, C_BLOCK_SIZE - 1 do
-            self.tiles[i][j] = { floor = nil, object = nil, overlay = nil, block = false }
+            self.tiles[i][j] = { floor = nil, object = nil, overlay = nil, block = true, event = nil }
         end
     end
 end
@@ -40,6 +40,13 @@ function Block:set(x, y, floor, object, overlay, block)
     if object then tile.object = object end
     if overlay then tile.overlay = overlay end
     tile.block = block
+end
+
+
+-- add an event trigger to the tile
+-- if event fires depends is coded into the event itself
+function Block:addEvent(x, y, event)
+    self.tiles[x][y].event = event
 end
 
 

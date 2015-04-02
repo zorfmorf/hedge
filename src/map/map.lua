@@ -12,7 +12,6 @@ end
 
 -- create/overwrite block at given position
 function Map:createBlock(x, y)
-    print( "Creating block", x, y )
     if not self.blocks[x] then self.blocks[x] = {} end
     self.blocks[x][y] = Block(x, y)
 end
@@ -25,7 +24,7 @@ end
 
 
 -- Draw all blocks that are at least partially on the screen
-function Map:draw(camera)
+function Map:draw()
     
     local wx, wy = camera:worldCoords(0, 0)
     local bx = math.floor((wx / C_BLOCK_SIZE) / C_TILE_SIZE)
@@ -55,4 +54,16 @@ function Map:setTile(x, y, tile, object, overlay, block)
     local tx = x % C_BLOCK_SIZE
     local ty = y % C_BLOCK_SIZE
     self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block)
+end
+
+
+function Map:getTile(x, y)
+    local bx = math.floor(x / C_BLOCK_SIZE)
+    local by = math.floor(y / C_BLOCK_SIZE)
+    
+    if self.blocks[bx] and self.blocks[bx][by] then 
+        return self.blocks[bx][by].tiles[x - bx * C_BLOCK_SIZE][y - by * C_BLOCK_SIZE]
+    end
+    
+    return nil
 end

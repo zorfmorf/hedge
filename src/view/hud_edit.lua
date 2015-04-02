@@ -12,7 +12,13 @@ menus.tiles = false -- tile for brush selector
 -- currently selected tile atlas
 local currentatlas = 1
 
-local temp = "Test" -- delete me
+-- if true, marks walkable tiles
+local showWalkable = false
+
+
+function hud_edit:showWalkable()
+    return showWalkable
+end
 
 
 -- topbar with options, brush, exit buttons
@@ -51,7 +57,9 @@ local function brushmenu()
                 Gui.Input{ info = {text = brush.name}, size = {100} }
                 
                 -- brush walkable
-                if Gui.Checkbox{ checked = not brush.blocked, text = "isWalkable", size = { "tight" } } then brush.blocked = not brush.blocked end
+                if Gui.Checkbox{ checked = not brush.blocking, text = "isWalkable", size = { "tight" } } then brush.blocking = not brush.blocking end
+                
+                Gui.Label{ text = "  ", size = { "tight" } }
                 
                 -- brush tiles
                 Gui.Label{ text = "Floor:", size = { "tight" } }
@@ -63,7 +71,9 @@ local function brushmenu()
                         end
                     end
                 end
-                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = { "tiles", i } end
+                if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "tiles", i } end
+                
+                Gui.Label{ text = "    ", size = { "tight" } }
                 
                 -- object tiles
                 Gui.Label{ text = "Object:", size = { "tight" } }
@@ -75,7 +85,9 @@ local function brushmenu()
                         end
                     end
                 end
-                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = { "objects", i } end
+                if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "objects", i } end
+                
+                Gui.Label{ text = "    ", size = { "tight" } }
                 
                 -- overlay tiles
                 Gui.Label{ text = "Overlay:", size = { "tight" } }
@@ -87,10 +99,12 @@ local function brushmenu()
                         end
                     end
                 end
-                if Gui.Button{ text = "+add", size = {'tight'} } then menus.tiles = { "overlays", i} end
+                if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "overlays", i} end
+                
+                Gui.Label{ text = "    ", size = { "tight" } }
                 
                 -- delete brush
-                if Gui.Button{ text = "-", size = {'tight'} } then table.remove(game.brushes, i) i = i - 1 end
+                if Gui.Button{ text = " - ", size = {'tight'} } then table.remove(game.brushes, i) i = i - 1 end
                 
             Gui.group.pop{}
         end
@@ -115,6 +129,11 @@ local function tools()
             if Gui.Button{ text = brush.name, size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
                 game.brush = i
             end
+        end
+        
+        Gui.Label{ text = "Toggles:", size = {60} }
+        if Gui.Button{ text = "w: " .. tostring(showWalkable), size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
+            showWalkable = not showWalkable
         end
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
