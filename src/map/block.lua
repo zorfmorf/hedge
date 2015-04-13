@@ -11,7 +11,7 @@ Block = Class{}
 
 -- x and y parameter of block position in overworld
 function Block:init(x, y)
-    print( "Block init", x, y )
+    -- print( "Block init", x, y )
     self.x = x
     self.y = y
     self.tiles = {}
@@ -34,12 +34,14 @@ end
 -- object : { textureatlas_index, texture_x, texture_y }
 -- overlay : { textureatlas_index, texture_x, texture_y }
 -- block : if the tile blocks movement
-function Block:set(x, y, floor, object, overlay, block)
+-- event : id of event triggered by this tile
+function Block:set(x, y, floor, object, overlay, block, event)
     local tile = self.tiles[x][y]
     if floor then tile.floor = floor end
     if object then tile.object = object end
     if overlay then tile.overlay = overlay end
     tile.block = block
+    if event then tile.event = event end
 end
 
 

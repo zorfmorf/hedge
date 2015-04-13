@@ -43,7 +43,10 @@ function Map:draw()
 end
 
 
-function Map:setTile(x, y, tile, object, overlay, block)
+-- set some or all values for a tile.
+-- nil values won't override old values (intended)
+-- exception: block value WILL override for reaons
+function Map:setTile(x, y, tile, object, overlay, block, event)
     
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
@@ -53,10 +56,12 @@ function Map:setTile(x, y, tile, object, overlay, block)
     
     local tx = x % C_BLOCK_SIZE
     local ty = y % C_BLOCK_SIZE
-    self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block)
+    self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event)
 end
 
 
+-- helper function to get the tile behind a tile coordinate
+-- you probably want to use this as blocks have their own coordinate system
 function Map:getTile(x, y)
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
@@ -66,4 +71,11 @@ function Map:getTile(x, y)
     end
     
     return nil
+end
+
+
+-- change event value for tile
+function Map:changeEvent(x, y, event)
+    local tile = Map:getTile(x, y)
+    if tile then tile.event = event end
 end
