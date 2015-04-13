@@ -38,6 +38,7 @@ end
 
 -- catches keyboard events
 function love.keypressed(key, isrepeat)
+    Gui.keyboard.pressed(key)
     if key == "escape" then        
         love.event.push("quit")
     end

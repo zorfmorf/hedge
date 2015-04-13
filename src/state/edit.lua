@@ -71,10 +71,7 @@ function st_edit:mousereleased(x, y, button)
 end
 
 
-function st_edit:keypressed(key, isrepeat)
-    
-    Gui.keyboard.pressed(key)
-    
+function st_edit:keypressed(key, isrepeat)    
     if not hud_edit:catchKey(key, isrepeat) then
         if key == "left" then camera:move(-C_CAM_SPEED, 0) end
         if key == "up" then camera:move(0, -C_CAM_SPEED) end

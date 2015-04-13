@@ -54,7 +54,9 @@ local function brushmenu()
             Gui.group.push{ grow = "right", size = {130}, spacing = 10 }
                 
                 -- brush name
-                Gui.Input{ info = {text = brush.name}, size = {100} }
+                local input = {text = brush.name}
+                Gui.Input{ info = input, size = {100} }
+                brush.name = input.text
                 
                 -- brush walkable
                 if Gui.Checkbox{ checked = not brush.blocking, text = "isWalkable", size = { "tight" } } then brush.blocking = not brush.blocking end
