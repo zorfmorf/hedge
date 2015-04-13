@@ -12,7 +12,7 @@ function game:init()
     self.atlanti = tilesetreader:read()
     self.brushes = {}
     
-    --map:setTile(0, 0, sTile[1], sTile[2], sTile[3])
+    -- add one default brush
     table.insert(self.brushes, Brush(1))
     self.brush = 1
     self.brushes[1].tiles = { {1, 21, 5}, {1, 22, 5}, {1, 23, 5} }

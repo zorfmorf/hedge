@@ -45,6 +45,23 @@ function Block:set(x, y, floor, object, overlay, block, event)
 end
 
 
+function Block:delete(x, y)
+    self.tiles[x][y] = { floor = nil, object = nil, overlay = nil, block = true, event = nil }
+end
+
+
+-- checks if no information is stored in this block
+function Block:isEmpty()
+    for i = 0, C_BLOCK_SIZE - 1 do
+        for j = 0, C_BLOCK_SIZE - 1 do
+            local t = self.tiles[i][j]
+            if t.floor or t.object or t.overlay or t.event then return false end
+        end
+    end
+    return true
+end
+
+
 -- add an event trigger to the tile
 -- if event fires depends is coded into the event itself
 function Block:addEvent(x, y, event)

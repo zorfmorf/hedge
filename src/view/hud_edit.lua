@@ -123,7 +123,14 @@ end
 
 -- quick access menu containing last used tools
 local function tools()
-    Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE }, bkg = true }        
+    Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE }, bkg = true }
+        
+        Gui.Label{ text = "Tools:", size = {60} }
+        if Gui.Button{ text = "Delete tile", size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
+            game.brush = -1
+        end
+        
+        
         Gui.Label{ text = "Brushes:", size = {60} }
         for i,brush in ipairs(game.brushes) do
             if Gui.Button{ text = brush.name, size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
@@ -135,6 +142,9 @@ local function tools()
         if Gui.Button{ text = "w: " .. tostring(showWalkable), size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
             showWalkable = not showWalkable
         end
+        
+        
+        
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
 end
@@ -191,7 +201,10 @@ function hud_edit:mousepressed(x, y, button)
 end
 
 
+-- Give the hud the ability to intercept key presses
 function hud_edit:catchKey(key, isrepeat)
+    
+    -- switch tile atlanti on key press
     if menus.tiles and key == "left" then
         currentatlas = currentatlas - 1
         if currentatlas < 1 then currentatlas = #game.atlanti end
@@ -202,5 +215,7 @@ function hud_edit:catchKey(key, isrepeat)
         if currentatlas > #game.atlanti then currentatlas = 1 end
         return true
     end
+    
+    -- key hasn't been intercepted
     return false
 end

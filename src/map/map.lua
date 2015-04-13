@@ -46,7 +46,7 @@ end
 -- set some or all values for a tile.
 -- nil values won't override old values (intended)
 -- exception: block value WILL override for reaons
-function Map:setTile(x, y, tile, object, overlay, block, event)
+function Map:setTile(x, y, tile, object, overlay, block, event, delete)
     
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
@@ -56,7 +56,17 @@ function Map:setTile(x, y, tile, object, overlay, block, event)
     
     local tx = x % C_BLOCK_SIZE
     local ty = y % C_BLOCK_SIZE
-    self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event)
+    
+    if delete then
+        self.blocks[bx][by]:delete(tx, ty)
+    else
+        self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event)
+    end
+end
+
+
+function Map:deleteTile()
+    
 end
 
 
@@ -76,6 +86,21 @@ end
 
 -- change event value for tile
 function Map:changeEvent(x, y, event)
-    local tile = Map:getTile(x, y)
+    local tile = self:getTile(x, y)
     if tile then tile.event = event end
+end
+
+
+-- delete tile and block if necessary
+function Map:deleteTile(x, y)
+    local tile = self:getTile(x, y)
+    if tile then
+        
+        self:setTile(x, y, nil, nil, nil, nil, nil, true)
+        
+        local bx = math.floor(x / C_BLOCK_SIZE)
+        local by = math.floor(y / C_BLOCK_SIZE)
+        
+        if self.blocks[bx][by]:isEmpty() then self.blocks[bx][by] = nil end
+    end
 end

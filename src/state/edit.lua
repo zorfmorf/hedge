@@ -25,8 +25,13 @@ function st_edit:update(dt)
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
-        local brush = game:getCurrentBrush()
-        if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
+        
+        if game.brush == -1 then
+            game.map:deleteTile(tx, ty)
+        else
+            local brush = game:getCurrentBrush()
+            if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
+        end
     end
 end
 
