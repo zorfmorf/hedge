@@ -19,6 +19,9 @@ menus.tiles = false -- tile for brush selector
 -- currently selected tile atlas
 local currentatlas = 1
 
+-- screen position for the current atlas
+local atlaspos = {0, 0}
+
 -- if true, marks walkable tiles
 local showWalkable = false
 
@@ -126,7 +129,8 @@ end
 
 local function tileselector()
     local atlas = game.atlanti[currentatlas]
-    Gui.Label{ text = "", draw = function() love.graphics.clear() love.graphics.draw(atlas.img) end}
+    Gui.Label{ text = "", draw = function() love.graphics.clear() love.graphics.draw(atlas.img, atlaspos[1], atlaspos[2]) end}
+    Gui.Label{ text = "Mousewheel: Switch atlas\nArrow keys: Move atlas", pos = {screen.w - 200, 0} }
 end
 
 
@@ -182,7 +186,7 @@ local function tools()
     end
     if Gui.mouse.isHot("toggle_walkable") then
         local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Deletion tool", pos = {mx+10,my-40}}
+        Gui.Label{text = "Toggle display of walkable areas", pos = {mx+10,my-40}}
     end
     for i,brush in ipairs(game.brushes) do
         if Gui.mouse.isHot("tool_brush_"..i) then
@@ -222,25 +226,41 @@ end
 
 function hud_edit:mousepressed(x, y, button)
     
-    -- if in tileselection select the tile based on current atlas and mousepos
-    if button == "l" and menus.tiles then
+    -- if in tileselection mode
+    if menus.tiles then
         
-        local tx = math.floor(x / C_TILE_SIZE)
-        local ty = math.floor(y / C_TILE_SIZE)
+        -- select tile based on current atlas
+        if button == "l" then
+            
+            local tx = math.floor((x - atlaspos[1]) / C_TILE_SIZE)
+            local ty = math.floor((y - atlaspos[2]) / C_TILE_SIZE)
+            
+            if menus.tiles[1] == "tiles" then
+                game.brushes[menus.tiles[2]]:addTile(currentatlas, tx, ty)
+            end
+            if menus.tiles[1] == "objects" then
+                game.brushes[menus.tiles[2]]:addObject(currentatlas, tx, ty)
+            end
+            if menus.tiles[1] == "overlays" then
+                game.brushes[menus.tiles[2]]:addOverlay(currentatlas, tx, ty)
+            end
+            
+            menus.tiles = false
+        end
         
-        if menus.tiles[1] == "tiles" then
-            game.brushes[menus.tiles[2]]:addTile(currentatlas, tx, ty)
-        end
-        if menus.tiles[1] == "objects" then
-            game.brushes[menus.tiles[2]]:addObject(currentatlas, tx, ty)
-        end
-        if menus.tiles[1] == "overlays" then
-            game.brushes[menus.tiles[2]]:addOverlay(currentatlas, tx, ty)
+        -- switch current atlas on mousewheel
+        if button == "wu" then
+            currentatlas = currentatlas - 1
+            atlaspos = {0, 0}
+            if currentatlas < 1 then currentatlas = #game.atlanti end
         end
         
-        menus.tiles = false
+        if button == "wd" then
+            currentatlas = currentatlas + 1
+            atlaspos = {0, 0}
+            if currentatlas > #game.atlanti then currentatlas = 1 end
+        end
     end
-    
 end
 
 
@@ -249,13 +269,19 @@ function hud_edit:catchKey(key, isrepeat)
     
     -- switch tile atlanti on key press
     if menus.tiles and key == "left" then
-        currentatlas = currentatlas - 1
-        if currentatlas < 1 then currentatlas = #game.atlanti end
+        atlaspos[1] = atlaspos[1] + C_TILE_SIZE * 8
         return true
     end
     if menus.tiles and key == "right" then
-        currentatlas = currentatlas + 1
-        if currentatlas > #game.atlanti then currentatlas = 1 end
+        atlaspos[1] = atlaspos[1] - C_TILE_SIZE * 8
+        return true
+    end
+    if menus.tiles and key == "up" then
+        atlaspos[2] = atlaspos[2] + C_TILE_SIZE * 8
+        return true
+    end
+    if menus.tiles and key == "down" then
+        atlaspos[2] = atlaspos[2] - C_TILE_SIZE * 8
         return true
     end
     

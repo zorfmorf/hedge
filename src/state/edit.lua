@@ -71,6 +71,17 @@ function st_edit:mousereleased(x, y, button)
 end
 
 
+-- key pressed had some issues with gui element ordering
+-- -> released is used as can be seen above
+-- however, mousewheel has no released action so we need to 
+-- handle them extra
+function st_edit:mousepressed(x, y, button)
+    if button == "wd" or button == "wu" then
+        hud_edit:mousepressed(x, y, button)
+    end
+end
+
+
 function st_edit:keypressed(key, isrepeat)    
     if not hud_edit:catchKey(key, isrepeat) then
         if key == "left" then camera:move(-C_CAM_SPEED, 0) end
