@@ -3,6 +3,13 @@ Gui.core.style = require "view.style"
 
 hud_edit = {}
 
+-- icons
+local icon = {
+    broom = love.graphics.newImage("img/icon/broom.png"),
+    palette = love.graphics.newImage("img/icon/palette.png"),
+    block = love.graphics.newImage("img/icon/block.png")
+}
+
 -- list of all menu dialogs
 local menus = { }
 menus.brush = false -- brush configurator
@@ -27,7 +34,7 @@ local function topbar()
         Gui.Button{ text = "Save", size = {100} }
         Gui.Button{ text = "Options", size = {100} }
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
-        Gui.Button{ text = "Quit", size = {100} }
+        if Gui.Button{ text = "Quit", size = {100} } then love.event.push("quit") end
         Gui.Label{ text = "FPS: " .. love.timer.getFPS() }
     Gui.group.pop{}
 end
@@ -123,25 +130,41 @@ local function tileselector()
 end
 
 
+-- draw function for icon buttons
+local function icon_func(img, brush, highlight)
+    return  function(state, title, x,y,w,h)
+                love.graphics.setColor(COLOR.white)
+                if state == "active" or highlight then
+                    love.graphics.setColor(COLOR.selected)
+                end
+                if img then love.graphics.draw(img, x, y) end
+                if brush then brush:drawPreview(x, y, icon.palette) end
+                if state == "hot" or highlight then
+                    love.graphics.rectangle("line", x, y, 32, 31)
+                end
+            end
+end
+
+
 -- quick access menu containing last used tools
 local function tools()
     Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE }, bkg = true }
         
         Gui.Label{ text = "Tools:", size = {60} }
-        if Gui.Button{ text = "Delete tile", size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
+        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, game.brush == -1) } then
             game.brush = -1
         end
         
         
         Gui.Label{ text = "Brushes:", size = {60} }
         for i,brush in ipairs(game.brushes) do
-            if Gui.Button{ text = brush.name, size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
+            if Gui.Button{ id = "tool_brush_"..i, text = brush.name, size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(nil, brush, game.brush == i) } then
                 game.brush = i
             end
         end
         
         Gui.Label{ text = "Toggles:", size = {60} }
-        if Gui.Button{ text = "w: " .. tostring(showWalkable), size = {C_TILE_SIZE * 2, C_TILE_SIZE} } then
+        if Gui.Button{ id = "toggle_walkable", text = "w: " .. tostring(showWalkable), size = {C_TILE_SIZE * 2, C_TILE_SIZE}, draw = icon_func(icon.block, nil, showWalkable == true)} then
             showWalkable = not showWalkable
         end
         
@@ -149,6 +172,24 @@ local function tools()
         
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
+    
+    
+    -- tool tooltips
+    -- tooltip (see above)
+    if Gui.mouse.isHot("tool_delete") then
+        local mx,my = love.mouse.getPosition()
+        Gui.Label{text = "Deletion tool", pos = {mx+10,my-40}}
+    end
+    if Gui.mouse.isHot("toggle_walkable") then
+        local mx,my = love.mouse.getPosition()
+        Gui.Label{text = "Deletion tool", pos = {mx+10,my-40}}
+    end
+    for i,brush in ipairs(game.brushes) do
+        if Gui.mouse.isHot("tool_brush_"..i) then
+            local mx,my = love.mouse.getPosition()
+            Gui.Label{text = brush.name, pos = {mx+10,my-40}}
+        end
+    end
 end
 
 
