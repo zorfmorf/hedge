@@ -13,12 +13,14 @@ function drawHelper:drawWalkable()
     local sx, sy = drawHelper:tileCoords(0, 0)
     local ex, ey = drawHelper:tileCoords(screen.w, screen.h)
     
+    love.graphics.setColor(255, 255, 255, 150)
     for x = sx, ex do
         for y = sy, ey do
             local tile = game.map:getTile(x, y)
             if tile and not tile.block then
-                love.graphics.rectangle("line", x * C_TILE_SIZE, y * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE)
+                love.graphics.rectangle("fill", x * C_TILE_SIZE, y * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE)
             end
         end
     end
+    love.graphics.setColor(255, 255, 255, 255)
 end

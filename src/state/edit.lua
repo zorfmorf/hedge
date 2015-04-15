@@ -7,6 +7,17 @@ st_edit = {}
 camera = nil
 
 
+-- helper var to not unnecessarily update the same tile
+-- multiple times while dragging a tool across the map
+local lastTile = {-1000, -1000}
+
+local function isNewTile(x, y)
+    local result = not (lastTile[1] == x and lastTile[2] == y)
+    if result then lastTile = { x, y } end
+    return result
+end
+
+
 function st_edit:enter()
     
     game:init()
@@ -25,12 +36,15 @@ function st_edit:update(dt)
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
-        
-        if game.brush == -1 then
-            game.map:deleteTile(tx, ty)
-        else
-            local brush = game:getCurrentBrush()
-            if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
+        if isNewTile(tx, ty) then
+            if game.brush == -1 then
+                game.map:deleteTile(tx, ty)
+            elseif game.brush == -2 then
+                game.map:toggleWalkable(tx, ty)
+            else
+                local brush = game:getCurrentBrush()
+                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
+            end
         end
     end
 end

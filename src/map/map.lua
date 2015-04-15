@@ -65,8 +65,9 @@ function Map:setTile(x, y, tile, object, overlay, block, event, delete)
 end
 
 
-function Map:deleteTile()
-    
+function Map:toggleWalkable(x, y)
+    local tile = self:getTile(x, y)
+    tile.block = not tile.block
 end
 
 

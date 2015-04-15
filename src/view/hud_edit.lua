@@ -7,7 +7,8 @@ hud_edit = {}
 local icon = {
     broom = love.graphics.newImage("img/icon/broom.png"),
     palette = love.graphics.newImage("img/icon/palette.png"),
-    block = love.graphics.newImage("img/icon/block.png")
+    block = love.graphics.newImage("img/icon/block.png"),
+    boot = love.graphics.newImage("img/icon/walking-boot.png")
 }
 
 -- list of all menu dialogs
@@ -158,7 +159,9 @@ local function tools()
         if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, game.brush == -1) } then
             game.brush = -1
         end
-        
+        if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, game.brush == -2) } then
+            game.brush = -2
+        end
         
         Gui.Label{ text = "Brushes:", size = {60} }
         for i,brush in ipairs(game.brushes) do
@@ -172,8 +175,6 @@ local function tools()
             showWalkable = not showWalkable
         end
         
-        
-        
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
     
@@ -183,6 +184,10 @@ local function tools()
     if Gui.mouse.isHot("tool_delete") then
         local mx,my = love.mouse.getPosition()
         Gui.Label{text = "Deletion tool", pos = {mx+10,my-40}}
+    end
+    if Gui.mouse.isHot("tool_walkable") then
+        local mx,my = love.mouse.getPosition()
+        Gui.Label{text = "Walkable tool", pos = {mx+10,my-40}}
     end
     if Gui.mouse.isHot("toggle_walkable") then
         local mx,my = love.mouse.getPosition()
