@@ -57,20 +57,24 @@ function st_edit:draw()
     
     -- clear spritebatches and draw tiles to batch
     for i,atlas in pairs(game.atlanti) do
-        atlas.batch:clear()
+        atlas:clear()
     end
     game.map:draw()
     
-    -- draw stored spritebatch operations by camera offset
+    -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
     for i,atlas in ipairs(game.atlanti) do
-        love.graphics.draw(atlas.batch)
+        love.graphics.draw(atlas.batch_floor)
+    end
+    for i,atlas in ipairs(game.atlanti) do
+        love.graphics.draw(atlas.batch_object)
+    end
+    for i,atlas in ipairs(game.atlanti) do
+        love.graphics.draw(atlas.batch_overlay)
     end
     
-    -- draw walkable tiles if enabled
-    if hud_edit:showWalkable() then 
-        drawHelper:drawWalkable()
-    end
+    -- draw walkable and event tile overlays if enabled
+    drawHelper:drawToggles(hud_edit:showEvents(), hud_edit:showWalkable())
     camera:detach() 
     
     -- draw hud

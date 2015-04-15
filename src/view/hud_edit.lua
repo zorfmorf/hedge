@@ -8,7 +8,8 @@ local icon = {
     broom = love.graphics.newImage("img/icon/broom.png"),
     palette = love.graphics.newImage("img/icon/palette.png"),
     block = love.graphics.newImage("img/icon/block.png"),
-    boot = love.graphics.newImage("img/icon/walking-boot.png")
+    boot = love.graphics.newImage("img/icon/walking-boot.png"),
+    event = love.graphics.newImage("img/icon/fishing-hook.png")
 }
 
 -- list of all menu dialogs
@@ -26,10 +27,18 @@ local atlaspos = {0, 0}
 -- if true, marks walkable tiles
 local showWalkable = false
 
+-- if true, marks events on tiles
+local showEvents = false
+
 
 function hud_edit:showWalkable()
     return showWalkable
 end
+
+function hud_edit:showEvents()
+    return showEvents
+end
+
 
 
 -- topbar with options, brush, exit buttons
@@ -171,8 +180,11 @@ local function tools()
         end
         
         Gui.Label{ text = "Toggles:", size = {60} }
-        if Gui.Button{ id = "toggle_walkable", text = "w: " .. tostring(showWalkable), size = {C_TILE_SIZE * 2, C_TILE_SIZE}, draw = icon_func(icon.block, nil, showWalkable == true)} then
+        if Gui.Button{ id = "toggle_walkable", text = "w: " .. tostring(showWalkable), size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.block, nil, showWalkable == true)} then
             showWalkable = not showWalkable
+        end
+        if Gui.Button{ id = "toggle_event", text = "e: " .. tostring(showWalkable), size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, showEvents == true)} then
+            showEvents = not showEvents
         end
         
         Gui.Label{ text = "" } -- to fill out the rest of the bar
@@ -191,7 +203,11 @@ local function tools()
     end
     if Gui.mouse.isHot("toggle_walkable") then
         local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Toggle display of walkable areas", pos = {mx+10,my-40}}
+        Gui.Label{text = "Toggle display of walkable tiles", pos = {mx+10,my-40}}
+    end
+    if Gui.mouse.isHot("toggle_event") then
+        local mx,my = love.mouse.getPosition()
+        Gui.Label{text = "Toggle display of events", pos = {mx+10,my-40}}
     end
     for i,brush in ipairs(game.brushes) do
         if Gui.mouse.isHot("tool_brush_"..i) then

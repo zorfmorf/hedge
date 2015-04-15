@@ -67,7 +67,7 @@ end
 
 function Map:toggleWalkable(x, y)
     local tile = self:getTile(x, y)
-    tile.block = not tile.block
+    if tile then tile.block = not tile.block end
 end
 
 

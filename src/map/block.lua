@@ -76,13 +76,13 @@ function Block:draw()
     for i,row in pairs(self.tiles) do
         for j,tile in pairs(row) do
             if tile.floor then 
-                at[tile.floor[1]]:addQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
             if tile.object then 
-                at[tile.object[1]]:addQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
             if tile.overlay then 
-                at[tile.overlay[1]]:addQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                at[tile.overlay[1]]:addOverlayQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
         end
     end
