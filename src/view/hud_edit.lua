@@ -83,50 +83,60 @@ local function brushmenu()
                 
                 Gui.Label{ text = "  ", size = { "tight" } }
                 
-                -- brush tiles
-                Gui.Label{ text = "Floor:", size = { "tight" } }
-                if brush.tiles then
-                    for i,tile in ipairs(brush.tiles) do
-                        if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                            table.remove(brush.tiles, i)
-                            i = i - 1
+                
+                Gui.group.push{ grow = "down" }
+                
+                
+                    -- brush tiles
+                    Gui.group.push{ grow = "right" }
+                        Gui.Label{ text = "Floor:", size = { 100 } }
+                        if brush.tiles then
+                            for i,tile in ipairs(brush.tiles) do
+                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                    table.remove(brush.tiles, i)
+                                    i = i - 1
+                                end
+                            end
                         end
-                    end
-                end
-                if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "tiles", i } end
-                
-                Gui.Label{ text = "    ", size = { "tight" } }
-                
-                -- object tiles
-                Gui.Label{ text = "Object:", size = { "tight" } }
-                if brush.objects then
-                    for i,tile in ipairs(brush.objects) do
-                        if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                            table.remove(brush.objects, i)
-                            i = i - 1
+                        if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "tiles", i } end
+                    Gui.group.pop{}
+                    
+                    
+                    -- object tiles
+                    Gui.group.push{ grow = "right" }
+                        Gui.Label{ text = "Object:", size = { 100 } }
+                        if brush.objects then
+                            for i,tile in ipairs(brush.objects) do
+                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                    table.remove(brush.objects, i)
+                                    i = i - 1
+                                end
+                            end
                         end
-                    end
-                end
-                if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "objects", i } end
-                
-                Gui.Label{ text = "    ", size = { "tight" } }
-                
-                -- overlay tiles
-                Gui.Label{ text = "Overlay:", size = { "tight" } }
-                if brush.overlays then
-                    for i,tile in ipairs(brush.overlays) do
-                        if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                            table.remove(brush.overlays, i)
-                            i = i - 1
+                        if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "objects", i } end
+                    Gui.group.pop{}
+                    
+                    
+                    -- overlay tiles
+                    Gui.group.push{ grow = "right" }
+                        Gui.Label{ text = "Overlay:", size = { 100 } }
+                        if brush.overlays then
+                            for i,tile in ipairs(brush.overlays) do
+                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                    table.remove(brush.overlays, i)
+                                    i = i - 1
+                                end
+                            end
                         end
-                    end
-                end
-                if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "overlays", i} end
+                        if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "overlays", i} end
+                    Gui.group.pop{}
+                    
+                Gui.group.pop{}
                 
                 Gui.Label{ text = "    ", size = { "tight" } }
                 
                 -- delete brush
-                if Gui.Button{ text = " - ", size = {'tight'} } then table.remove(game.brushes, i) i = i - 1 end
+                if Gui.Button{ text = "Delete" } then table.remove(game.brushes, i) i = i - 1 end
                 
             Gui.group.pop{}
         end
