@@ -30,6 +30,9 @@ local showWalkable = false
 -- if true, marks events on tiles
 local showEvents = false
 
+-- nil or the current event tile that is edited
+local eventEdit = nil
+
 
 function hud_edit:showWalkable()
     return showWalkable
@@ -39,6 +42,21 @@ function hud_edit:showEvents()
     return showEvents
 end
 
+
+function hud_edit:toggleEventMenu(tx, ty)
+    if eventEdit then
+        eventEdit = nil
+    else
+        local tile = game.map:getTile(tx, ty)
+        if tile then
+            local eventlist = game:getEventList()
+            if not tile.event then
+                tile.event = 1
+            end
+            eventEdit = { tx, ty, tile.event}
+        end
+    end
+end
 
 
 -- topbar with options, brush, exit buttons
@@ -181,6 +199,9 @@ local function tools()
         if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, game.brush == -2) } then
             game.brush = -2
         end
+        if Gui.Button{ id = "tool_event", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, game.brush == -3) } then
+            game.brush = -3
+        end
         
         Gui.Label{ text = "Brushes:", size = {60} }
         for i,brush in ipairs(game.brushes) do
@@ -210,6 +231,10 @@ local function tools()
     if Gui.mouse.isHot("tool_walkable") then
         local mx,my = love.mouse.getPosition()
         Gui.Label{text = "Walkable tool", pos = {mx+10,my-40}}
+    end
+    if Gui.mouse.isHot("tool_event") then
+        local mx,my = love.mouse.getPosition()
+        Gui.Label{text = "Event placement & editing tool", pos = {mx+10,my-40}}
     end
     if Gui.mouse.isHot("toggle_walkable") then
         local mx,my = love.mouse.getPosition()
