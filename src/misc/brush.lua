@@ -25,6 +25,9 @@ function Brush:init(id)
     -- overlays are drawn over the player
     self.overlays = nil
     
+    -- event placed by this brush
+    self.event = nil
+    
 end
 
 

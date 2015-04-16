@@ -42,10 +42,10 @@ function st_edit:update(dt)
             elseif game.brush == -2 then
                 game.map:toggleWalkable(tx, ty)
             elseif game.brush == -3 then
-                hud_edit:toggleEventMenu(tx, ty)
+                hud_edit:deleteEvent(tx, ty)
             else
                 local brush = game:getCurrentBrush()
-                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
+                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
             end
         end
     end
@@ -77,7 +77,13 @@ function st_edit:draw()
     
     -- draw walkable and event tile overlays if enabled
     drawHelper:drawToggles(hud_edit:showEvents(), hud_edit:showWalkable())
-    camera:detach() 
+    
+    -- draw event tooltip if toggled
+    if hud_edit:showEvents() then
+        hud_edit:drawEventTooltip()
+    end
+    
+    camera:detach()
     
     -- draw hud
     Gui.core.draw()

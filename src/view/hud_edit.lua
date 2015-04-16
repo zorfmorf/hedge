@@ -30,31 +30,21 @@ local showWalkable = false
 -- if true, marks events on tiles
 local showEvents = false
 
--- nil or the current event tile that is edited
-local eventEdit = nil
-
 
 function hud_edit:showWalkable()
     return showWalkable
 end
+
 
 function hud_edit:showEvents()
     return showEvents
 end
 
 
-function hud_edit:toggleEventMenu(tx, ty)
-    if eventEdit then
-        eventEdit = nil
-    else
-        local tile = game.map:getTile(tx, ty)
-        if tile then
-            local eventlist = game:getEventList()
-            if not tile.event then
-                tile.event = 1
-            end
-            eventEdit = { tx, ty, tile.event}
-        end
+function hud_edit:deleteEvent(tx, ty)
+    local tile = game.map:getTile(tx, ty)
+    if tile then
+        tile.event = nil
     end
 end
 
@@ -153,6 +143,13 @@ local function brushmenu()
                 
                 Gui.Label{ text = "    ", size = { "tight" } }
                 
+                local event = { text = "" }
+                if brush.event then event.text = tostring(brush.event) end
+                Gui.Input{ info = event, size = {100} }
+                brush.event = tonumber(event.text)
+                
+                Gui.Label{ text = "    ", size = { "tight" } }
+                
                 -- delete brush
                 if Gui.Button{ text = "Delete" } then table.remove(game.brushes, i) i = i - 1 end
                 
@@ -234,7 +231,7 @@ local function tools()
     end
     if Gui.mouse.isHot("tool_event") then
         local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Event placement & editing tool", pos = {mx+10,my-40}}
+        Gui.Label{text = "Event deletion tool", pos = {mx+10,my-40}}
     end
     if Gui.mouse.isHot("toggle_walkable") then
         local mx,my = love.mouse.getPosition()
@@ -249,6 +246,25 @@ local function tools()
             local mx,my = love.mouse.getPosition()
             Gui.Label{text = brush.name, pos = {mx+10,my-40}}
         end
+    end
+end
+
+
+function hud_edit:drawEventTooltip()
+    local mx, my = camera:mousepos()
+    local tx = math.floor(mx / C_TILE_SIZE)
+    local ty = math.floor(my / C_TILE_SIZE)
+    local tile = game.map:getTile(tx, ty)
+    if tile and tile.event then
+        local elist = game:getEventList()
+        local text = "Event " .. tostring(tile.event) .. " not found"
+        if elist[tile.event] then
+            text = elist[tile.event]
+        end
+        love.graphics.setColor(COLOR.black)
+        love.graphics.rectangle("fill", mx + C_TILE_SIZE, my - C_TILE_SIZE, love.graphics.getFont():getWidth(text) + C_TILE_SIZE, C_TILE_SIZE)
+        love.graphics.setColor(COLOR.white)
+        love.graphics.print(text, mx + C_TILE_SIZE * 1.5, my - C_TILE_SIZE * 0.75)
     end
 end
 
