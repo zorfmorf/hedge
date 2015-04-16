@@ -41,9 +41,11 @@ function st_edit:update(dt)
                 game.map:deleteTile(tx, ty)
             elseif game.brush == -2 then
                 game.map:toggleWalkable(tx, ty)
+            elseif game.brush == -3 then
+                hud_edit:deleteEvent(tx, ty)
             else
                 local brush = game:getCurrentBrush()
-                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking) end
+                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
             end
         end
     end
@@ -75,7 +77,13 @@ function st_edit:draw()
     
     -- draw walkable and event tile overlays if enabled
     drawHelper:drawToggles(hud_edit:showEvents(), hud_edit:showWalkable())
-    camera:detach() 
+    
+    -- draw event tooltip if toggled
+    if hud_edit:showEvents() then
+        hud_edit:drawEventTooltip()
+    end
+    
+    camera:detach()
     
     -- draw hud
     Gui.core.draw()
@@ -94,6 +102,7 @@ end
 -- however, mousewheel has no released action so we need to 
 -- handle them extra
 function st_edit:mousepressed(x, y, button)
+    lastTile = {-1000, -1000} -- so that we can repeatedly click the last tile
     if button == "wd" or button == "wu" then
         hud_edit:mousepressed(x, y, button)
     end
