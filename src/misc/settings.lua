@@ -19,3 +19,9 @@ C_CAM_SPEED = 4 * C_TILE_SIZE
 -- Gui settings
 G_TOPBAR_HEIGHT = 30
 G_TOPBAR_PAD = 5
+
+COLOR = {
+    white = {255, 255, 255},
+    black = {0, 0, 0},
+    selected = {49,181,64}
+}

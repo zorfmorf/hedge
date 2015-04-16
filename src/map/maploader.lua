@@ -40,7 +40,7 @@ function maploader:read()
                             end
                         end
                         map:setTile(bx * C_BLOCK_SIZE + linex, 
-                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4] == 1)
+                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4] == 1, params[5])
                     end
                     y = y + 1
                 end
@@ -107,6 +107,15 @@ function maploader:save(map)
                     else
                         file:write( 0 )
                     end
+                    file:write( "|" )
+                    
+                    -- event number
+                    if block.event then
+                        file:write( block.event )
+                    else
+                        file:write( "nil" )
+                    end
+                    
                     file:write( ";" )
                 end
                 file:write( "\n" )

@@ -13,7 +13,9 @@ TexAtlas = Class{}
 
 function TexAtlas:init(path)
     self.img = love.graphics.newImage(path)
-    self.batch = love.graphics.newSpriteBatch(self.img)
+    self.batch_floor = love.graphics.newSpriteBatch(self.img)
+    self.batch_object = love.graphics.newSpriteBatch(self.img)
+    self.batch_overlay = love.graphics.newSpriteBatch(self.img)
     
     self.quads = {}
     for i = 0, math.floor(self.img:getWidth() / C_TILE_SIZE) - 1 do
@@ -31,11 +33,23 @@ function TexAtlas:update(dt)
 end
 
 
-function TexAtlas:addQuad(x, y, i, j)
-    self.batch:add(self.quads[x][y], i * C_TILE_SIZE, j * C_TILE_SIZE)
+function TexAtlas:addFloorQuad(x, y, i, j)
+    self.batch_floor:add(self.quads[x][y], i * C_TILE_SIZE, j * C_TILE_SIZE)
 end
 
--- 
-function TexAtlas:draw()
-    love.graphics.draw(self.batch)
+
+function TexAtlas:addObjectQuad(x, y, i, j)
+    self.batch_object:add(self.quads[x][y], i * C_TILE_SIZE, j * C_TILE_SIZE)
+end
+
+
+function TexAtlas:addOverlayQuad(x, y, i, j)
+    self.batch_overlay:add(self.quads[x][y], i * C_TILE_SIZE, j * C_TILE_SIZE)
+end
+
+
+function TexAtlas:clear()
+    self.batch_floor:clear()
+    self.batch_object:clear()
+    self.batch_overlay:clear()
 end

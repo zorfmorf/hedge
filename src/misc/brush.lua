@@ -25,6 +25,9 @@ function Brush:init(id)
     -- overlays are drawn over the player
     self.overlays = nil
     
+    -- event placed by this brush
+    self.event = nil
+    
 end
 
 
@@ -67,4 +70,22 @@ function Brush:getOverlay()
         return self.overlays[math.random(1, #self.overlays)]
     end
     return nil
+end
+
+
+-- preview the brash by drawing the first tile that can be found
+-- x,y coordinates to draw to and the default to use if not found
+function Brush:drawPreview(x, y, default)
+    local t = nil
+    if self.tiles and self.tiles[1] then t = self.tiles end
+    if not t and self.objects and self.objects[1] then t = self.objects end
+    if not t and self.overlays and self.overlays[1] then t = self.overlays end
+    
+    if t and t[1] then
+        local atl = game.atlanti[t[1][1]]
+        local quad = love.graphics.newQuad( t[1][2] * C_TILE_SIZE, t[1][3] * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, atl.img:getWidth(), atl.img:getHeight() )
+        love.graphics.draw(atl.img, quad, x, y)
+    else
+        love.graphics.draw(default, x, y)
+    end
 end
