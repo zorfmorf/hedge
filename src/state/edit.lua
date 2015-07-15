@@ -1,5 +1,5 @@
 
-requier "events.eventHandler"
+require "events.eventHandler"
 require "view.hud_edit"
 require "view.drawHelper"
 
@@ -21,6 +21,7 @@ end
 
 function st_edit:enter()
     
+    eventHandler:init()
     game:init()
     
     camera = Camera(0, 0)

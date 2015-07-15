@@ -256,10 +256,10 @@ function hud_edit:drawEventTooltip()
     local ty = math.floor(my / C_TILE_SIZE)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.event then
-        local elist = game:getEventList()
+        local elist = eventHandler:getEvents()
         local text = "Event " .. tostring(tile.event) .. " not found"
         if elist[tile.event] then
-            text = elist[tile.event]
+            text = elist[tile.event].name
         end
         love.graphics.setColor(COLOR.black)
         love.graphics.rectangle("fill", mx + C_TILE_SIZE, my - C_TILE_SIZE, love.graphics.getFont():getWidth(text) + C_TILE_SIZE, C_TILE_SIZE)

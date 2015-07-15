@@ -22,8 +22,3 @@ end
 function game:getCurrentBrush()
     return self.brushes[self.brush]
 end
-
-
-function game:getEventList()
-    return { "Event A", "Event B" }
-end
