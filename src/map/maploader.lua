@@ -2,13 +2,15 @@
 maploader = {}
 
 
-function maploader:read()
+function maploader:read( path, name )
     
-    local map = Map()
+    log:msg("verbose", "Loading map", path..name)
     
-    if love.filesystem.isFile( C_FILE_MAP ) then
+    local map = Map(name:sub(1, name:len() - C_MAP_SUFFIX:len()))
     
-        local file = love.filesystem.newFile( C_FILE_MAP )
+    if love.filesystem.isFile( path..name ) then
+    
+        local file = love.filesystem.newFile( path..name )
         file:open( "r" )
         
         local bx, by = nil
@@ -50,6 +52,7 @@ function maploader:read()
         
         file:close()
     else
+        log:msg("debug", "Map not found:", path..name)
         map:createBlock(0, 0)
     end
     return map
@@ -57,9 +60,18 @@ end
 
 
 -- save map to file
-function maploader:save(map)
-    local file = love.filesystem.newFile( C_FILE_MAP )
-    file:open( "w" )
+-- path needs trailing /
+function maploader:save(map, path)
+    
+    -- target path handling
+    local ok = love.filesystem.createDirectory( path )
+    if not ok then log:msg("verbose", "Error creating folder", path) end
+    log:msg("verbose", "Writing map", map.name, "to path", path..map.name..C_MAP_SUFFIX)
+    local file = love.filesystem.newFile( path..map.name..C_MAP_SUFFIX )
+    local okay, err = file:open( "w" )
+    if not okay then log:msg("error", "Error saving map", map.name, "to", path, "-", err) end
+    
+    -- writing file content
     file:write( "# Tiles\n" )
     local blkcntr = 0
     for i, row in pairs(map.blocks) do
@@ -123,5 +135,5 @@ function maploader:save(map)
         end
     end
     local result = file:close( )
-    print( "Wrote", blkcntr, "blocks" )
+    log:msg("verbose", "Wrote", blkcntr, "blocks to", love.filesystem.getRealDirectory( path ).."/"..path )
 end

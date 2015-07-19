@@ -22,7 +22,7 @@ end
 function st_edit:enter()
     
     eventHandler:init()
-    game:init()
+    game:init(true)
     
     camera = Camera(0, 0)
     
@@ -129,9 +129,33 @@ function st_edit:keypressed(key, isrepeat)
 end
 
 
+function st_edit:loadMap(name)
+    -- TODO: implement
+end
+
+
+function st_edit:newMap()
+    local name = "unnamed"
+    if love.filesystem.isFile( C_MAP_MASTER..name ) then
+        local i = 1
+        while love.filesystem.isFile( C_MAP_MASTER..name..tostring(i) ) do
+            i = i + 1
+        end
+    end
+    game.map = Map(name)
+    game.map:createBlock(0, 0)
+end
+
+
+function st_edit:saveMap()
+    game.map.name = hud_edit:getMapName()
+    maploader:save(game.map, C_MAP_MASTER)
+end
+
+
 -- called when leaving state
 function st_edit:leave()
-    maploader:save(game.map)
+    st_edit:saveMap()
 end
 
 

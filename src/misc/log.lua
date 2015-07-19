@@ -9,9 +9,13 @@ function log:init()
     
 end
 
-function log:msg(lvl, msg)
+function log:msg(lvl, ...)
     if not ((lvl == "verbose" and (level == "debug" or level == "error")) or
         (lvl == "debug" and level == "error"))then
-        print(lvl, msg)
+        local output = ""
+        for i = 1, select("#", ...) do
+            output = output .. tostring(select(i,...)) .. " "
+        end
+        print(lvl, output)
     end
 end

@@ -30,6 +30,18 @@ local showWalkable = false
 -- if true, marks events on tiles
 local showEvents = false
 
+local mapname = { text = "" }
+
+
+function hud_edit:setMapName(text)
+    mapname.text = text
+end
+
+
+function hud_edit:getMapName()
+    return mapname.text
+end
+
 
 function hud_edit:showWalkable()
     return showWalkable
@@ -52,7 +64,10 @@ end
 -- topbar with options, brush, exit buttons
 local function topbar()
     Gui.group.push{ grow = "right", pos = { 0, 0 }, size = {screen.w, G_TOPBAR_HEIGHT} }
-        Gui.Button{ text = "Save", size = {100} }
+        if Gui.Button{ text = "New", size = {100} } then st_edit:newMap() end
+        Gui.Input{info = mapname, size = {200} }
+        if Gui.Button{ text = "Save", size = {100} } then st_edit:saveMap() end
+        Gui.Button{ text = "Load", size = {100} }
         Gui.Button{ text = "Options", size = {100} }
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
         if Gui.Button{ text = "Quit", size = {100} } then love.event.push("quit") end

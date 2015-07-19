@@ -5,7 +5,9 @@
 
 Map = Class{}
 
-function Map:init()
+function Map:init(name)
+    self.name = name
+    hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
     self.blocks = {}
 end
 
