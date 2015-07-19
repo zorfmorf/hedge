@@ -51,7 +51,7 @@ end
 
 -- topbar with options, brush, exit buttons
 local function topbar()
-    Gui.group.push{ grow = "right", pos = { 0, 0 }, size = {screen.w, G_TOPBAR_HEIGHT}, pad = G_TOPBAR_PAD, bkg = true }
+    Gui.group.push{ grow = "right", pos = { 0, 0 }, size = {screen.w, G_TOPBAR_HEIGHT} }
         Gui.Button{ text = "Save", size = {100} }
         Gui.Button{ text = "Options", size = {100} }
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
@@ -75,7 +75,7 @@ end
 
 -- menu where you can edit existing brushes
 local function brushmenu()
-    Gui.group.push{ grow = "down", pos = { screen.w * 0.1, screen.h * 0.25 }, size = {screen.w * 0.5}, pad = 10, bkg = true, border = 1 }
+    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE }, size = {screen.w * 0.5}, border = 1 }
         Gui.Label{ text = "Currently defined brushes:" }
         
         for i,brush in ipairs(game.brushes) do
@@ -187,7 +187,7 @@ end
 
 -- quick access menu containing last used tools
 local function tools()
-    Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE }, bkg = true }
+    Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE } }
         
         Gui.Label{ text = "Tools:", size = {60} }
         if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, game.brush == -1) } then
@@ -284,10 +284,19 @@ function hud_edit:update(dt)
 end
 
 
--- we need this to not draw tiles while menus are open
-function hud_edit:menuIsOpen()
+-- whether a menu dialog is currently open
+function hud_edit:menuOpen()
     for i,item in pairs(menus) do
         if item == true then return true end
+    end
+    return false
+end
+
+
+-- don't place tiles when interacting with menus
+function hud_edit:mouseIsOnMenu()
+    if hud_edit:menuOpen() then
+        return true
     end
     if love.mouse.getY() > screen.h - C_TILE_SIZE then 
         return true 

@@ -30,8 +30,7 @@ local utf8 = require "lib.quickie.utf8"
 local color = {
 	normal = {bg = {78,78,78}, fg = {200,200,200}, border={20,20,20}},
 	hot    = {bg = {98,98,98}, fg = {69,201,84},   border={30,30,30}},
-	active = {bg = {88,88,88}, fg = {49,181,64},   border={10,10,10}},
-	group = {bg = {33,101,123}, border = {255,255,255}}
+	active = {bg = {88,88,88}, fg = {49,181,64},   border={10,10,10}}
 }
 
 -- box drawing

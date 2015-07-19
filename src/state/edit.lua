@@ -32,7 +32,7 @@ function st_edit:update(dt)
     hud_edit:update(dt)
     
     -- if left mouse is pressed, set current tile to position
-    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not hud_edit:menuIsOpen() then
+    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not hud_edit:mouseIsOnMenu() then
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
@@ -84,6 +84,14 @@ function st_edit:draw()
     end
     
     camera:detach()
+    
+    -- draw toolbar/menu backgrounds
+    if hud_edit:menuOpen() then
+        drawHelper:greyOut()
+    else
+        drawHelper:toolbarBkg()
+    end
+    
     
     -- draw hud
     Gui.core.draw()

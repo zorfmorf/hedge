@@ -4,6 +4,7 @@ Gamestate = require "lib.hump.gamestate"
 Class = require "lib.hump.class"
 Gui = require "lib.quickie"
 Camera = require "lib.hump.camera"
+Color = require "misc.color"
 
 -- require everything in the given subdirectory
 local function requireDirectory( dir )
