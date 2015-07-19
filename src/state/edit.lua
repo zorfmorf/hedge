@@ -130,17 +130,22 @@ end
 
 
 function st_edit:loadMap(name)
-    -- TODO: implement
+    if love.filesystem.isFile( C_MAP_MASTER..name ) then
+        game.map = maploader:read( C_MAP_MASTER, name )
+    else
+        log:msg("error", "Error loading map", C_MAP_MASTER..name)
+    end
 end
 
 
 function st_edit:newMap()
     local name = "unnamed"
-    if love.filesystem.isFile( C_MAP_MASTER..name ) then
+    if love.filesystem.isFile( C_MAP_MASTER..name..C_MAP_SUFFIX ) then
         local i = 1
-        while love.filesystem.isFile( C_MAP_MASTER..name..tostring(i) ) do
+        while love.filesystem.isFile( C_MAP_MASTER..name..tostring(i)..C_MAP_SUFFIX ) do
             i = i + 1
         end
+        name = name..tostring(i)
     end
     game.map = Map(name)
     game.map:createBlock(0, 0)

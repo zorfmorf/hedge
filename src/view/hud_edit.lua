@@ -16,6 +16,7 @@ local icon = {
 local menus = { }
 menus.brush = false -- brush configurator
 menus.tiles = false -- tile for brush selector
+menus.load = false -- map load 
 
 
 -- currently selected tile atlas
@@ -67,7 +68,7 @@ local function topbar()
         if Gui.Button{ text = "New", size = {100} } then st_edit:newMap() end
         Gui.Input{info = mapname, size = {200} }
         if Gui.Button{ text = "Save", size = {100} } then st_edit:saveMap() end
-        Gui.Button{ text = "Load", size = {100} }
+        if Gui.Button{ text = "Load", size = {100} } then menus.load = not menus.load end
         Gui.Button{ text = "Options", size = {100} }
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
         if Gui.Button{ text = "Quit", size = {100} } then love.event.push("quit") end
@@ -184,6 +185,27 @@ local function tileselector()
 end
 
 
+local function mapselector()
+    Gui.group.push{ grow = "down", spacing = 10 }
+    Gui.group.push{ grow = "right", spacing = 10 }
+    local files = love.filesystem.getDirectoryItems( C_MAP_MASTER )
+    for i,item in ipairs(files) do
+        if love.filesystem.isFile(C_MAP_MASTER..item) then
+            if Gui.Button{ text = item } then
+                menus.load = false
+                st_edit:loadMap(item)
+            end
+            if i % 5 == 0 and files[i+1] then
+                Gui.group.pop{}
+                Gui.group.push{ grow = "right", spacing = 10 }
+            end
+        end
+    end
+    Gui.group.pop{}
+    Gui.group.pop{}
+end
+
+
 -- draw function for icon buttons
 local function icon_func(img, brush, highlight)
     return  function(state, title, x,y,w,h)
@@ -286,9 +308,10 @@ end
 
 function hud_edit:update(dt)
     
-    if menus.tiles then
-        tileselector()
-    else
+    if menus.tiles then tileselector() end
+    if menus.load then mapselector() end
+        
+    if not (menus.tiles or menus.load) then
         
         if menus.brush then brushmenu() return end
         
