@@ -188,18 +188,17 @@ end
 local function mapselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
-    local files = love.filesystem.getDirectoryItems( C_MAP_MASTER )
-    for i,item in ipairs(files) do
-        if love.filesystem.isFile(C_MAP_MASTER..item) then
-            if Gui.Button{ text = item } then
-                menus.load = false
-                st_edit:loadMap(item)
-            end
-            if i % 5 == 0 and files[i+1] then
-                Gui.group.pop{}
-                Gui.group.push{ grow = "right", spacing = 10 }
-            end
+    local i = 1
+    for name,map in pairs(st_edit.maps) do
+        if Gui.Button{ text = name } then
+            menus.load = false
+            st_edit:loadMap(name)
         end
+        if i % 5 == 0 then
+            Gui.group.pop{}
+            Gui.group.push{ grow = "right", spacing = 10 }
+        end
+        i = i + 1
     end
     Gui.group.pop{}
     Gui.group.pop{}

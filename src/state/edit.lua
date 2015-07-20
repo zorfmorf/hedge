@@ -19,7 +19,27 @@ local function isNewTile(x, y)
 end
 
 
+function st_edit:reloadMapIndex()
+    self.maps = {}
+    local files = love.filesystem.getDirectoryItems( C_MAP_MASTER )
+    for i,item in ipairs(files) do
+        if love.filesystem.isFile(C_MAP_MASTER..item) then
+            local map = maploader:read(C_MAP_MASTER, item)
+            self.maps[map.name] = map
+        end
+    end
+end
+
+
+function st_edit:reloadMap(name)
+    local map = maploader:read(C_MAP_MASTER, name..C_MAP_SUFFIX)
+    self.maps[map.name] = map
+end
+
+
 function st_edit:enter()
+    
+    self:reloadMapIndex()
     
     eventHandler:init()
     game:init(true)
@@ -130,10 +150,10 @@ end
 
 
 function st_edit:loadMap(name)
-    if love.filesystem.isFile( C_MAP_MASTER..name ) then
-        game.map = maploader:read( C_MAP_MASTER, name )
+    if love.filesystem.isFile( C_MAP_MASTER..name..C_MAP_SUFFIX ) then
+        game.map = maploader:read( C_MAP_MASTER, name..C_MAP_SUFFIX )
     else
-        log:msg("error", "Error loading map", C_MAP_MASTER..name)
+        log:msg("error", "Error loading map", C_MAP_MASTER..name..C_MAP_SUFFIX)
     end
 end
 
@@ -155,16 +175,17 @@ end
 function st_edit:saveMap()
     game.map.name = hud_edit:getMapName()
     maploader:save(game.map, C_MAP_MASTER)
+    self:reloadMap(game.map.name)
 end
 
 
 -- called when leaving state
 function st_edit:leave()
-    st_edit:saveMap()
+    self:saveMap()
 end
 
 
 -- called when state active and game exits
 function st_edit:quit()
-    st_edit:leave()
+    self:leave()
 end
