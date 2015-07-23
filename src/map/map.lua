@@ -8,7 +8,8 @@ Map = Class{}
 function Map:init(name)
     self.name = name
     hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
-    self.blocks = {}
+    self.blocks = {} -- actual block data
+    self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
 end
 
 
@@ -106,4 +107,20 @@ function Map:deleteTile(x, y)
         
         if self.blocks[bx][by]:isEmpty() then self.blocks[bx][by] = nil end
     end
+end
+
+
+-- add a spawn point or remove a spawn point at the given location
+function Map:toggleSpawn(x, y)
+    for key,value in pairs(self.spawns) do
+        if value.x == x and value.y == y then
+            self.spawns[key] = nil
+            return
+        end
+    end
+    local i = 1
+    while self.spawns[i] do
+        i = i + 1
+    end
+    self.spawns[i] = { x=x, y=y}
 end

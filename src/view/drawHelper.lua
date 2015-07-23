@@ -1,4 +1,6 @@
 
+local location_icon = love.graphics.newImage("img/icon/position-marker.png")
+
 drawHelper = {}
 
 -- convert screen coordinates to tile coordinates
@@ -13,6 +15,7 @@ function drawHelper:drawToggles(events, walkable)
     local sx, sy = drawHelper:tileCoords(0, 0)
     local ex, ey = drawHelper:tileCoords(screen.w, screen.h)
     
+    -- draw events and walkable fields
     for x = sx, ex do
         for y = sy, ey do
             local tile = game.map:getTile(x, y)
@@ -28,7 +31,19 @@ function drawHelper:drawToggles(events, walkable)
             end
         end
     end
-    love.graphics.setColor(255, 255, 255, 255)
+    
+    -- draw spawns
+    for key,value in pairs(game.map.spawns) do
+        love.graphics.setColor(Color.FADE)
+        love.graphics.draw(location_icon, value.x * C_TILE_SIZE, value.y * C_TILE_SIZE)
+        love.graphics.setColor(Color.RED_HARD)
+        love.graphics.print(key, value.x * C_TILE_SIZE, value.y * C_TILE_SIZE)
+    end
+    
+    -- draw 0,0 position (default spawn)
+    love.graphics.setColor(Color.RED_HARD)
+    love.graphics.rectangle("line", 0, 0, C_TILE_SIZE, C_TILE_SIZE)
+    love.graphics.setColor(Color.WHITE)
 end
 
 

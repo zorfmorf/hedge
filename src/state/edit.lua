@@ -65,6 +65,8 @@ function st_edit:update(dt)
                 game.map:toggleWalkable(tx, ty)
             elseif game.brush == -3 then
                 hud_edit:deleteEvent(tx, ty)
+            elseif game.brush == -4 then
+                hud_edit:spawnEvent(tx, ty)
             else
                 local brush = game:getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end

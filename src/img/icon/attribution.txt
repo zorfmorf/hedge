@@ -9,3 +9,4 @@ block.png - http://game-icons.net/lorc/originals/stone-block.html - Lorc - http:
 palette.png - http://game-icons.net/delapouite/originals/palette.html - Delapouite - http://delapouite.com/
 walking-boot.png - http://game-icons.net/lorc/originals/walking-boot.html - Lorc - http://lorcblog.blogspot.de/
 fishing-hook.png - http://game-icons.net/lorc/originals/fishing-hook.html - Lorc - http://lorcblog.blogspot.de/
+position-marker.png - http://game-icons.net/delapouite/gui/position-marker.html - Delapouite - http://delapouite.com/

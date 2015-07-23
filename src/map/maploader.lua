@@ -16,14 +16,24 @@ function maploader:read( path, name )
         local bx, by = nil
         local linex = 0
         
+        local readspawns = false
+        
         for line in file:lines( ) do
             if line:sub(1, 8) == "# Tiles" then
-            
+                
+            elseif line:sub(1, 8) == "# Spawns" then
+                readspawns = true
             elseif line:sub(1, 8) == "# Block " then 
                 bx, by = line:sub(9):match("([^,]+) ([^,]+)")
                 bx = tonumber(bx)
                 by = tonumber(by)
                 linex = -1
+            elseif readspawns then
+                log:msg("verbose", "Found spawn at", line)
+                local values = line:split(";")
+                if values then
+                    map.spawns[tonumber(values[1])] = { x=tonumber(values[2]), y=tonumber(values[3]) }
+                end
             else
                 local y = 0
                 for i,entry in ipairs(line:split(";")) do
@@ -133,6 +143,10 @@ function maploader:save(map, path)
                 file:write( "\n" )
             end
         end
+    end
+    file:write( "# Spawns\n" )
+    for i,value in pairs(map.spawns) do
+        file:write( i..";"..value.x..";"..value.y.."\n")
     end
     local result = file:close( )
     log:msg("verbose", "Wrote", blkcntr, "blocks to", love.filesystem.getRealDirectory( path ).."/"..path )

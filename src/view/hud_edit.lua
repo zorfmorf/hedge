@@ -9,7 +9,8 @@ local icon = {
     palette = love.graphics.newImage("img/icon/palette.png"),
     block = love.graphics.newImage("img/icon/block.png"),
     boot = love.graphics.newImage("img/icon/walking-boot.png"),
-    event = love.graphics.newImage("img/icon/fishing-hook.png")
+    event = love.graphics.newImage("img/icon/fishing-hook.png"),
+    spawn = love.graphics.newImage("img/icon/position-marker.png")
 }
 
 -- list of all menu dialogs
@@ -59,6 +60,11 @@ function hud_edit:deleteEvent(tx, ty)
     if tile then
         tile.event = nil
     end
+end
+
+
+function hud_edit:spawnEvent(tx, ty)
+    game.map:toggleSpawn(tx, ty)
 end
 
 
@@ -235,6 +241,9 @@ local function tools()
         if Gui.Button{ id = "tool_event", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, game.brush == -3) } then
             game.brush = -3
         end
+        if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
+            game.brush = -4
+        end
         
         Gui.Label{ text = "Brushes:", size = {60} }
         for i,brush in ipairs(game.brushes) do
@@ -250,6 +259,7 @@ local function tools()
         if Gui.Button{ id = "toggle_event", text = "e: " .. tostring(showWalkable), size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, showEvents == true)} then
             showEvents = not showEvents
         end
+        
         
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
