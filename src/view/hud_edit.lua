@@ -413,6 +413,10 @@ function hud_edit:catchKey(key, isrepeat)
         return true
     end
     
+    if menus.load and key == "escape" then
+        menus.load = false
+    end
+    
     -- key hasn't been intercepted
     return false
 end

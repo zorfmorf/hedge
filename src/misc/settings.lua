@@ -16,6 +16,9 @@ C_BLOCK_SIZE = 8
 
 -- tile size nxn
 C_TILE_SIZE = 32
+C_CHAR_SIZE = 64
+C_CHAR_MOD_X = 16
+C_CHAR_MOD_Y = 38
 
 -- camera tile speed per second/click
 C_CAM_SPEED = 4 * C_TILE_SIZE

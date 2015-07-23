@@ -147,6 +147,7 @@ function st_edit:keypressed(key, isrepeat)
         if key == "up" then camera:move(0, -C_CAM_SPEED) end
         if key == "right" then camera:move(C_CAM_SPEED, 0) end
         if key == "down" then camera:move(0, C_CAM_SPEED) end
+        if key == "escape" then Gamestate.switch(st_menu_main) end
     end
 end
 

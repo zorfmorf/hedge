@@ -21,6 +21,7 @@ end
 requireDirectory( 'state' )
 requireDirectory( 'misc' )
 requireDirectory( 'map' )
+requireDirectory( 'class' )
 require "events.eventHandler" -- dont require the events itself
 
 
@@ -28,8 +29,8 @@ require "events.eventHandler" -- dont require the events itself
 function love.load()
     log.init()
     Gamestate.registerEvents()
-    --Gamestate.switch(st_menu_main)
-    Gamestate.switch(st_edit)
+    Gamestate.switch(st_menu_main)
+    --Gamestate.switch(st_edit)
 end
 
 
@@ -42,9 +43,6 @@ end
 -- catches keyboard events
 function love.keypressed(key, isrepeat)
     Gui.keyboard.pressed(key)
-    if key == "escape" then        
-        love.event.push("quit")
-    end
 end
 
 
