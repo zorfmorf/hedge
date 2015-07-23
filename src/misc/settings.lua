@@ -35,3 +35,4 @@ KEY_UP = "up"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
+CHAR_ANIM = 15 -- animation speed
