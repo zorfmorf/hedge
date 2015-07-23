@@ -23,13 +23,15 @@ C_CHAR_MOD_Y = 38
 -- camera tile speed per second/click
 C_CAM_SPEED = 4 * C_TILE_SIZE
 
-
 -- Gui settings
 G_TOPBAR_HEIGHT = 30
 G_TOPBAR_PAD = 5
 
-COLOR = {
-    white = {255, 255, 255},
-    black = {0, 0, 0},
-    selected = {49,181,64}
-}
+-- Key settings
+KEY_LEFT = "left"
+KEY_RIGHT = "right"
+KEY_DOWN = "down"
+KEY_UP = "up"
+
+-- entity setting
+CHAR_MOVE = 4 -- tile movement per second

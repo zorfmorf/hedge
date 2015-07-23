@@ -227,6 +227,12 @@ local function icon_func(img, brush, highlight)
 end
 
 
+local function drawTooltip(title)
+    local mx,my = love.mouse.getPosition()
+    Gui.Label{text = title, pos = {mx+10,my-40}}
+end
+
+
 -- quick access menu containing last used tools
 local function tools()
     Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE } }
@@ -267,31 +273,14 @@ local function tools()
     
     -- tool tooltips
     -- tooltip (see above)
-    if Gui.mouse.isHot("tool_delete") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Deletion tool", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("tool_walkable") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Walkable tool", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("tool_event") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Event deletion tool", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("toggle_walkable") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Toggle display of walkable tiles", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("toggle_event") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Toggle display of events", pos = {mx+10,my-40}}
-    end
+    if Gui.mouse.isHot("tool_delete") then drawTooltip("Deletion tool") end
+    if Gui.mouse.isHot("tool_walkable") then drawTooltip("Walkable tool") end
+    if Gui.mouse.isHot("tool_event") then drawTooltip("Event deletion tool") end
+    if Gui.mouse.isHot("tool_spawn") then drawTooltip("Event deletion tool") end
+    if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
+    if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     for i,brush in ipairs(game.brushes) do
-        if Gui.mouse.isHot("tool_brush_"..i) then
-            local mx,my = love.mouse.getPosition()
-            Gui.Label{text = brush.name, pos = {mx+10,my-40}}
-        end
+        if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end
 end
 

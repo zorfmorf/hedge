@@ -1,5 +1,6 @@
 
 require "events.eventHandler"
+require "view.animationHelper"
 
 st_ingame = {}
 
@@ -24,6 +25,7 @@ end
 function st_ingame:enter()
     
     eventHandler:init()
+    animationHelper.init()
     game:init(true)
     
     camera = Camera(0, 0)
@@ -41,6 +43,7 @@ function st_ingame:update(dt)
         entity:update(dt)
     end
 end
+
 
 function st_ingame:draw()
         
@@ -73,4 +76,20 @@ function st_ingame:draw()
     
     -- draw hud
     Gui.core.draw()
+end
+
+
+function st_ingame:keypressed(key, isrepeat)
+    if key == KEY_LEFT then player:move("left") end
+    if key == KEY_RIGHT then player:move("right") end
+    if key == KEY_DOWN then player:move("down") end
+    if key == KEY_UP then player:move("up") end
+end
+
+
+function st_ingame:keyreleased(key)
+    if key == KEY_LEFT then player:unmove("left") end
+    if key == KEY_RIGHT then player:unmove("right") end
+    if key == KEY_DOWN then player:unmove("down") end
+    if key == KEY_UP then player:unmove("up") end
 end
