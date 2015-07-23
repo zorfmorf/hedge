@@ -27,6 +27,7 @@ end
 -- copy master to current
 function saveHandler.newGame()
     copyFiles(C_MAP_MASTER, C_MAP_CURRENT)
+    var.new()
 end
 
 -- TODO handle different savespots
@@ -34,6 +35,7 @@ end
 -- save current game
 function saveHandler.saveGame()
     maploader:save(game.map, C_MAP_CURRENT)
+    var.save()
     copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..'001/')
 end
 
@@ -42,4 +44,5 @@ end
 function saveHandler.loadGame()
     copyFiles(C_MAP_SAVEGAMES..'001/', C_MAP_CURRENT)
     maploader:read(C_MAP_CURRENT, C_MAP_NAME_DEFAULT)
+    var.load()
 end
