@@ -124,3 +124,19 @@ function Map:toggleSpawn(x, y)
     end
     self.spawns[i] = { x=x, y=y}
 end
+
+
+function Map:removeEntity(x, y)
+    local tile = self:getTile(x, y)
+    if tile then
+        tile.npc = nil
+    end
+end
+
+
+function Map:addEntity(x, y, id)
+    local tile = self:getTile(x, y)
+    if tile and not tile.npc then
+        tile.npc = id
+    end
+end

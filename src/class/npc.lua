@@ -1,9 +1,8 @@
 
+Npc = Class{}
 
-Player = Class{}
-
-function Player:init()
-    self. id = 1 -- player always has id 1, only one player allowed at all times
+function Npc:init(id)
+    self.id = id
     self.pos = { x=0, y=0 }
     self.dir = nil
     self.cycle = 0
@@ -11,29 +10,29 @@ function Player:init()
 end
 
 
-function Player:place(x, y)
+function Npc:place(x, y)
     self.pos = { x=x, y=y } -- actual current position
     self.tile = { x=x, y=y } -- tile currently occupied
     game.map:addEntity(x, y, self.id)
 end
 
 
-function Player:update(dt)
+function Npc:update(dt)
     moveHandler.update(self, dt)
     animationHelper.update(self, dt)
 end
 
 
-function Player:draw()
+function Npc:draw()
     animationHelper.draw(self)
 end
 
 
-function Player:move(direction)
+function Npc:move(direction)
     moveHandler.move(self, direction)
 end
 
 
-function Player:unmove(direction)
+function Npc:unmove(direction)
     moveHandler.unmove(self, direction)
 end

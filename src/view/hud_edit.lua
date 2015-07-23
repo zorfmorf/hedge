@@ -214,9 +214,9 @@ end
 -- draw function for icon buttons
 local function icon_func(img, brush, highlight)
     return  function(state, title, x,y,w,h)
-                love.graphics.setColor(COLOR.white)
+                love.graphics.setColor(Color.WHITE)
                 if state == "active" or highlight then
-                    love.graphics.setColor(COLOR.selected)
+                    love.graphics.setColor(Color.RED)
                 end
                 if img then love.graphics.draw(img, x, y) end
                 if brush then brush:drawPreview(x, y, icon.palette) end

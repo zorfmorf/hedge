@@ -34,9 +34,12 @@ function st_ingame:enter()
     
     self.entities = {}
     self.entities[player.id] = player
+    self.entities[2] = Npc(2)
+    self.entities[2]:place(0, -2)
     
     placePlayer(1)
 end
+
 
 function st_ingame:update(dt)
     for id,entity in pairs(self.entities) do
@@ -70,7 +73,6 @@ function st_ingame:draw()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_overlay)
     end
-    
     
     camera:detach()
     
