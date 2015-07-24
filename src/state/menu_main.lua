@@ -7,13 +7,21 @@ function st_menu_main:enter()
     
 end
 
+
 function st_menu_main:update(dt)
     
     screen:update()
     
     Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.4}}
         
-        Gui.Button{text = "Play"}
+        if Gui.Button{text = "Play"} then 
+            saveHandler.newGame()
+            Gamestate.switch(st_ingame)
+        end
+        if Gui.Button{text = "Load"} then 
+            saveHandler.loadGame()
+            Gamestate.switch(st_ingame)
+        end
         if C_DEBUG and Gui.Button{text = "Editor"} then Gamestate.switch(st_edit) end
         Gui.Button{text = "Options"}
         if Gui.Button{text = "Exit"} then love.event.push("quit") end
@@ -22,6 +30,14 @@ function st_menu_main:update(dt)
     
 end
 
+
 function st_menu_main:draw()
     Gui.core.draw()
+end
+
+
+function st_menu_main:keypressed(key, isrepeat)
+    if key == "escape" then        
+        love.event.push("quit")
+    end
 end

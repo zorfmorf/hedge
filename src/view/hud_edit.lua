@@ -9,13 +9,15 @@ local icon = {
     palette = love.graphics.newImage("img/icon/palette.png"),
     block = love.graphics.newImage("img/icon/block.png"),
     boot = love.graphics.newImage("img/icon/walking-boot.png"),
-    event = love.graphics.newImage("img/icon/fishing-hook.png")
+    event = love.graphics.newImage("img/icon/fishing-hook.png"),
+    spawn = love.graphics.newImage("img/icon/position-marker.png")
 }
 
 -- list of all menu dialogs
 local menus = { }
 menus.brush = false -- brush configurator
 menus.tiles = false -- tile for brush selector
+menus.load = false -- map load 
 
 
 -- currently selected tile atlas
@@ -29,6 +31,18 @@ local showWalkable = false
 
 -- if true, marks events on tiles
 local showEvents = false
+
+local mapname = { text = "" }
+
+
+function hud_edit:setMapName(text)
+    mapname.text = text
+end
+
+
+function hud_edit:getMapName()
+    return mapname.text
+end
 
 
 function hud_edit:showWalkable()
@@ -49,10 +63,18 @@ function hud_edit:deleteEvent(tx, ty)
 end
 
 
+function hud_edit:spawnEvent(tx, ty)
+    game.map:toggleSpawn(tx, ty)
+end
+
+
 -- topbar with options, brush, exit buttons
 local function topbar()
-    Gui.group.push{ grow = "right", pos = { 0, 0 }, size = {screen.w, G_TOPBAR_HEIGHT}, pad = G_TOPBAR_PAD, bkg = true }
-        Gui.Button{ text = "Save", size = {100} }
+    Gui.group.push{ grow = "right", pos = { 0, 0 }, size = {screen.w, G_TOPBAR_HEIGHT} }
+        if Gui.Button{ text = "New", size = {100} } then st_edit:newMap() end
+        Gui.Input{info = mapname, size = {200} }
+        if Gui.Button{ text = "Save", size = {100} } then st_edit:saveMap() end
+        if Gui.Button{ text = "Load", size = {100} } then menus.load = not menus.load end
         Gui.Button{ text = "Options", size = {100} }
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
         if Gui.Button{ text = "Quit", size = {100} } then love.event.push("quit") end
@@ -75,7 +97,7 @@ end
 
 -- menu where you can edit existing brushes
 local function brushmenu()
-    Gui.group.push{ grow = "down", pos = { screen.w * 0.1, screen.h * 0.25 }, size = {screen.w * 0.5}, pad = 10, bkg = true, border = 1 }
+    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE }, size = {screen.w * 0.5}, border = 1 }
         Gui.Label{ text = "Currently defined brushes:" }
         
         for i,brush in ipairs(game.brushes) do
@@ -169,12 +191,32 @@ local function tileselector()
 end
 
 
+local function mapselector()
+    Gui.group.push{ grow = "down", spacing = 10 }
+    Gui.group.push{ grow = "right", spacing = 10 }
+    local i = 1
+    for name,map in pairs(st_edit.maps) do
+        if Gui.Button{ text = name } then
+            menus.load = false
+            st_edit:loadMap(name)
+        end
+        if i % 5 == 0 then
+            Gui.group.pop{}
+            Gui.group.push{ grow = "right", spacing = 10 }
+        end
+        i = i + 1
+    end
+    Gui.group.pop{}
+    Gui.group.pop{}
+end
+
+
 -- draw function for icon buttons
 local function icon_func(img, brush, highlight)
     return  function(state, title, x,y,w,h)
-                love.graphics.setColor(COLOR.white)
+                love.graphics.setColor(Color.WHITE)
                 if state == "active" or highlight then
-                    love.graphics.setColor(COLOR.selected)
+                    love.graphics.setColor(Color.RED)
                 end
                 if img then love.graphics.draw(img, x, y) end
                 if brush then brush:drawPreview(x, y, icon.palette) end
@@ -185,9 +227,15 @@ local function icon_func(img, brush, highlight)
 end
 
 
+local function drawTooltip(title)
+    local mx,my = love.mouse.getPosition()
+    Gui.Label{text = title, pos = {mx+10,my-40}}
+end
+
+
 -- quick access menu containing last used tools
 local function tools()
-    Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE }, bkg = true }
+    Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE } }
         
         Gui.Label{ text = "Tools:", size = {60} }
         if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, game.brush == -1) } then
@@ -198,6 +246,9 @@ local function tools()
         end
         if Gui.Button{ id = "tool_event", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, game.brush == -3) } then
             game.brush = -3
+        end
+        if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
+            game.brush = -4
         end
         
         Gui.Label{ text = "Brushes:", size = {60} }
@@ -215,37 +266,21 @@ local function tools()
             showEvents = not showEvents
         end
         
+        
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
     
     
     -- tool tooltips
     -- tooltip (see above)
-    if Gui.mouse.isHot("tool_delete") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Deletion tool", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("tool_walkable") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Walkable tool", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("tool_event") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Event deletion tool", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("toggle_walkable") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Toggle display of walkable tiles", pos = {mx+10,my-40}}
-    end
-    if Gui.mouse.isHot("toggle_event") then
-        local mx,my = love.mouse.getPosition()
-        Gui.Label{text = "Toggle display of events", pos = {mx+10,my-40}}
-    end
+    if Gui.mouse.isHot("tool_delete") then drawTooltip("Deletion tool") end
+    if Gui.mouse.isHot("tool_walkable") then drawTooltip("Walkable tool") end
+    if Gui.mouse.isHot("tool_event") then drawTooltip("Event deletion tool") end
+    if Gui.mouse.isHot("tool_spawn") then drawTooltip("Event deletion tool") end
+    if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
+    if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     for i,brush in ipairs(game.brushes) do
-        if Gui.mouse.isHot("tool_brush_"..i) then
-            local mx,my = love.mouse.getPosition()
-            Gui.Label{text = brush.name, pos = {mx+10,my-40}}
-        end
+        if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end
 end
 
@@ -256,14 +291,14 @@ function hud_edit:drawEventTooltip()
     local ty = math.floor(my / C_TILE_SIZE)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.event then
-        local elist = game:getEventList()
+        local elist = eventHandler:getEvents()
         local text = "Event " .. tostring(tile.event) .. " not found"
         if elist[tile.event] then
-            text = elist[tile.event]
+            text = elist[tile.event].name
         end
-        love.graphics.setColor(COLOR.black)
+        love.graphics.setColor(Color.BLACK)
         love.graphics.rectangle("fill", mx + C_TILE_SIZE, my - C_TILE_SIZE, love.graphics.getFont():getWidth(text) + C_TILE_SIZE, C_TILE_SIZE)
-        love.graphics.setColor(COLOR.white)
+        love.graphics.setColor(Color.WHITE)
         love.graphics.print(text, mx + C_TILE_SIZE * 1.5, my - C_TILE_SIZE * 0.75)
     end
 end
@@ -271,9 +306,10 @@ end
 
 function hud_edit:update(dt)
     
-    if menus.tiles then
-        tileselector()
-    else
+    if menus.tiles then tileselector() end
+    if menus.load then mapselector() end
+        
+    if not (menus.tiles or menus.load) then
         
         if menus.brush then brushmenu() return end
         
@@ -284,10 +320,19 @@ function hud_edit:update(dt)
 end
 
 
--- we need this to not draw tiles while menus are open
-function hud_edit:menuIsOpen()
+-- whether a menu dialog is currently open
+function hud_edit:menuOpen()
     for i,item in pairs(menus) do
         if item == true then return true end
+    end
+    return false
+end
+
+
+-- don't place tiles when interacting with menus
+function hud_edit:mouseIsOnMenu()
+    if hud_edit:menuOpen() then
+        return true
     end
     if love.mouse.getY() > screen.h - C_TILE_SIZE then 
         return true 
@@ -355,6 +400,10 @@ function hud_edit:catchKey(key, isrepeat)
     if menus.tiles and key == "down" then
         atlaspos[2] = atlaspos[2] - C_TILE_SIZE * 8
         return true
+    end
+    
+    if menus.load and key == "escape" then
+        menus.load = false
     end
     
     -- key hasn't been intercepted

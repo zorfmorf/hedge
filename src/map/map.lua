@@ -5,8 +5,11 @@
 
 Map = Class{}
 
-function Map:init()
-    self.blocks = {}
+function Map:init(name)
+    self.name = name
+    hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
+    self.blocks = {} -- actual block data
+    self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
 end
 
 
@@ -46,7 +49,7 @@ end
 -- set some or all values for a tile.
 -- nil values won't override old values (intended)
 -- exception: block value WILL override for reaons
-function Map:setTile(x, y, tile, object, overlay, block, event, delete)
+function Map:setTile(x, y, tile, object, overlay, block, event, npc, delete)
     
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
@@ -60,7 +63,7 @@ function Map:setTile(x, y, tile, object, overlay, block, event, delete)
     if delete then
         self.blocks[bx][by]:delete(tx, ty)
     else
-        self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event)
+        self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event, npc)
     end
 end
 
@@ -97,11 +100,66 @@ function Map:deleteTile(x, y)
     local tile = self:getTile(x, y)
     if tile then
         
-        self:setTile(x, y, nil, nil, nil, nil, nil, true)
+        self:setTile(x, y, nil, nil, nil, nil, nil, nil, true)
         
         local bx = math.floor(x / C_BLOCK_SIZE)
         local by = math.floor(y / C_BLOCK_SIZE)
         
         if self.blocks[bx][by]:isEmpty() then self.blocks[bx][by] = nil end
     end
+end
+
+
+-- add a spawn point or remove a spawn point at the given location
+function Map:toggleSpawn(x, y)
+    for key,value in pairs(self.spawns) do
+        if value.x == x and value.y == y then
+            self.spawns[key] = nil
+            return
+        end
+    end
+    local i = 1
+    while self.spawns[i] do
+        i = i + 1
+    end
+    self.spawns[i] = { x=x, y=y}
+end
+
+
+function Map:removeEntity(x, y)
+    local tile = self:getTile(x, y)
+    if tile then
+        tile.npc = nil
+    end
+end
+
+
+function Map:addEntity(x, y, id)
+    local tile = self:getTile(x, y)
+    if tile and not tile.npc then
+        tile.npc = id
+    end
+end
+
+
+-- return a list of all entities currently on the map
+function Map:loadEntities()
+    local entities = {}
+    for x,blockrow in pairs(self.blocks) do
+        for y,block in pairs(blockrow) do
+            for i,row in pairs(block.tiles) do
+                for j,tile in pairs(row) do
+                    if tile.npc then
+                        if tile.npc == player.id then
+                            entities[tile.npc] = player
+                        else
+                            entities[tile.npc] = Npc(tile.npc)
+                        end
+                        entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j)
+                    end
+                end
+            end
+        end
+    end
+    return entities
 end

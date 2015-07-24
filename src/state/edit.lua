@@ -1,4 +1,5 @@
 
+require "events.eventHandler"
 require "view.hud_edit"
 require "view.drawHelper"
 
@@ -18,9 +19,30 @@ local function isNewTile(x, y)
 end
 
 
+function st_edit:reloadMapIndex()
+    self.maps = {}
+    local files = love.filesystem.getDirectoryItems( C_MAP_MASTER )
+    for i,item in ipairs(files) do
+        if love.filesystem.isFile(C_MAP_MASTER..item) then
+            local map = maploader:read(C_MAP_MASTER, item)
+            self.maps[map.name] = map
+        end
+    end
+end
+
+
+function st_edit:reloadMap(name)
+    local map = maploader:read(C_MAP_MASTER, name..C_MAP_SUFFIX)
+    self.maps[map.name] = map
+end
+
+
 function st_edit:enter()
     
-    game:init()
+    self:reloadMapIndex()
+    
+    eventHandler:init()
+    game:init(true)
     
     camera = Camera(0, 0)
     
@@ -32,7 +54,7 @@ function st_edit:update(dt)
     hud_edit:update(dt)
     
     -- if left mouse is pressed, set current tile to position
-    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not hud_edit:menuIsOpen() then
+    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not hud_edit:mouseIsOnMenu() then
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
@@ -43,6 +65,8 @@ function st_edit:update(dt)
                 game.map:toggleWalkable(tx, ty)
             elseif game.brush == -3 then
                 hud_edit:deleteEvent(tx, ty)
+            elseif game.brush == -4 then
+                hud_edit:spawnEvent(tx, ty)
             else
                 local brush = game:getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
@@ -85,6 +109,14 @@ function st_edit:draw()
     
     camera:detach()
     
+    -- draw toolbar/menu backgrounds
+    if hud_edit:menuOpen() then
+        drawHelper:greyOut()
+    else
+        drawHelper:toolbarBkg()
+    end
+    
+    
     -- draw hud
     Gui.core.draw()
 end
@@ -115,17 +147,48 @@ function st_edit:keypressed(key, isrepeat)
         if key == "up" then camera:move(0, -C_CAM_SPEED) end
         if key == "right" then camera:move(C_CAM_SPEED, 0) end
         if key == "down" then camera:move(0, C_CAM_SPEED) end
+        if key == "escape" then Gamestate.switch(st_menu_main) end
     end
+end
+
+
+function st_edit:loadMap(name)
+    if love.filesystem.isFile( C_MAP_MASTER..name..C_MAP_SUFFIX ) then
+        game.map = maploader:read( C_MAP_MASTER, name..C_MAP_SUFFIX )
+    else
+        log:msg("error", "Error loading map", C_MAP_MASTER..name..C_MAP_SUFFIX)
+    end
+end
+
+
+function st_edit:newMap()
+    local name = "unnamed"
+    if love.filesystem.isFile( C_MAP_MASTER..name..C_MAP_SUFFIX ) then
+        local i = 1
+        while love.filesystem.isFile( C_MAP_MASTER..name..tostring(i)..C_MAP_SUFFIX ) do
+            i = i + 1
+        end
+        name = name..tostring(i)
+    end
+    game.map = Map(name)
+    game.map:createBlock(0, 0)
+end
+
+
+function st_edit:saveMap()
+    game.map.name = hud_edit:getMapName()
+    maploader:save(game.map, C_MAP_MASTER)
+    self:reloadMap(game.map.name)
 end
 
 
 -- called when leaving state
 function st_edit:leave()
-    maploader:save(game.map)
+    self:saveMap()
 end
 
 
 -- called when state active and game exits
 function st_edit:quit()
-    st_edit:leave()
+    self:leave()
 end

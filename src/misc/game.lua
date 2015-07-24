@@ -6,9 +6,13 @@
 
 game = {}
 
-function game:init()
+function game:init(editmode)
     
-    self.map = maploader:read()
+    -- todo: account for different savegamefolders
+    local path = C_MAP_CURRENT
+    if editmode then path = C_MAP_MASTER end
+    
+    self.map = maploader:read(path, C_MAP_NAME_DEFAULT)
     self.atlanti = tilesetreader:read()
     self.brushes = {}
     
@@ -21,9 +25,4 @@ end
 
 function game:getCurrentBrush()
     return self.brushes[self.brush]
-end
-
-
-function game:getEventList()
-    return { "Event A", "Event B" }
 end
