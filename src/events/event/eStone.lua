@@ -9,7 +9,7 @@ local function use(x, y)
 end
 
 local function walk(x, y)
-    
+    print("Jo man, don't walk around on MY FACE")
 end
 
 return {

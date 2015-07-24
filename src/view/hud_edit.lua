@@ -296,9 +296,9 @@ function hud_edit:drawEventTooltip()
         if elist[tile.event] then
             text = elist[tile.event].name
         end
-        love.graphics.setColor(COLOR.black)
+        love.graphics.setColor(Color.BLACK)
         love.graphics.rectangle("fill", mx + C_TILE_SIZE, my - C_TILE_SIZE, love.graphics.getFont():getWidth(text) + C_TILE_SIZE, C_TILE_SIZE)
-        love.graphics.setColor(COLOR.white)
+        love.graphics.setColor(Color.WHITE)
         love.graphics.print(text, mx + C_TILE_SIZE * 1.5, my - C_TILE_SIZE * 0.75)
     end
 end

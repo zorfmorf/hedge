@@ -9,7 +9,7 @@ game = {}
 function game:init(editmode)
     
     -- todo: account for different savegamefolders
-    local path = C_MAP_SAVEGAMES..'001/'
+    local path = C_MAP_CURRENT
     if editmode then path = C_MAP_MASTER end
     
     self.map = maploader:read(path, C_MAP_NAME_DEFAULT)
