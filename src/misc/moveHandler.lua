@@ -9,9 +9,9 @@ end
 
 
 local function handleMove(entity, direction, target)
+    entity.dir = direction
     if canBeMovedTo( target.x, target.y ) then
         entity.target = target
-        entity.dir = direction
         entity.next = direction
         
         -- update map
@@ -35,7 +35,7 @@ function moveHandler.update(entity, dt)
             else
                 entity.pos.x = entity.target.x
                 entity.dir = nil
-                entity:move(entity.next)
+                if entity.next then entity:move(entity.next) end
             end
         end
     end
@@ -47,7 +47,7 @@ function moveHandler.update(entity, dt)
             else
                 entity.pos.x = entity.target.x
                 entity.dir = nil
-                entity:move(entity.next)
+                if entity.next then entity:move(entity.next) end
             end
         end
     end
@@ -59,7 +59,7 @@ function moveHandler.update(entity, dt)
             else
                 entity.pos.y = entity.target.y
                 entity.dir = nil
-                entity:move(entity.next)
+                if entity.next then entity:move(entity.next) end
             end
         end
     end
@@ -71,7 +71,7 @@ function moveHandler.update(entity, dt)
             else
                 entity.pos.y = entity.target.y
                 entity.dir = nil
-                entity:move(entity.next)
+                if entity.next then entity:move(entity.next) end
             end
         end
     end

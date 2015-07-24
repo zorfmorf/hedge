@@ -19,8 +19,8 @@ end
 
 
 function Player:update(dt)
-    moveHandler.update(self, dt)
     animationHelper.update(self, dt)
+    moveHandler.update(self, dt)
 end
 
 

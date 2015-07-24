@@ -82,10 +82,10 @@ end
 
 
 function st_ingame:keypressed(key, isrepeat)
-    if key == KEY_LEFT then player:move("left") end
-    if key == KEY_RIGHT then player:move("right") end
-    if key == KEY_DOWN then player:move("down") end
-    if key == KEY_UP then player:move("up") end
+    if key == KEY_LEFT and not isrepeat then player:move("left") end
+    if key == KEY_RIGHT and not isrepeat then player:move("right") end
+    if key == KEY_DOWN and not isrepeat then player:move("down") end
+    if key == KEY_UP and not isrepeat then player:move("up") end
     if key == "escape" then Gamestate.switch(st_menu_main) end
 end
 

@@ -52,7 +52,7 @@ function maploader:read( path, name )
                             end
                         end
                         map:setTile(bx * C_BLOCK_SIZE + linex, 
-                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4] == 1, params[5])
+                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4] == 1, params[5], params[6])
                     end
                     y = y + 1
                 end
