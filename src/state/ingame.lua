@@ -26,18 +26,18 @@ function st_ingame:enter()
     
     eventHandler:init()
     animationHelper.init()
-    game:init(true)
+    game:init(false)
     
     camera = Camera(0, 0)
     
     player = Player()
     
-    self.entities = {}
-    self.entities[player.id] = player
-    self.entities[2] = Npc(2)
-    self.entities[2]:place(0, -2)
+    self.entities = game.map:loadEntities()
     
-    placePlayer(1)
+    if not self.entities[player.id] then
+        placePlayer(1)
+        self.entities[player.id] = player
+    end
 end
 
 
@@ -86,7 +86,10 @@ function st_ingame:keypressed(key, isrepeat)
     if key == KEY_RIGHT and not isrepeat then player:move("right") end
     if key == KEY_DOWN and not isrepeat then player:move("down") end
     if key == KEY_UP and not isrepeat then player:move("up") end
-    if key == "escape" then Gamestate.switch(st_menu_main) end
+    if key == "escape" then 
+        saveHandler.saveGame()
+        Gamestate.switch(st_menu_main)
+    end
 end
 
 

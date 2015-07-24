@@ -140,3 +140,26 @@ function Map:addEntity(x, y, id)
         tile.npc = id
     end
 end
+
+
+-- return a list of all entities currently on the map
+function Map:loadEntities()
+    local entities = {}
+    for x,blockrow in pairs(self.blocks) do
+        for y,block in pairs(blockrow) do
+            for i,row in pairs(block.tiles) do
+                for j,tile in pairs(row) do
+                    if tile.npc then
+                        if tile.npc == player.id then
+                            entities[tile.npc] = player
+                        else
+                            entities[tile.npc] = Npc(tile.npc)
+                        end
+                        entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j)
+                    end
+                end
+            end
+        end
+    end
+    return entities
+end

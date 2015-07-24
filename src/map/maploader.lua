@@ -137,6 +137,14 @@ function maploader:save(map, path)
                     else
                         file:write( "nil" )
                     end
+                    file:write( "|" )
+                    
+                    -- npc number
+                    if block.npc then
+                        file:write( block.npc )
+                    else
+                        file:write( "nil" )
+                    end
                     
                     file:write( ";" )
                 end

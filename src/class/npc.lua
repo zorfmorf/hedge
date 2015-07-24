@@ -6,7 +6,7 @@ function Npc:init(id)
     self.pos = { x=0, y=0 }
     self.dir = nil
     self.cycle = 0
-    self.anim = 1
+    self.anim = 3
 end
 
 
