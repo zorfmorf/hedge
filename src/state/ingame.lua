@@ -23,6 +23,7 @@ end
 
 
 function st_ingame:enter()
+    log:msg("verbose", "Entering game state")
     
     eventHandler:init()
     animationHelper.init()
@@ -30,19 +31,15 @@ function st_ingame:enter()
     
     camera = Camera(0, 0)
     
-    player = Player()
-    
-    self.entities = game.map:loadEntities()
-    
-    if not self.entities[player.id] then
+    if not game.map.entities[player.id] then
         placePlayer(1)
-        self.entities[player.id] = player
+        game.map.entities[player.id] = player
     end
 end
 
 
 function st_ingame:update(dt)
-    for id,entity in pairs(self.entities) do
+    for id,entity in pairs(game.map.entities) do
         entity:update(dt)
     end
 end
@@ -67,7 +64,7 @@ function st_ingame:draw()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
     end
-    for id,entity in pairs(self.entities) do
+    for id,entity in pairs(game.map.entities) do
         entity:draw()
     end
     for i,atlas in ipairs(game.atlanti) do

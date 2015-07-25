@@ -35,6 +35,7 @@ end
 -- save current game
 function saveHandler.saveGame()
     maploader:save(game.map, C_MAP_CURRENT)
+    entityHandler.save()
     var.save()
     copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..'001/')
 end
@@ -43,6 +44,6 @@ end
 -- load a game
 function saveHandler.loadGame()
     copyFiles(C_MAP_SAVEGAMES..'001/', C_MAP_CURRENT)
-    maploader:read(C_MAP_CURRENT, C_MAP_NAME_DEFAULT)
+    entityHandler.load()
     var.load()
 end

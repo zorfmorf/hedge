@@ -10,6 +10,7 @@ function Map:init(name)
     hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
+    self.entities = {}
 end
 
 
@@ -161,5 +162,5 @@ function Map:loadEntities()
             end
         end
     end
-    return entities
+    self.entities = entities
 end

@@ -3,7 +3,7 @@
 Player = Class{}
 
 function Player:init()
-    self. id = 1 -- player always has id 1, only one player allowed at all times
+    self.id = 1 -- player always has id 1, only one player allowed at all times
     self.pos = { x=0, y=0 }
     self.dir = nil
     self.cycle = 0
@@ -14,7 +14,7 @@ end
 function Player:place(x, y)
     self.pos = { x=x, y=y } -- actual current position
     self.tile = { x=x, y=y } -- tile currently occupied
-    game.map:addEntity(x, y, self.id)
+    if game.map then game.map:addEntity(x, y, self.id) end
 end
 
 

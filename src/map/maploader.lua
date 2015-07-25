@@ -8,6 +8,8 @@ function maploader:read( path, name )
     
     local map = Map(name:sub(1, name:len() - C_MAP_SUFFIX:len()))
     
+    local animations = {} -- npc directions can be temporarily saved here
+    
     if love.filesystem.isFile( path..name ) then
     
         local file = love.filesystem.newFile( path..name )
@@ -49,6 +51,11 @@ function maploader:read( path, name )
                                 for l,number in ipairs(value:split(",")) do
                                     table.insert(params[k], tonumber(number))
                                 end
+                                -- if we read an npc settings we need to handle the direction extra
+                                if k == 6 and params[6][1] and params[6][2] then
+                                    animations[params[6][1]] = params[6][2]
+                                    params[6] = params[6][1]
+                                end
                             end
                         end
                         map:setTile(bx * C_BLOCK_SIZE + linex, 
@@ -64,6 +71,12 @@ function maploader:read( path, name )
     else
         log:msg("debug", "Map not found:", path..name)
         map:createBlock(0, 0)
+    end
+    
+    -- load up entities and set their directions
+    map:loadEntities()
+    for npc,anim in ipairs(animations) do
+        map.entities[npc].anim = anim
     end
     return map
 end
@@ -140,8 +153,8 @@ function maploader:save(map, path)
                     file:write( "|" )
                     
                     -- npc number
-                    if block.npc then
-                        file:write( block.npc )
+                    if block.npc and map.entities[block.npc] then
+                        file:write( block.npc..","..map.entities[block.npc].anim )
                     else
                         file:write( "nil" )
                     end
