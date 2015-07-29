@@ -45,6 +45,7 @@ end
 function saveHandler.newGame()
     deleteFolderContents(C_MAP_CURRENT)
     copyFiles(C_MAP_MASTER, C_MAP_CURRENT)
+    entityHandler.load()
     var.new()
 end
 
