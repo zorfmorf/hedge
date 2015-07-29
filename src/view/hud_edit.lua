@@ -10,14 +10,16 @@ local icon = {
     block = love.graphics.newImage("img/icon/block.png"),
     boot = love.graphics.newImage("img/icon/walking-boot.png"),
     event = love.graphics.newImage("img/icon/fishing-hook.png"),
-    spawn = love.graphics.newImage("img/icon/position-marker.png")
+    spawn = love.graphics.newImage("img/icon/position-marker.png"),
+    npc = love.graphics.newImage("img/icon/npc.png")
 }
 
 -- list of all menu dialogs
 local menus = { }
 menus.brush = false -- brush configurator
 menus.tiles = false -- tile for brush selector
-menus.load = false -- map load 
+menus.load = false -- map load
+menus.npc = false
 
 
 -- currently selected tile atlas
@@ -75,6 +77,18 @@ end
 
 function hud_edit:spawnEvent(tx, ty)
     game.map:toggleSpawn(tx, ty)
+end
+
+
+function hud_edit:spawnNpc(tx, ty)
+    local tile = game.map:getTile(tx, ty)
+    if tile and tile.npc then
+        local npc = entityHandler.get(tile.npc)
+        npc.anim = npc.anim + 1
+        if npc.anim > 4 then npc.anim = 1 end
+    else
+        menus.npc = { x=tx, y=ty }
+    end
 end
 
 
@@ -201,6 +215,28 @@ local function tileselector()
 end
 
 
+local function npcselector()
+    Gui.group.push{ grow = "down", spacing = 10 }
+    Gui.group.push{ grow = "right", spacing = 10 }
+    local counter = 1
+    for i,entity in ipairs(entityHandler.getAll()) do
+        if not (i == 1) then
+            if Gui.Button{ text = entity.name } then
+                entity:place(menus.npc.x, menus.npc.y)
+                menus.npc = false
+            end
+            if counter % 3 == 0 then
+                Gui.group.pop{}
+                Gui.group.push{ grow = "right", spacing = 10 }
+            end
+            counter = counter + 1
+        end
+    end
+    Gui.group.pop{}
+    Gui.group.pop{}
+end
+
+
 local function mapselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
@@ -260,6 +296,9 @@ local function tools()
         if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
             game.brush = -4
         end
+        if Gui.Button{ id = "tool_npc", text = "Add/Remove Npc", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.npc, nil, game.brush == -5)} then
+            game.brush = -5
+        end
         
         Gui.Label{ text = "Brushes:", size = {60} }
         for i,brush in ipairs(game.brushes) do
@@ -318,8 +357,9 @@ function hud_edit:update(dt)
     
     if menus.tiles then tileselector() end
     if menus.load then mapselector() end
+    if menus.npc then npcselector() end
         
-    if not (menus.tiles or menus.load) then
+    if not (menus.tiles or menus.load or menus.npc) then
         
         if menus.brush then brushmenu() return end
         
@@ -333,7 +373,7 @@ end
 -- whether a menu dialog is currently open
 function hud_edit:menuOpen()
     for i,item in pairs(menus) do
-        if item == true then return true end
+        if item then return true end
     end
     return false
 end
@@ -374,7 +414,7 @@ function hud_edit:mousepressed(x, y, button)
             
             menus.tiles = false
         end
-        
+                
         -- switch current atlas on mousewheel
         if button == "wu" then
             currentatlas = currentatlas - 1
@@ -387,6 +427,14 @@ function hud_edit:mousepressed(x, y, button)
             atlaspos = {0, 0}
             if currentatlas > #game.atlanti then currentatlas = 1 end
         end
+    end
+    
+    -- delete npc on rightclick
+    if not hud_edit:menuOpen() and button == "r" and game.brush == -5 then
+        local mx, my = camera:mousepos()
+        local tx = math.floor(mx / C_TILE_SIZE)
+        local ty = math.floor(my / C_TILE_SIZE)
+        game.map:removeEntity(tx, ty)
     end
 end
 

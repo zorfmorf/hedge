@@ -6,14 +6,15 @@ function Npc:init(id)
     self.pos = { x=0, y=0 }
     self.dir = nil
     self.cycle = 0
-    self.anim = 3
+    self.anim = 4
+    self.name = "Unnamed"
 end
 
 
-function Npc:place(x, y)
+function Npc:place(x, y, blockMapPlacement)
     self.pos = { x=x, y=y } -- actual current position
     self.tile = { x=x, y=y } -- tile currently occupied
-    game.map:addEntity(x, y, self.id)
+    if not blockMapPlacement then game.map:addEntity(x, y, self.id) end
 end
 
 

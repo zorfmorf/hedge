@@ -130,6 +130,7 @@ end
 function Map:removeEntity(x, y)
     local tile = self:getTile(x, y)
     if tile then
+        self.entities[tile.npc] = nil
         tile.npc = nil
     end
 end
@@ -140,6 +141,7 @@ function Map:addEntity(x, y, id)
     if tile and not tile.npc then
         tile.npc = id
     end
+    self.entities[id] = entityHandler.get(id)
 end
 
 
@@ -151,12 +153,8 @@ function Map:loadEntities()
             for i,row in pairs(block.tiles) do
                 for j,tile in pairs(row) do
                     if tile.npc then
-                        if tile.npc == player.id then
-                            entities[tile.npc] = player
-                        else
-                            entities[tile.npc] = Npc(tile.npc)
-                        end
-                        entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j)
+                        entities[tile.npc] = entityHandler.get(tile.npc)
+                        entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
                     end
                 end
             end

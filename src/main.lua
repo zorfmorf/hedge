@@ -23,6 +23,7 @@ requireDirectory( 'misc' )
 requireDirectory( 'map' )
 requireDirectory( 'class' )
 require "events.eventHandler" -- dont require the events itself
+require "npc.entityHandler" -- dont require the actual npcs itself
 
 
 -- load hook. executed once on startup

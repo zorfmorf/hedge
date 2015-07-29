@@ -39,8 +39,10 @@ end
 
 function st_edit:enter()
     
+    entityHandler.load()
     self:reloadMapIndex()
     
+    animationHelper.init()
     eventHandler:init()
     game:init(true)
     self:loadSettings()
@@ -68,6 +70,8 @@ function st_edit:update(dt)
                 hud_edit:deleteEvent(tx, ty)
             elseif game.brush == -4 then
                 hud_edit:spawnEvent(tx, ty)
+            elseif game.brush == -5 then
+                hud_edit:spawnNpc(tx, ty)
             else
                 local brush = game:getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
@@ -95,6 +99,9 @@ function st_edit:draw()
     end
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
+    end
+    for id,entity in pairs(game.map.entities) do
+        entity:draw()
     end
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_overlay)
