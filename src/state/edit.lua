@@ -43,6 +43,7 @@ function st_edit:enter()
     
     eventHandler:init()
     game:init(true)
+    self:loadSettings()
     
     camera = Camera(0, 0)
     
@@ -182,9 +183,51 @@ function st_edit:saveMap()
 end
 
 
+function st_edit:saveSettings()
+    local file = love.filesystem.newFile("editor.settings")
+    if file then
+        file:open("w")
+        file:write(game.brush.."\n")
+        file:write(tostring(hud_edit:showWalkable()).."\n")
+        file:write(tostring(hud_edit:showEvents()).."\n")
+        for i,brush in ipairs(game.brushes) do
+            file:write(brush:toLine().."\n")
+        end
+    else
+        log:msg("error", "Failed creating file editor.settings")
+    end
+end
+
+
+function st_edit:loadSettings()
+    local file = love.filesystem.newFile("editor.settings")
+    local result = file:open("r")
+    if result then
+        local i = 1
+        for line in file:lines() do
+            if i == 1 then
+                game.brush = tonumber(line)
+            elseif i == 2 then
+                hud_edit:setWalkable(line == "true")
+            elseif i == 3 then
+                hud_edit:setEvents(line == "true")
+            else
+                local brush = Brush(i - 3)
+                brush:fromLine(line)
+                game.brushes[i - 3] = brush
+            end
+            i = i + 1
+        end
+    else
+        log:msg("verbose", "Could not find editor.settings")
+    end
+end
+
+
 -- called when leaving state
 function st_edit:leave()
     self:saveMap()
+    self:saveSettings()
 end
 
 

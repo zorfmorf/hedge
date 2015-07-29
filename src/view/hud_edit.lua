@@ -55,6 +55,16 @@ function hud_edit:showEvents()
 end
 
 
+function hud_edit:setWalkable(value)
+    showWalkable = value
+end
+
+
+function hud_edit:setEvents(value)
+    showEvents = value
+end
+
+
 function hud_edit:deleteEvent(tx, ty)
     local tile = game.map:getTile(tx, ty)
     if tile then
