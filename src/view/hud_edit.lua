@@ -330,7 +330,7 @@ local function tools()
         if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
             game.brush = -4
         end
-        if Gui.Button{ id = "tool_transition", text = "Add transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, game.brush == -5)} then
+        if Gui.Button{ id = "tool_transition", text = "Add transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, game.brush == -6)} then
             game.brush = -6
             menus.transition = true
         end

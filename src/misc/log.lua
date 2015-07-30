@@ -1,4 +1,4 @@
--- handles log interaction
+ -- handles log interaction
 -- error, debug, verbose
 
 log = {}

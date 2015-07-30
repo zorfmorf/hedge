@@ -38,9 +38,18 @@ function st_ingame:enter()
 end
 
 
+function st_ingame:startDialog(dialog)
+    self.dialog = dialog
+end
+
+
 function st_ingame:update(dt)
-    for id,entity in pairs(game.map.entities) do
-        entity:update(dt)
+    if self.dialog then
+        if self.dialog:isFinished() then self.dialog = nil end
+    else
+        for id,entity in pairs(game.map.entities) do
+            entity:update(dt)
+        end
     end
 end
 
@@ -73,16 +82,23 @@ function st_ingame:draw()
     
     camera:detach()
     
+    if self.dialog then self.dialog:draw() end
+    
     -- draw hud
     Gui.core.draw()
 end
 
 
 function st_ingame:keypressed(key, isrepeat)
-    if key == KEY_LEFT and not isrepeat then player:move("left") end
-    if key == KEY_RIGHT and not isrepeat then player:move("right") end
-    if key == KEY_DOWN and not isrepeat then player:move("down") end
-    if key == KEY_UP and not isrepeat then player:move("up") end
+    if self.dialog then
+        if key == KEY_USE then self.dialog:advance() end
+    else
+        if key == KEY_LEFT and not isrepeat then player:move("left") end
+        if key == KEY_RIGHT and not isrepeat then player:move("right") end
+        if key == KEY_DOWN and not isrepeat then player:move("down") end
+        if key == KEY_UP and not isrepeat then player:move("up") end
+        if key == KEY_USE then player:use() end
+    end
     if key == "escape" then 
         saveHandler.saveGame()
         Gamestate.switch(st_menu_main)
@@ -91,8 +107,12 @@ end
 
 
 function st_ingame:keyreleased(key)
-    if key == KEY_LEFT then player:unmove("left") end
-    if key == KEY_RIGHT then player:unmove("right") end
-    if key == KEY_DOWN then player:unmove("down") end
-    if key == KEY_UP then player:unmove("up") end
+    if self.dialog then
+        
+    else
+        if key == KEY_LEFT then player:unmove("left") end
+        if key == KEY_RIGHT then player:unmove("right") end
+        if key == KEY_DOWN then player:unmove("down") end
+        if key == KEY_UP then player:unmove("up") end
+    end
 end

@@ -29,7 +29,7 @@ end
 
 -- Draw all blocks that are at least partially on the screen
 function Map:draw()
-    
+    love.graphics.setColor(Color.WHITE)
     local wx, wy = camera:worldCoords(0, 0)
     local bx = math.floor((wx / C_BLOCK_SIZE) / C_TILE_SIZE)
     local by = math.floor((wy / C_BLOCK_SIZE) / C_TILE_SIZE)

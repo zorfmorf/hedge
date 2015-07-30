@@ -19,6 +19,25 @@ function Player:place(x, y)
 end
 
 
+function Player:use()
+    local tile = nil
+    if math.floor(self.pos.x) == self.pos.x and math.floor(self.pos.y) == self.pos.y then
+        local target = {}
+        target.x = self.pos.x
+        target.y = self.pos.y
+        if self.anim == 1 then target.y = target.y - 1 end
+        if self.anim == 2 then target.x = target.x - 1 end
+        if self.anim == 3 then target.y = target.y + 1 end
+        if self.anim == 4 then target.x = target.x + 1 end
+        tile = game.map:getTile(target.x, target.y)
+    end
+    if tile then
+        if tile.npc then game.map.entities[tile.npc]:use() end
+        if not tile.npc and tile.event then eventHandler.triggerEvent(tile.event, false) end
+    end
+end
+
+
 function Player:update(dt)
     animationHelper.update(self, dt)
     moveHandler.update(self, dt)

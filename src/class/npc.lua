@@ -31,7 +31,7 @@ end
 
 -- if the player uses a use action on this npc
 function Npc:use()
-    
+    st_ingame:startDialog(Dialog(1))
 end
 
 

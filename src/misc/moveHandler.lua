@@ -3,6 +3,7 @@ moveHandler = {}
 
 
 local function canBeMovedTo(x, y)
+    if not x or not y then return false end
     local tile = game.map:getTile(x, y)
     return tile and not tile.block and not tile.npc
 end

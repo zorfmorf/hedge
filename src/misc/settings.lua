@@ -33,6 +33,7 @@ KEY_LEFT = "left"
 KEY_RIGHT = "right"
 KEY_DOWN = "down"
 KEY_UP = "up"
+KEY_USE = "return"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
