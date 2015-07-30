@@ -8,6 +8,7 @@ function Player:init()
     self.dir = nil
     self.cycle = 0
     self.anim = 3
+    self.name = "Player"
 end
 
 

@@ -76,7 +76,7 @@ function maploader:read( path, name )
     -- load up entities and set their directions
     map:loadEntities()
     for npc,anim in pairs(animations) do
-        map.entities[npc].anim = anim
+        if map.entities[npc] then map.entities[npc].anim = anim end
     end
     return map
 end

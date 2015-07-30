@@ -153,8 +153,11 @@ function Map:loadEntities()
             for i,row in pairs(block.tiles) do
                 for j,tile in pairs(row) do
                     if tile.npc then
-                        entities[tile.npc] = entityHandler.get(tile.npc)
-                        entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
+                        local npc = entityHandler.get(tile.npc)
+                        if npc then 
+                            entities[tile.npc] = npc
+                            entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
+                        end
                     end
                 end
             end

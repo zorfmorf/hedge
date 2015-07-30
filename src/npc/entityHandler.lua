@@ -5,18 +5,30 @@ local entities = {}
 
 
 function entityHandler.load()
-    -- TODO, load entities from file
     entities = {}
-    entities[1] = Player()
-    player = entities[1]
-    entities[2] = Npc(2)
-    entities[3] = Npc(3)
-    entities[4] = Npc(4)
-end
+    player = Player()
+    entities[1] = player
+    
+    local dir = "npc/all/"
+    local files = love.filesystem.getDirectoryItems(dir)
 
-
-function entityHandler.save()
-    -- TODO. Save all entites to file
+    for k, ents in ipairs(files) do
+        local name = string.gsub( ents, ".lua", "")
+        local data = require(dir .. "/" .. name)
+        if data.id and data.name then
+            if not entities[data.id] then
+                local npc = Npc(data.id)
+                npc.name = data.name
+                entities[npc.id] = npc
+                if data.use then npc.use = data.use end
+                log:msg("verbose", "Read npc: ", entities[npc.id].id, entities[npc.id].name)
+            else
+                log:msg("error", "Loaded npc exists for id", data.id, ":", data.name, " was read, but conflicts with existing npc", entities[npc.id].name)
+            end
+        else
+            log:msg("error", "Loading npc error:", name, "id:", data.id, "name:", data.name)
+        end
+    end
 end
 
 

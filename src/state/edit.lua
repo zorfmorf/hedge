@@ -114,6 +114,7 @@ function st_edit:draw()
     if hud_edit:showEvents() then
         hud_edit:drawEventTooltip()
     end
+    hud_edit:drawNpcTooltip()
     
     camera:detach()
     

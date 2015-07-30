@@ -29,6 +29,12 @@ function Npc:draw()
 end
 
 
+-- if the player uses a use action on this npc
+function Npc:use()
+    
+end
+
+
 function Npc:move(direction)
     moveHandler.move(self, direction)
 end

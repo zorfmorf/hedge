@@ -219,7 +219,8 @@ local function npcselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
     local counter = 1
-    for i,entity in ipairs(entityHandler.getAll()) do
+    local ents = entityHandler.getAll()
+    for i,entity in pairs(entityHandler.getAll()) do
         if not (i == 1) then
             if Gui.Button{ text = entity.name } then
                 entity:place(menus.npc.x, menus.npc.y)
@@ -353,6 +354,23 @@ function hud_edit:drawEventTooltip()
 end
 
 
+function hud_edit:drawNpcTooltip()
+    local mx, my = camera:mousepos()
+    local tx = math.floor(mx / C_TILE_SIZE)
+    local ty = math.floor(my / C_TILE_SIZE)
+    local tile = game.map:getTile(tx, ty)
+    if tile and tile.npc then
+        local npc = entityHandler.get(tile.npc)
+        if npc then
+            love.graphics.setColor(Color.BLACK)
+            love.graphics.rectangle("fill", mx + C_TILE_SIZE, my - C_TILE_SIZE, love.graphics.getFont():getWidth(npc.name) + C_TILE_SIZE, C_TILE_SIZE)
+            love.graphics.setColor(Color.WHITE)
+            love.graphics.print(npc.name, mx + C_TILE_SIZE * 1.5, my - C_TILE_SIZE * 0.75)
+        end
+    end
+end
+
+
 function hud_edit:update(dt)
     
     if menus.tiles then tileselector() end
@@ -460,8 +478,11 @@ function hud_edit:catchKey(key, isrepeat)
         return true
     end
     
-    if menus.load and key == "escape" then
-        menus.load = false
+    if self:menuOpen() and key == "escape" then
+        for key,value in pairs(menus) do
+            menus[key] = false
+        end
+        return true
     end
     
     -- key hasn't been intercepted
