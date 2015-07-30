@@ -10,6 +10,7 @@ function Map:init(name)
     hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
+    self.entities = {}
 end
 
 
@@ -28,7 +29,7 @@ end
 
 -- Draw all blocks that are at least partially on the screen
 function Map:draw()
-    
+    love.graphics.setColor(Color.WHITE)
     local wx, wy = camera:worldCoords(0, 0)
     local bx = math.floor((wx / C_BLOCK_SIZE) / C_TILE_SIZE)
     local by = math.floor((wy / C_BLOCK_SIZE) / C_TILE_SIZE)
@@ -129,6 +130,7 @@ end
 function Map:removeEntity(x, y)
     local tile = self:getTile(x, y)
     if tile then
+        self.entities[tile.npc] = nil
         tile.npc = nil
     end
 end
@@ -139,6 +141,7 @@ function Map:addEntity(x, y, id)
     if tile and not tile.npc then
         tile.npc = id
     end
+    self.entities[id] = entityHandler.get(id)
 end
 
 
@@ -150,16 +153,15 @@ function Map:loadEntities()
             for i,row in pairs(block.tiles) do
                 for j,tile in pairs(row) do
                     if tile.npc then
-                        if tile.npc == player.id then
-                            entities[tile.npc] = player
-                        else
-                            entities[tile.npc] = Npc(tile.npc)
+                        local npc = entityHandler.get(tile.npc)
+                        if npc then 
+                            entities[tile.npc] = npc
+                            entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
                         end
-                        entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j)
                     end
                 end
             end
         end
     end
-    return entities
+    self.entities = entities
 end

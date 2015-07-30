@@ -3,10 +3,27 @@
 saveHandler = {}
 
 
+-- try to delete folder at target path
+local function deleteFolderContents(path)
+    if love.filesystem.isFile(path) then 
+        log:msg("error", "Tried to delete folder that is a file:", path)
+        return
+    end
+    
+    local files = love.filesystem.getDirectoryItems(path)
+    for i,filename in ipairs(files) do
+        local dir = love.filesystem.getRealDirectory(path..filename)
+        os.remove(dir.."/"..path..filename)
+    end
+end
+
+
 -- low level method to copy files from to
 local function copyFiles(from, to)
     local ok = love.filesystem.createDirectory( to )
     if not ok then log:msg("verbose", "Error creating folder", to) end
+
+    -- gets all files in subdirectory from of both game.zip and save dir!
     local files = love.filesystem.getDirectoryItems( from )
     log:msg("verbose", "Copying", table.getn(files), "files from", from, "to", to)
     for i,item in ipairs(files) do
@@ -26,23 +43,27 @@ end
 
 -- copy master to current
 function saveHandler.newGame()
+    deleteFolderContents(C_MAP_CURRENT)
     copyFiles(C_MAP_MASTER, C_MAP_CURRENT)
+    entityHandler.load()
     var.new()
 end
 
 -- TODO handle different savespots
 
 -- save current game
-function saveHandler.saveGame()
+function saveHandler.saveGame(slot)
     maploader:save(game.map, C_MAP_CURRENT)
     var.save()
-    copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..'001/')
+    if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
+    copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..slot..'/')
 end
 
 
 -- load a game
-function saveHandler.loadGame()
-    copyFiles(C_MAP_SAVEGAMES..'001/', C_MAP_CURRENT)
-    maploader:read(C_MAP_CURRENT, C_MAP_NAME_DEFAULT)
+function saveHandler.loadGame(name)
+    deleteFolderContents(C_MAP_CURRENT)
+    copyFiles(C_MAP_SAVEGAMES..name..'/', C_MAP_CURRENT)
+    entityHandler.load()
     var.load()
 end

@@ -7,7 +7,7 @@ st_ingame = {}
 camera = nil
 
 -- place player at specified spawnId or at first or at origin
-local function placePlayer(spawnId)
+function st_ingame:placePlayer(spawnId)
     for i,value in pairs(game.map.spawns) do
         if i == spawnId then
             player:place(value.x, value.y)
@@ -23,6 +23,7 @@ end
 
 
 function st_ingame:enter()
+    log:msg("verbose", "Entering game state")
     
     eventHandler:init()
     animationHelper.init()
@@ -30,20 +31,25 @@ function st_ingame:enter()
     
     camera = Camera(0, 0)
     
-    player = Player()
-    
-    self.entities = game.map:loadEntities()
-    
-    if not self.entities[player.id] then
-        placePlayer(1)
-        self.entities[player.id] = player
+    if not game.map.entities[player.id] then
+        st_ingame:placePlayer(1)
+        game.map.entities[player.id] = player
     end
 end
 
 
+function st_ingame:startDialog(dialog)
+    self.dialog = dialog
+end
+
+
 function st_ingame:update(dt)
-    for id,entity in pairs(self.entities) do
-        entity:update(dt)
+    if self.dialog then
+        if self.dialog:isFinished() then self.dialog = nil end
+    else
+        for id,entity in pairs(game.map.entities) do
+            entity:update(dt)
+        end
     end
 end
 
@@ -67,7 +73,7 @@ function st_ingame:draw()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
     end
-    for id,entity in pairs(self.entities) do
+    for id,entity in pairs(game.map.entities) do
         entity:draw()
     end
     for i,atlas in ipairs(game.atlanti) do
@@ -76,16 +82,23 @@ function st_ingame:draw()
     
     camera:detach()
     
+    if self.dialog then self.dialog:draw() end
+    
     -- draw hud
     Gui.core.draw()
 end
 
 
 function st_ingame:keypressed(key, isrepeat)
-    if key == KEY_LEFT and not isrepeat then player:move("left") end
-    if key == KEY_RIGHT and not isrepeat then player:move("right") end
-    if key == KEY_DOWN and not isrepeat then player:move("down") end
-    if key == KEY_UP and not isrepeat then player:move("up") end
+    if self.dialog then
+        if key == KEY_USE then self.dialog:advance() end
+    else
+        if key == KEY_LEFT and not isrepeat then player:move("left") end
+        if key == KEY_RIGHT and not isrepeat then player:move("right") end
+        if key == KEY_DOWN and not isrepeat then player:move("down") end
+        if key == KEY_UP and not isrepeat then player:move("up") end
+        if key == KEY_USE then player:use() end
+    end
     if key == "escape" then 
         saveHandler.saveGame()
         Gamestate.switch(st_menu_main)
@@ -94,8 +107,12 @@ end
 
 
 function st_ingame:keyreleased(key)
-    if key == KEY_LEFT then player:unmove("left") end
-    if key == KEY_RIGHT then player:unmove("right") end
-    if key == KEY_DOWN then player:unmove("down") end
-    if key == KEY_UP then player:unmove("up") end
+    if self.dialog then
+        
+    else
+        if key == KEY_LEFT then player:unmove("left") end
+        if key == KEY_RIGHT then player:unmove("right") end
+        if key == KEY_DOWN then player:unmove("down") end
+        if key == KEY_UP then player:unmove("up") end
+    end
 end

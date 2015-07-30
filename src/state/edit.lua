@@ -39,10 +39,13 @@ end
 
 function st_edit:enter()
     
+    entityHandler.load()
     self:reloadMapIndex()
     
+    animationHelper.init()
     eventHandler:init()
     game:init(true)
+    self:loadSettings()
     
     camera = Camera(0, 0)
     
@@ -67,6 +70,10 @@ function st_edit:update(dt)
                 hud_edit:deleteEvent(tx, ty)
             elseif game.brush == -4 then
                 hud_edit:spawnEvent(tx, ty)
+            elseif game.brush == -5 then
+                hud_edit:spawnNpc(tx, ty)
+            elseif game.brush == -6 then
+                hud_edit:placeTransition(tx, ty)
             else
                 local brush = game:getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
@@ -95,6 +102,9 @@ function st_edit:draw()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
     end
+    for id,entity in pairs(game.map.entities) do
+        entity:draw()
+    end
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_overlay)
     end
@@ -106,6 +116,7 @@ function st_edit:draw()
     if hud_edit:showEvents() then
         hud_edit:drawEventTooltip()
     end
+    hud_edit:drawNpcTooltip()
     
     camera:detach()
     
@@ -182,9 +193,51 @@ function st_edit:saveMap()
 end
 
 
+function st_edit:saveSettings()
+    local file = love.filesystem.newFile("editor.settings")
+    if file then
+        file:open("w")
+        file:write(game.brush.."\n")
+        file:write(tostring(hud_edit:showWalkable()).."\n")
+        file:write(tostring(hud_edit:showEvents()).."\n")
+        for i,brush in ipairs(game.brushes) do
+            file:write(brush:toLine().."\n")
+        end
+    else
+        log:msg("error", "Failed creating file editor.settings")
+    end
+end
+
+
+function st_edit:loadSettings()
+    local file = love.filesystem.newFile("editor.settings")
+    local result = file:open("r")
+    if result then
+        local i = 1
+        for line in file:lines() do
+            if i == 1 then
+                game.brush = tonumber(line)
+            elseif i == 2 then
+                hud_edit:setWalkable(line == "true")
+            elseif i == 3 then
+                hud_edit:setEvents(line == "true")
+            else
+                local brush = Brush(i - 3)
+                brush:fromLine(line)
+                game.brushes[i - 3] = brush
+            end
+            i = i + 1
+        end
+    else
+        log:msg("verbose", "Could not find editor.settings")
+    end
+end
+
+
 -- called when leaving state
 function st_edit:leave()
     self:saveMap()
+    self:saveSettings()
 end
 
 

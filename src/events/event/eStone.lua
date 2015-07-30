@@ -4,13 +4,16 @@ local function init()
     
 end
 
-local function use(x, y)
-    
+
+local function walk()
+    print( "stop walking on me!")
 end
 
-local function walk(x, y)
-    print("Jo man, don't walk around on MY FACE")
+
+local function use()
+    st_ingame:startDialog(Dialog(1))
 end
+
 
 return {
         id = 1,

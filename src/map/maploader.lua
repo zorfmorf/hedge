@@ -8,6 +8,8 @@ function maploader:read( path, name )
     
     local map = Map(name:sub(1, name:len() - C_MAP_SUFFIX:len()))
     
+    local animations = {} -- npc directions can be temporarily saved here
+    
     if love.filesystem.isFile( path..name ) then
     
         local file = love.filesystem.newFile( path..name )
@@ -47,7 +49,16 @@ function maploader:read( path, name )
                             else
                                 params[k] = {}
                                 for l,number in ipairs(value:split(",")) do
-                                    table.insert(params[k], tonumber(number))
+                                    if tonumber(number) then
+                                        table.insert(params[k], tonumber(number))
+                                    else
+                                        table.insert(params[k], number)
+                                    end
+                                end
+                                -- if we read an npc settings we need to handle the direction extra
+                                if k == 6 and params[6][1] and params[6][2] then
+                                    animations[params[6][1]] = params[6][2]
+                                    params[6] = params[6][1]
                                 end
                             end
                         end
@@ -64,6 +75,12 @@ function maploader:read( path, name )
     else
         log:msg("debug", "Map not found:", path..name)
         map:createBlock(0, 0)
+    end
+    
+    -- load up entities and set their directions
+    map:loadEntities()
+    for npc,anim in pairs(animations) do
+        if map.entities[npc] then map.entities[npc].anim = anim end
     end
     return map
 end
@@ -133,15 +150,19 @@ function maploader:save(map, path)
                     
                     -- event number
                     if block.event then
-                        file:write( block.event )
+                        if type(block.event) == "table" then
+                            file:write( block.event[1]..','..tostring(block.event[2]) )
+                        else
+                            file:write( block.event )
+                        end
                     else
                         file:write( "nil" )
                     end
                     file:write( "|" )
                     
                     -- npc number
-                    if block.npc then
-                        file:write( block.npc )
+                    if block.npc and map.entities[block.npc] then
+                        file:write( block.npc..","..map.entities[block.npc].anim )
                     else
                         file:write( "nil" )
                     end

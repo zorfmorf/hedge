@@ -10,3 +10,5 @@ palette.png - http://game-icons.net/delapouite/originals/palette.html - Delapoui
 walking-boot.png - http://game-icons.net/lorc/originals/walking-boot.html - Lorc - http://lorcblog.blogspot.de/
 fishing-hook.png - http://game-icons.net/lorc/originals/fishing-hook.html - Lorc - http://lorcblog.blogspot.de/
 position-marker.png - http://game-icons.net/delapouite/gui/position-marker.html - Delapouite - http://delapouite.com/
+npc.png - http://game-icons.net/lorc/originals/cowled.html - Lorc - http://lorcblog.blogspot.de/
+transition.png - http://game-icons.net/lorc/originals/wooden-door.html - Lorc - http://lorcblog.blogspot.de/

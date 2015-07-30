@@ -34,10 +34,30 @@ function eventHandler:getEvents()
 end
 
 
+function eventHandler.triggerEvent(id, walked)
+    if events[id] then
+        log:msg("verbose", "Triggered event", events[id].name)
+        if walked then
+            events[id].walk()
+        else
+            events[id].use()
+        end
+    end
+end
+
+
 function eventHandler.walkedOnTile(pos)
     local tile = game.map:getTile(pos.x, pos.y)
-    if tile and tile.event and events[tile.event] then
-        log:msg("verbose", "Walked on event", events[tile.event].name)
-        events[tile.event].walk(x, y)
+    if tile and tile.event then
+        if type(tile.event) == "table" then
+            log:msg("verbose", "Triggered transition to", tile.event[1]..":"..tile.event[2])
+            game.map = maploader:read(C_MAP_CURRENT, tile.event[1]..C_MAP_SUFFIX)
+            st_ingame:placePlayer(tile.event[2])
+            return true
+        else
+            eventHandler.triggerEvent(tile.event, true)
+            return false
+        end
     end
+    return false
 end

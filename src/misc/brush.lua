@@ -9,7 +9,7 @@ Brush = Class{}
 
 function Brush:init(id)
     
-    self.name = "Brush #" .. id
+    self.name = "Brush " .. id
     
     -- if a player can walk on the tile after this brush has been used on it
     self.blocking = false
@@ -87,5 +87,63 @@ function Brush:drawPreview(x, y, default)
         love.graphics.draw(atl.img, quad, x, y)
     else
         love.graphics.draw(default, x, y)
+    end
+end
+
+
+local function lineFromLayer(layer)
+    local line = "nil"
+    if layer then
+        line = ""
+        local first = true
+        for i,set in ipairs(layer) do
+            for j,value in ipairs(set) do
+                if first then first = false else line = line .. "," end
+                line = line .. value
+            end
+        end
+    end
+    return line
+end
+
+
+local function layerFromLine(line)
+    local result = {}
+    local current = {}
+    for i,entry in ipairs(line:split(",")) do
+        table.insert(current, tonumber(entry))
+        if i % 3 == 0 then
+            table.insert(result, current)
+            current = {}
+        end
+    end
+    return result
+end
+
+
+-- create a line representation of the brush
+function Brush:toLine()
+    local line = self.name:gsub('%W','')..";" --strip special chars from name
+    line = line .. tostring(self.blocking)..";"
+    line = line .. lineFromLayer(self.tiles)..";"
+    line = line .. lineFromLayer(self.objects)..";"
+    line = line .. lineFromLayer(self.overlays)..";"
+    line = line .. tostring(self.event)
+    return line
+end
+
+
+-- read brush settings from a line representation
+function Brush:fromLine(line)
+    for i,entry in ipairs(line:split(";")) do
+        if i == 1 then self.name = entry end
+        if i == 2 then 
+            self.blocking = false
+            if entry == "true" then self.blocking = true end
+        end
+        if i == 3 then self.tiles = layerFromLine(entry) end
+        if i == 4 then self.objects = layerFromLine(entry) end
+        if i == 5 then self.overlays = layerFromLine(entry) end
+        if i == 6 and not entry == "nil" then self.event = tonumber(entry) end
     end
 end

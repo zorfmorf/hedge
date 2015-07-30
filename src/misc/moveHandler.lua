@@ -3,6 +3,7 @@ moveHandler = {}
 
 
 local function canBeMovedTo(x, y)
+    if not x or not y then return false end
     local tile = game.map:getTile(x, y)
     return tile and not tile.block and not tile.npc
 end
@@ -30,7 +31,13 @@ function moveHandler.update(entity, dt)
     if entity.dir == "left" then
         entity.pos.x = entity.pos.x - dt * CHAR_MOVE
         if entity.pos.x < entity.target.x then
-            eventHandler.walkedOnTile(entity.target)
+            local blocksMovement = eventHandler.walkedOnTile(entity.target)
+            if blocksMovement then 
+                entity.next = nil
+                entity.target = nil
+                entity.dir = nil
+                return 
+            end
             if entity.next == "left" and love.keyboard.isDown(KEY_LEFT) then
                 handleMove(entity, entity.next, { x=entity.target.x-1, y=entity.target.y})
             else
@@ -43,7 +50,13 @@ function moveHandler.update(entity, dt)
     if entity.dir == "right" then
         entity.pos.x = entity.pos.x + dt * CHAR_MOVE
         if entity.pos.x > entity.target.x then
-            eventHandler.walkedOnTile(entity.target)
+            local blocksMovement = eventHandler.walkedOnTile(entity.target)
+            if blocksMovement then 
+                entity.next = nil
+                entity.target = nil 
+                entity.dir = nil
+                return 
+            end
             if entity.next == "right" and love.keyboard.isDown(KEY_RIGHT)then
                 handleMove(entity, entity.next, { x=entity.target.x+1, y=entity.target.y})
             else
@@ -56,7 +69,13 @@ function moveHandler.update(entity, dt)
     if entity.dir == "up" then
         entity.pos.y = entity.pos.y - dt * CHAR_MOVE
         if entity.pos.y < entity.target.y then
-            eventHandler.walkedOnTile(entity.target)
+            local blocksMovement = eventHandler.walkedOnTile(entity.target)
+            if blocksMovement then 
+                entity.next = nil
+                entity.target = nil 
+                entity.dir = nil
+                return 
+            end
             if entity.next == "up" and love.keyboard.isDown(KEY_UP) then
                 handleMove(entity, entity.next, { x=entity.target.x, y=entity.target.y-1})
             else
@@ -69,7 +88,13 @@ function moveHandler.update(entity, dt)
     if entity.dir == "down" then
         entity.pos.y = entity.pos.y + dt * CHAR_MOVE
         if entity.pos.y > entity.target.y then
-            eventHandler.walkedOnTile(entity.target)
+            local blocksMovement = eventHandler.walkedOnTile(entity.target)
+            if blocksMovement then 
+                entity.next = nil
+                entity.target = nil 
+                entity.dir = nil
+                return 
+            end
             if entity.next == "down" and love.keyboard.isDown(KEY_DOWN) then
                 handleMove(entity, entity.next, { x=entity.target.x, y=entity.target.y+1})
             else
