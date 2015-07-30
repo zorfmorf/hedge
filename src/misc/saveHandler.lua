@@ -52,18 +52,18 @@ end
 -- TODO handle different savespots
 
 -- save current game
-function saveHandler.saveGame()
+function saveHandler.saveGame(slot)
     maploader:save(game.map, C_MAP_CURRENT)
-    entityHandler.save()
     var.save()
-    copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..'001/')
+    if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
+    copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..slot..'/')
 end
 
 
 -- load a game
-function saveHandler.loadGame()
+function saveHandler.loadGame(name)
     deleteFolderContents(C_MAP_CURRENT)
-    copyFiles(C_MAP_SAVEGAMES..'001/', C_MAP_CURRENT)
+    copyFiles(C_MAP_SAVEGAMES..name..'/', C_MAP_CURRENT)
     entityHandler.load()
     var.load()
 end
