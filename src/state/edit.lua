@@ -72,6 +72,8 @@ function st_edit:update(dt)
                 hud_edit:spawnEvent(tx, ty)
             elseif game.brush == -5 then
                 hud_edit:spawnNpc(tx, ty)
+            elseif game.brush == -6 then
+                hud_edit:placeTransition(tx, ty)
             else
                 local brush = game:getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end

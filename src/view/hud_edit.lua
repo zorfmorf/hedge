@@ -11,7 +11,8 @@ local icon = {
     boot = love.graphics.newImage("img/icon/walking-boot.png"),
     event = love.graphics.newImage("img/icon/fishing-hook.png"),
     spawn = love.graphics.newImage("img/icon/position-marker.png"),
-    npc = love.graphics.newImage("img/icon/npc.png")
+    npc = love.graphics.newImage("img/icon/npc.png"),
+    transition = love.graphics.newImage("img/icon/transition.png")
 }
 
 -- list of all menu dialogs
@@ -19,7 +20,8 @@ local menus = { }
 menus.brush = false -- brush configurator
 menus.tiles = false -- tile for brush selector
 menus.load = false -- map load
-menus.npc = false
+menus.npc = false -- npc selector
+menus.transition = false -- transition placer
 
 
 -- currently selected tile atlas
@@ -34,7 +36,11 @@ local showWalkable = false
 -- if true, marks events on tiles
 local showEvents = false
 
+-- name of the currently edited map
 local mapname = { text = "" }
+
+-- current map target for map transition placment tool
+local transitiontarget = nil
 
 
 function hud_edit:setMapName(text)
@@ -92,6 +98,16 @@ function hud_edit:spawnNpc(tx, ty)
 end
 
 
+function hud_edit:placeTransition(tx, ty)
+    if transitiontarget then
+        local t = {}
+        t[1] = transitiontarget.name
+        t[2] = transitiontarget.key
+        game.map:changeEvent(tx, ty, t)
+    end
+end
+
+
 -- topbar with options, brush, exit buttons
 local function topbar()
     Gui.group.push{ grow = "right", pos = { 0, 0 }, size = {screen.w, G_TOPBAR_HEIGHT} }
@@ -101,7 +117,7 @@ local function topbar()
         if Gui.Button{ text = "Load", size = {100} } then menus.load = not menus.load end
         Gui.Button{ text = "Options", size = {100} }
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
-        if Gui.Button{ text = "Quit", size = {100} } then love.event.push("quit") end
+        if Gui.Button{ text = "Quit", size = {100} } then Gamestate.switch(st_menu_main) end
         Gui.Label{ text = "FPS: " .. love.timer.getFPS() }
     Gui.group.pop{}
 end
@@ -219,7 +235,6 @@ local function npcselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
     local counter = 1
-    local ents = entityHandler.getAll()
     for i,entity in pairs(entityHandler.getAll()) do
         if not (i == 1) then
             if Gui.Button{ text = entity.name } then
@@ -232,6 +247,24 @@ local function npcselector()
             end
             counter = counter + 1
         end
+    end
+    Gui.group.pop{}
+    Gui.group.pop{}
+end
+
+
+local function transitionselector()
+    Gui.group.push{ grow = "down", spacing = 10 }
+    Gui.group.push{ grow = "right", spacing = 10 }
+    for name,map in pairs(st_edit.maps) do
+        for key,value in pairs(map.spawns) do
+            if Gui.Button{ text = name..": "..key } then
+                transitiontarget = { name=name, key=key}
+                menus.transition = false
+            end
+        end
+        Gui.group.pop{}
+        Gui.group.push{ grow = "right", spacing = 10 }
     end
     Gui.group.pop{}
     Gui.group.pop{}
@@ -297,6 +330,10 @@ local function tools()
         if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
             game.brush = -4
         end
+        if Gui.Button{ id = "tool_transition", text = "Add transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, game.brush == -5)} then
+            game.brush = -6
+            menus.transition = true
+        end
         if Gui.Button{ id = "tool_npc", text = "Add/Remove Npc", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.npc, nil, game.brush == -5)} then
             game.brush = -5
         end
@@ -326,7 +363,9 @@ local function tools()
     if Gui.mouse.isHot("tool_delete") then drawTooltip("Deletion tool") end
     if Gui.mouse.isHot("tool_walkable") then drawTooltip("Walkable tool") end
     if Gui.mouse.isHot("tool_event") then drawTooltip("Event deletion tool") end
-    if Gui.mouse.isHot("tool_spawn") then drawTooltip("Event deletion tool") end
+    if Gui.mouse.isHot("tool_spawn") then drawTooltip("Spawn placement tool") end
+    if Gui.mouse.isHot("tool_transition") then drawTooltip("Transition tool") end
+    if Gui.mouse.isHot("tool_npc") then drawTooltip("Npc placement tool") end
     if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     for i,brush in ipairs(game.brushes) do
@@ -341,10 +380,14 @@ function hud_edit:drawEventTooltip()
     local ty = math.floor(my / C_TILE_SIZE)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.event then
-        local elist = eventHandler:getEvents()
         local text = "Event " .. tostring(tile.event) .. " not found"
-        if elist[tile.event] then
-            text = elist[tile.event].name
+        if type(tile.event) == "table" then
+            text = "Transition to "..tile.event[1]..":"..tostring(tile.event[2])
+        else
+            local elist = eventHandler:getEvents()
+            if elist[tile.event] then
+                text = elist[tile.event].name
+            end
         end
         love.graphics.setColor(Color.BLACK)
         love.graphics.rectangle("fill", mx + C_TILE_SIZE, my - C_TILE_SIZE, love.graphics.getFont():getWidth(text) + C_TILE_SIZE, C_TILE_SIZE)
@@ -376,8 +419,9 @@ function hud_edit:update(dt)
     if menus.tiles then tileselector() end
     if menus.load then mapselector() end
     if menus.npc then npcselector() end
+    if menus.transition then transitionselector() end
         
-    if not (menus.tiles or menus.load or menus.npc) then
+    if not (menus.tiles or menus.load or menus.npc or menus.transition) then
         
         if menus.brush then brushmenu() return end
         

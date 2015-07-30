@@ -49,7 +49,11 @@ function maploader:read( path, name )
                             else
                                 params[k] = {}
                                 for l,number in ipairs(value:split(",")) do
-                                    table.insert(params[k], tonumber(number))
+                                    if tonumber(number) then
+                                        table.insert(params[k], tonumber(number))
+                                    else
+                                        table.insert(params[k], number)
+                                    end
                                 end
                                 -- if we read an npc settings we need to handle the direction extra
                                 if k == 6 and params[6][1] and params[6][2] then
@@ -146,7 +150,11 @@ function maploader:save(map, path)
                     
                     -- event number
                     if block.event then
-                        file:write( block.event )
+                        if type(block.event) == "table" then
+                            file:write( block.event[1]..','..tostring(block.event[2]) )
+                        else
+                            file:write( block.event )
+                        end
                     else
                         file:write( "nil" )
                     end

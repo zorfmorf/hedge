@@ -7,7 +7,7 @@ st_ingame = {}
 camera = nil
 
 -- place player at specified spawnId or at first or at origin
-local function placePlayer(spawnId)
+function st_ingame:placePlayer(spawnId)
     for i,value in pairs(game.map.spawns) do
         if i == spawnId then
             player:place(value.x, value.y)
@@ -32,7 +32,7 @@ function st_ingame:enter()
     camera = Camera(0, 0)
     
     if not game.map.entities[player.id] then
-        placePlayer(1)
+        st_ingame:placePlayer(1)
         game.map.entities[player.id] = player
     end
 end
