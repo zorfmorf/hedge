@@ -132,6 +132,7 @@ function Map:removeEntity(x, y)
     if tile then
         self.entities[tile.npc] = nil
         tile.npc = nil
+        self:sortEntities()
     end
 end
 
@@ -140,8 +141,24 @@ function Map:addEntity(x, y, id)
     local tile = self:getTile(x, y)
     if tile and not tile.npc then
         tile.npc = id
+        self.entities[id] = entityHandler.get(id)
+        self:sortEntities()
     end
-    self.entities[id] = entityHandler.get(id)
+end
+
+
+local function compareEntities(a, b)
+    return a.pos.y < b.pos.y
+end
+
+
+function Map:sortEntities()
+    local t = {}
+    for i,ent in pairs(self.entities) do
+        table.insert(t, ent)
+    end
+    table.sort(t, compareEntities)
+    self.sortedEntities = t
 end
 
 
@@ -164,4 +181,5 @@ function Map:loadEntities()
         end
     end
     self.entities = entities
+    self:sortEntities()
 end

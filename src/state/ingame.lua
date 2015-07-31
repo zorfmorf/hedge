@@ -73,7 +73,7 @@ function st_ingame:draw()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
     end
-    for id,entity in pairs(game.map.entities) do
+    for i,entity in pairs(game.map.sortedEntities) do
         entity:draw()
     end
     for i,atlas in ipairs(game.atlanti) do
@@ -86,6 +86,7 @@ function st_ingame:draw()
     
     -- draw hud
     Gui.core.draw()
+    love.graphics.print(math.floor(love.timer.getFPS()), screen.w - 50, 5)
 end
 
 
