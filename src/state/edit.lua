@@ -67,11 +67,11 @@ function st_edit:update(dt)
             elseif game.brush == -2 then
                 game.map:toggleWalkable(tx, ty)
             elseif game.brush == -3 then
-                hud_edit:deleteEvent(tx, ty)
+                hud_edit:addEvent(tx, ty)
             elseif game.brush == -4 then
-                hud_edit:spawnEvent(tx, ty)
+                hud_edit:addSpawn(tx, ty)
             elseif game.brush == -5 then
-                hud_edit:spawnNpc(tx, ty)
+                hud_edit:addNpc(tx, ty)
             elseif game.brush == -6 then
                 hud_edit:placeTransition(tx, ty)
             else
