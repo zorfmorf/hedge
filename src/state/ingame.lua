@@ -93,6 +93,8 @@ end
 function st_ingame:keypressed(key, isrepeat)
     if self.dialog then
         if key == KEY_USE then self.dialog:advance() end
+        if key == KEY_UP then self.dialog:up() end
+        if key == KEY_DOWN then self.dialog:down() end
     else
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end

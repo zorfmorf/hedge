@@ -25,7 +25,7 @@ local function copyFiles(from, to)
 
     -- gets all files in subdirectory from of both game.zip and save dir!
     local files = love.filesystem.getDirectoryItems( from )
-    log:msg("verbose", "Copying", table.getn(files), "files from", from, "to", to)
+    log:msg("verbose", "Copying", #files, "files from", from, "to", to)
     for i,item in ipairs(files) do
         if love.filesystem.isFile(from..item) then
             local file = love.filesystem.newFile(from..item)

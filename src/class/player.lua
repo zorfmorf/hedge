@@ -32,7 +32,7 @@ function Player:use()
         tile = game.map:getTile(target.x, target.y)
     end
     if tile then
-        if tile.npc then game.map.entities[tile.npc]:use() end
+        if tile.npc and not(tile.npc == self.id) then game.map.entities[tile.npc]:use() end
         if not tile.npc and tile.event then eventHandler.triggerEvent(tile.event, false) end
     end
 end
