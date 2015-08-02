@@ -17,17 +17,17 @@ end
 
 
 function animationHelper.draw(entity)
-    love.graphics.draw(charset, quads[math.floor(entity.cycle + 1)][entity.anim], entity.pos.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.pos.y * C_TILE_SIZE - C_CHAR_MOD_Y)
+    love.graphics.draw(charset, quads[math.floor(entity.cycle + 1)][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
 end
 
 
 function animationHelper.update(entity, dt)
-    entity.cycle = entity.cycle + dt * CHAR_ANIM
     if entity.dir == "up" then entity.anim = 9 end
     if entity.dir == "left" then entity.anim = 10 end
     if entity.dir == "down" then entity.anim = 11 end
     if entity.dir == "right" then entity.anim = 12 end
-    if entity.dir then
+    if entity.walking then
+        entity.cycle = entity.cycle + dt * CHAR_ANIM
         if entity.cycle >= 9 then entity.cycle = entity.cycle - 9 end
     else
         entity.cycle = 1

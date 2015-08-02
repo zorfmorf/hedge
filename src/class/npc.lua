@@ -3,17 +3,22 @@ Npc = Class{}
 
 function Npc:init(id)
     self.id = id
-    self.pos = { x=0, y=0 }
-    self.dir = nil
-    self.cycle = 0
-    self.anim = 4
     self.name = "Unnamed"
+    
+    -- pos/draw information
+    self.pos = { x=0, y=0 } -- actual current position
+    self.posd = { x=0, y=0 } -- draw position
+    self.dir = "down" -- look direction
+    self.walking = false -- if currently walking
+    self.anim = 3 -- corresponding animation set
+    self.next = nil -- queued movement
+    self.cycle = 0 -- anim cycle
 end
 
 
 function Npc:place(x, y, blockMapPlacement)
     self.pos = { x=x, y=y } -- actual current position
-    self.tile = { x=x, y=y } -- tile currently occupied
+    self.posd = { x=x, y=y }
     if not blockMapPlacement then game.map:addEntity(x, y, self.id) end
 end
 
@@ -31,7 +36,7 @@ end
 
 -- if the player uses a use action on this npc
 function Npc:use()
-    st_ingame:startDialog(Dialog(1))
+    -- define via npc settings
 end
 
 

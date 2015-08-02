@@ -6,12 +6,12 @@ end
 
 
 local function walk()
-    print( "stop walking on me!")
+    
 end
 
 
 local function use()
-    st_ingame:startDialog(Dialog(1))
+    st_ingame:startDialog("d_example")
 end
 
 

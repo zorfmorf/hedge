@@ -23,11 +23,13 @@ end
 
 
 function st_ingame:enter()
+    
     log:msg("verbose", "Entering game state")
     
     eventHandler:init()
     animationHelper.init()
     game:init(false)
+    self.menu = Menu()
     
     camera = Camera(0, 0)
     
@@ -35,21 +37,50 @@ function st_ingame:enter()
         st_ingame:placePlayer(1)
         game.map.entities[player.id] = player
     end
+    
 end
 
 
 function st_ingame:startDialog(dialog)
-    self.dialog = dialog
+    local d = dialogHandler.get(dialog)
+    if d then
+        self.dialog = d
+    else
+        log:msg("error", "Dialog not found:", dialog)
+    end
 end
 
 
 function st_ingame:update(dt)
+    
+    -- open menus trump all
+    if self.menu:isOpen() then
+        self.menu:update(dt)
+        return
+    end
+    
+    -- transition effects block everything else
+    if self.transition then
+        self.transition:update(dt)
+        if self.transition:isFinished() then
+            if self.transition.style == "fade_out" then
+                self.transition = Transition("fade_in")
+            else
+                self.transition = nil
+            end
+        end
+        return
+    end
+    
+    -- dialog block entity updates
     if self.dialog then
         if self.dialog:isFinished() then self.dialog = nil end
-    else
-        for id,entity in pairs(game.map.entities) do
-            entity:update(dt)
-        end
+        return
+    end
+    
+    -- default entity updates
+    for id,entity in pairs(game.map.entities) do
+        entity:update(dt)
     end
 end
 
@@ -73,7 +104,7 @@ function st_ingame:draw()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
     end
-    for id,entity in pairs(game.map.entities) do
+    for i,entity in pairs(game.map.sortedEntities) do
         entity:draw()
     end
     for i,atlas in ipairs(game.atlanti) do
@@ -84,31 +115,43 @@ function st_ingame:draw()
     
     if self.dialog then self.dialog:draw() end
     
+    if self.transition then self.transition:draw() end
+    
+    if self.menu:isOpen() then self.menu:draw() end
+    
     -- draw hud
     Gui.core.draw()
+    love.graphics.print(math.floor(love.timer.getFPS()), screen.w - 50, 5)
 end
 
 
 function st_ingame:keypressed(key, isrepeat)
-    if self.dialog then
+    if self.menu:isOpen() then
+        self.menu:keypressed(key, isrepeat)
+    elseif self.transition then
+    
+    elseif self.dialog then
         if key == KEY_USE then self.dialog:advance() end
+        if key == KEY_UP then self.dialog:up() end
+        if key == KEY_DOWN then self.dialog:down() end
     else
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end
         if key == KEY_DOWN and not isrepeat then player:move("down") end
         if key == KEY_UP and not isrepeat then player:move("up") end
         if key == KEY_USE then player:use() end
-    end
-    if key == "escape" then 
-        saveHandler.saveGame()
-        Gamestate.switch(st_menu_main)
+        if key == KEY_EXIT then self.menu:open() end
     end
 end
 
 
 function st_ingame:keyreleased(key)
-    if self.dialog then
+    if self.menu:isOpen() then
         
+    elseif self.transition then
+    
+    elseif self.dialog then
+            
     else
         if key == KEY_LEFT then player:unmove("left") end
         if key == KEY_RIGHT then player:unmove("right") end

@@ -24,6 +24,7 @@ requireDirectory( 'map' )
 requireDirectory( 'class' )
 require "events.eventHandler" -- dont require the events itself
 require "npc.entityHandler" -- dont require the actual npcs itself
+require "dialog.dialogHandler" -- dont require the actual dialogs itself
 
 
 -- load hook. executed once on startup

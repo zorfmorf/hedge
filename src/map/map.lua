@@ -132,16 +132,51 @@ function Map:removeEntity(x, y)
     if tile then
         self.entities[tile.npc] = nil
         tile.npc = nil
+        self:sortEntities()
     end
+end
+
+
+-- delete all occurences of given npc on this map
+function Map:deleteNpc(id)
+    for x,blockrow in pairs(self.blocks) do
+        for y,block in pairs(blockrow) do
+            for i,row in pairs(block.tiles) do
+                for j,tile in pairs(row) do
+                    if tile.npc and tile.npc == id then
+                        tile.npc = nil
+                    end
+                end
+            end
+        end
+    end
+    self.entities[id] = nil
 end
 
 
 function Map:addEntity(x, y, id)
     local tile = self:getTile(x, y)
     if tile and not tile.npc then
+        self:deleteNpc(id)
         tile.npc = id
+        self.entities[id] = entityHandler.get(id)
+        self:sortEntities()
     end
-    self.entities[id] = entityHandler.get(id)
+end
+
+
+local function compareEntities(a, b)
+    return a.pos.y < b.pos.y
+end
+
+
+function Map:sortEntities()
+    local t = {}
+    for i,ent in pairs(self.entities) do
+        table.insert(t, ent)
+    end
+    table.sort(t, compareEntities)
+    self.sortedEntities = t
 end
 
 
@@ -164,4 +199,5 @@ function Map:loadEntities()
         end
     end
     self.entities = entities
+    self:sortEntities()
 end

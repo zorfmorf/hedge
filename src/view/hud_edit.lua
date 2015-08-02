@@ -22,6 +22,7 @@ menus.tiles = false -- tile for brush selector
 menus.load = false -- map load
 menus.npc = false -- npc selector
 menus.transition = false -- transition placer
+menus.event = false -- event placer
 
 
 -- currently selected tile atlas
@@ -42,6 +43,13 @@ local mapname = { text = "" }
 -- current map target for map transition placment tool
 local transitiontarget = nil
 
+-- current map target for event placement tool
+local eventtarget = nil
+
+
+local function buttonWidth(text)
+    return math.max(love.graphics.getFont():getWidth(text) + 10, 110)
+end
 
 function hud_edit:setMapName(text)
     mapname.text = text
@@ -73,20 +81,12 @@ function hud_edit:setEvents(value)
 end
 
 
-function hud_edit:deleteEvent(tx, ty)
-    local tile = game.map:getTile(tx, ty)
-    if tile then
-        tile.event = nil
-    end
+function hud_edit:addEvent(tx, ty)
+    game.map:changeEvent(tx, ty, eventtarget)
 end
 
 
-function hud_edit:spawnEvent(tx, ty)
-    game.map:toggleSpawn(tx, ty)
-end
-
-
-function hud_edit:spawnNpc(tx, ty)
+function hud_edit:addNpc(tx, ty)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.npc then
         local npc = entityHandler.get(tile.npc)
@@ -137,7 +137,7 @@ end
 
 -- menu where you can edit existing brushes
 local function brushmenu()
-    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE }, size = {screen.w * 0.5}, border = 1 }
+    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE } }
         Gui.Label{ text = "Currently defined brushes:" }
         
         for i,brush in ipairs(game.brushes) do
@@ -159,7 +159,7 @@ local function brushmenu()
                 
                     -- brush tiles
                     Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Floor:", size = { 100 } }
+                        Gui.Label{ text = "Floor:" }
                         if brush.tiles then
                             for i,tile in ipairs(brush.tiles) do
                                 if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
@@ -174,7 +174,7 @@ local function brushmenu()
                     
                     -- object tiles
                     Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Object:", size = { 100 } }
+                        Gui.Label{ text = "Object:" }
                         if brush.objects then
                             for i,tile in ipairs(brush.objects) do
                                 if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
@@ -189,7 +189,7 @@ local function brushmenu()
                     
                     -- overlay tiles
                     Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Overlay:", size = { 100 } }
+                        Gui.Label{ text = "Overlay:" }
                         if brush.overlays then
                             for i,tile in ipairs(brush.overlays) do
                                 if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
@@ -237,7 +237,7 @@ local function npcselector()
     local counter = 1
     for i,entity in pairs(entityHandler.getAll()) do
         if not (i == 1) then
-            if Gui.Button{ text = entity.name } then
+            if Gui.Button{ text = entity.name, size = { buttonWidth(entity.name) } } then
                 entity:place(menus.npc.x, menus.npc.y)
                 menus.npc = false
             end
@@ -253,12 +253,30 @@ local function npcselector()
 end
 
 
+local function eventselector()
+    Gui.group.push{ grow = "down", spacing = 10 }
+    Gui.group.push{ grow = "right", spacing = 10 }
+    for i,event in pairs(eventHandler:getEvents()) do
+        if Gui.Button{ text = event.name, size = { buttonWidth(event.name) } } then
+            eventtarget = i
+            menus.event = false
+        end
+        if i % 5 == 0 then
+            Gui.group.pop{}
+            Gui.group.push{ grow = "right", spacing = 10 }
+        end
+    end
+    Gui.group.pop{}
+    Gui.group.pop{}
+end
+
+
 local function transitionselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
     for name,map in pairs(st_edit.maps) do
         for key,value in pairs(map.spawns) do
-            if Gui.Button{ text = name..": "..key } then
+            if Gui.Button{ text = (name..": "..key), size = { buttonWidth(name..": "..key) } } then
                 transitiontarget = { name=name, key=key}
                 menus.transition = false
             end
@@ -276,7 +294,7 @@ local function mapselector()
     Gui.group.push{ grow = "right", spacing = 10 }
     local i = 1
     for name,map in pairs(st_edit.maps) do
-        if Gui.Button{ text = name } then
+        if Gui.Button{ text = name, size = { buttonWidth(name) } } then
             menus.load = false
             st_edit:loadMap(name)
         end
@@ -324,13 +342,14 @@ local function tools()
         if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, game.brush == -2) } then
             game.brush = -2
         end
-        if Gui.Button{ id = "tool_event", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, game.brush == -3) } then
+        if Gui.Button{ id = "tool_event", text = "Add/Remove Event", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, game.brush == -3) } then
             game.brush = -3
+            menus.event = true
         end
         if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
             game.brush = -4
         end
-        if Gui.Button{ id = "tool_transition", text = "Add transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, game.brush == -6)} then
+        if Gui.Button{ id = "tool_transition", text = "Add/Remove transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, game.brush == -6)} then
             game.brush = -6
             menus.transition = true
         end
@@ -362,7 +381,7 @@ local function tools()
     -- tooltip (see above)
     if Gui.mouse.isHot("tool_delete") then drawTooltip("Deletion tool") end
     if Gui.mouse.isHot("tool_walkable") then drawTooltip("Walkable tool") end
-    if Gui.mouse.isHot("tool_event") then drawTooltip("Event deletion tool") end
+    if Gui.mouse.isHot("tool_event") then drawTooltip("Event tool") end
     if Gui.mouse.isHot("tool_spawn") then drawTooltip("Spawn placement tool") end
     if Gui.mouse.isHot("tool_transition") then drawTooltip("Transition tool") end
     if Gui.mouse.isHot("tool_npc") then drawTooltip("Npc placement tool") end
@@ -420,8 +439,9 @@ function hud_edit:update(dt)
     if menus.load then mapselector() end
     if menus.npc then npcselector() end
     if menus.transition then transitionselector() end
+    if menus.event then eventselector() end
         
-    if not (menus.tiles or menus.load or menus.npc or menus.transition) then
+    if not (menus.tiles or menus.load or menus.npc or menus.transition or menus.event) then
         
         if menus.brush then brushmenu() return end
         
@@ -491,12 +511,20 @@ function hud_edit:mousepressed(x, y, button)
         end
     end
     
-    -- delete npc on rightclick
-    if not hud_edit:menuOpen() and button == "r" and game.brush == -5 then
-        local mx, my = camera:mousepos()
-        local tx = math.floor(mx / C_TILE_SIZE)
-        local ty = math.floor(my / C_TILE_SIZE)
-        game.map:removeEntity(tx, ty)
+    
+    if not hud_edit:menuOpen() then
+        if button == "r" then
+            local mx, my = camera:mousepos()
+            local tx = math.floor(mx / C_TILE_SIZE)
+            local ty = math.floor(my / C_TILE_SIZE)
+            -- delete npc on rightclick
+            if game.brush == -5 then
+                game.map:removeEntity(tx, ty)
+            end
+            if game.brush == -3 then
+                game.map:changeEvent(tx, ty, nil)
+            end
+        end
     end
 end
 

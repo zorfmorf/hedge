@@ -2,5 +2,5 @@
 return {
         id = 2,
         name = "Merchant",
-        use = nil -- use function
+        use = function() st_ingame:startDialog("d_example") end
     }
