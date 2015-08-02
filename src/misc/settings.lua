@@ -38,3 +38,7 @@ KEY_USE = "return"
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
 CHAR_ANIM = 15 -- animation speed
+
+-- dialog settings
+C_DIALOG_PAD = 10
+C_DIALOG_LINE_PAD = 2
