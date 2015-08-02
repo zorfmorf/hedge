@@ -34,6 +34,7 @@ KEY_RIGHT = "right"
 KEY_DOWN = "down"
 KEY_UP = "up"
 KEY_USE = "return"
+KEY_EXIT = "escape"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
@@ -42,3 +43,6 @@ CHAR_ANIM = 15 -- animation speed
 -- dialog settings
 C_DIALOG_PAD = 10
 C_DIALOG_LINE_PAD = 2
+
+-- transition settings
+C_TRANS_TIME = 0.6 -- in seconds

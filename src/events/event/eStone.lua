@@ -6,7 +6,7 @@ end
 
 
 local function walk()
-    print( "stop walking on me!")
+    
 end
 
 
