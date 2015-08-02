@@ -34,6 +34,8 @@ function eventHandler:getEvents()
 end
 
 
+-- !!! use this only for use events, not for walking events !!!
+-- there is a separate walkedOnTile function
 function eventHandler.triggerEvent(id, walked)
     if events[id] then
         log:msg("verbose", "Triggered event", events[id].name)

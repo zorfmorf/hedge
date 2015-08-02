@@ -38,7 +38,6 @@ function st_ingame:enter()
         game.map.entities[player.id] = player
     end
     
-    self.transition = Transition("fade_in")
 end
 
 
