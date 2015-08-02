@@ -4,20 +4,8 @@ local placeholder = love.graphics.newImage("img/avatar/placeholder.png")
 
 Dialog = Class{}
 
-function Dialog:init(id)
-    self.id = id
-    self.lines = {}
-    self.lines[1] = { name = "Daphne", text = "This is a dialog line" }
-    self.lines[2] = { text = "This is another dialog line", avatar = true }
-    self.lines[3] = { text = "Choose one of these options:", 
-                        options={ 
-                            { target=4, text="First option, read on", func=function() print("Function call") end }, 
-                            { target=6, text="Second option, jump to end" }
-                        }
-                    }
-    self.lines[4] = { text = "This is another dialog line" }
-    self.lines[5] = { text = "This is yet another dialog line" }
-    self.lines[6] = { text = "This is the last dialog line" }
+function Dialog:init(lines)
+    self.lines = lines
     self.cursor = 1 -- selected option
     self.pos = 1
 end

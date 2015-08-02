@@ -45,6 +45,7 @@ end
 function saveHandler.newGame()
     deleteFolderContents(C_MAP_CURRENT)
     copyFiles(C_MAP_MASTER, C_MAP_CURRENT)
+    dialogHandler.load()
     entityHandler.load()
     var.new()
 end
@@ -64,6 +65,7 @@ end
 function saveHandler.loadGame(name)
     deleteFolderContents(C_MAP_CURRENT)
     copyFiles(C_MAP_SAVEGAMES..name..'/', C_MAP_CURRENT)
+    dialogHandler.load()
     entityHandler.load()
     var.load()
 end

@@ -41,7 +41,12 @@ end
 
 
 function st_ingame:startDialog(dialog)
-    self.dialog = dialog
+    local d = dialogHandler.get(dialog)
+    if d then
+        self.dialog = d
+    else
+        log:msg("error", "Dialog not found:", dialog)
+    end
 end
 
 
