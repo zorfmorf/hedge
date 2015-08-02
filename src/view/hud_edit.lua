@@ -47,6 +47,10 @@ local transitiontarget = nil
 local eventtarget = nil
 
 
+local function buttonWidth(text)
+    return math.max(love.graphics.getFont():getWidth(text) + 10, 110)
+end
+
 function hud_edit:setMapName(text)
     mapname.text = text
 end
@@ -79,11 +83,6 @@ end
 
 function hud_edit:addEvent(tx, ty)
     game.map:changeEvent(tx, ty, eventtarget)
-end
-
-
-function hud_edit:addSpawn(tx, ty)
-    game.map:toggleSpawn(tx, ty)
 end
 
 
@@ -138,7 +137,7 @@ end
 
 -- menu where you can edit existing brushes
 local function brushmenu()
-    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE }, size = {screen.w * 0.5}, border = 1 }
+    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE } }
         Gui.Label{ text = "Currently defined brushes:" }
         
         for i,brush in ipairs(game.brushes) do
@@ -160,7 +159,7 @@ local function brushmenu()
                 
                     -- brush tiles
                     Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Floor:", size = { 100 } }
+                        Gui.Label{ text = "Floor:" }
                         if brush.tiles then
                             for i,tile in ipairs(brush.tiles) do
                                 if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
@@ -175,7 +174,7 @@ local function brushmenu()
                     
                     -- object tiles
                     Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Object:", size = { 100 } }
+                        Gui.Label{ text = "Object:" }
                         if brush.objects then
                             for i,tile in ipairs(brush.objects) do
                                 if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
@@ -190,7 +189,7 @@ local function brushmenu()
                     
                     -- overlay tiles
                     Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Overlay:", size = { 100 } }
+                        Gui.Label{ text = "Overlay:" }
                         if brush.overlays then
                             for i,tile in ipairs(brush.overlays) do
                                 if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
@@ -238,7 +237,7 @@ local function npcselector()
     local counter = 1
     for i,entity in pairs(entityHandler.getAll()) do
         if not (i == 1) then
-            if Gui.Button{ text = entity.name } then
+            if Gui.Button{ text = entity.name, size = { buttonWidth(entity.name) } } then
                 entity:place(menus.npc.x, menus.npc.y)
                 menus.npc = false
             end
@@ -258,7 +257,7 @@ local function eventselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
     for i,event in pairs(eventHandler:getEvents()) do
-        if Gui.Button{ text = event.name } then
+        if Gui.Button{ text = event.name, size = { buttonWidth(event.name) } } then
             eventtarget = i
             menus.event = false
         end
@@ -277,7 +276,7 @@ local function transitionselector()
     Gui.group.push{ grow = "right", spacing = 10 }
     for name,map in pairs(st_edit.maps) do
         for key,value in pairs(map.spawns) do
-            if Gui.Button{ text = name..": "..key } then
+            if Gui.Button{ text = (name..": "..key), size = { buttonWidth(name..": "..key) } } then
                 transitiontarget = { name=name, key=key}
                 menus.transition = false
             end
@@ -295,7 +294,7 @@ local function mapselector()
     Gui.group.push{ grow = "right", spacing = 10 }
     local i = 1
     for name,map in pairs(st_edit.maps) do
-        if Gui.Button{ text = name } then
+        if Gui.Button{ text = name, size = { buttonWidth(name) } } then
             menus.load = false
             st_edit:loadMap(name)
         end

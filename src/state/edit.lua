@@ -69,7 +69,7 @@ function st_edit:update(dt)
             elseif game.brush == -3 then
                 hud_edit:addEvent(tx, ty)
             elseif game.brush == -4 then
-                hud_edit:addSpawn(tx, ty)
+                game.map:toggleSpawn(tx, ty)
             elseif game.brush == -5 then
                 hud_edit:addNpc(tx, ty)
             elseif game.brush == -6 then
