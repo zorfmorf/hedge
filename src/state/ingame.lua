@@ -91,7 +91,22 @@ end
 
 
 function st_ingame:updateCamera()
-    camera:lookAt(math.floor(player.posd.x * C_TILE_SIZE), math.floor(player.posd.y * C_TILE_SIZE))
+    local x = player.posd.x * C_TILE_SIZE
+    local y = player.posd.y * C_TILE_SIZE
+    
+    local min = game.map.bound.min
+    local max = game.map.bound.max
+    
+    -- adjust camera max and min dependent on map boundary
+    -- do this only if the map is larger than the screen
+    if (max.x - min.x) * C_TILE_SIZE > screen.w and (max.y - min.y) * C_TILE_SIZE > screen.h then
+        if x - screen.w * 0.5 < min.x * C_TILE_SIZE then x = min.x * C_TILE_SIZE +  screen.w * 0.5 end
+        if y - screen.h * 0.5 < min.y * C_TILE_SIZE then y = min.y * C_TILE_SIZE +  screen.h * 0.5 end
+        if x + screen.w * 0.5 > (max.x + 1) * C_TILE_SIZE then x = (max.x + 1) * C_TILE_SIZE -  screen.w * 0.5 end
+        if y + screen.h * 0.5 > (max.y + 1) * C_TILE_SIZE then y = (max.y + 1) * C_TILE_SIZE -  screen.h * 0.5 end
+    end
+    
+    camera:lookAt(math.floor(x), math.floor(y))
 end
 
 

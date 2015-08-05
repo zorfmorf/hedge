@@ -11,6 +11,9 @@ function Map:init(name)
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
     self.entities = {}
+    
+    -- set boundaries for camera
+    self.bound = { min={ x=0, y=0 }, max={ x=0, y=0 }}
 end
 
 
@@ -64,6 +67,15 @@ function Map:setTile(x, y, tile, object, overlay, block, event, npc, delete)
     if delete then
         self.blocks[bx][by]:delete(tx, ty)
     else
+        -- adjust map boundary if necessary
+        if tile or object or overlay then
+            if x < self.bound.min.x then self.bound.min.x = x end
+            if y < self.bound.min.y then self.bound.min.y = y end
+            if x > self.bound.max.x then self.bound.max.x = x end
+            if y > self.bound.max.y then self.bound.max.y = y end
+        end
+        
+        -- then set the tile
         self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event, npc)
     end
 end
