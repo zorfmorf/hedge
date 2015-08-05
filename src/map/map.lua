@@ -127,6 +127,17 @@ function Map:toggleSpawn(x, y)
 end
 
 
+-- deletes object, overlay, event of tile
+function Map:delObj(x, y)
+    local tile = self:getTile(x, y)
+    if tile then
+        tile.object = nil
+        tile.overlay = nil
+        tile.event = nil
+    end
+end
+
+
 function Map:removeEntity(x, y)
     local tile = self:getTile(x, y)
     if tile then

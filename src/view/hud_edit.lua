@@ -12,7 +12,8 @@ local icon = {
     event = love.graphics.newImage("img/icon/fishing-hook.png"),
     spawn = love.graphics.newImage("img/icon/position-marker.png"),
     npc = love.graphics.newImage("img/icon/npc.png"),
-    transition = love.graphics.newImage("img/icon/transition.png")
+    transition = love.graphics.newImage("img/icon/transition.png"),
+    delobj = love.graphics.newImage("img/icon/delobj.png")
 }
 
 -- list of all menu dialogs
@@ -339,6 +340,9 @@ local function tools()
         if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, game.brush == -1) } then
             game.brush = -1
         end
+        if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, game.brush == -7) } then
+            game.brush = -7
+        end
         if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, game.brush == -2) } then
             game.brush = -2
         end
@@ -387,6 +391,7 @@ local function tools()
     if Gui.mouse.isHot("tool_npc") then drawTooltip("Npc placement tool") end
     if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
+    if Gui.mouse.isHot("tool_delete_obj") then drawTooltip("Delete object & overlay & event of tile") end
     for i,brush in ipairs(game.brushes) do
         if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end

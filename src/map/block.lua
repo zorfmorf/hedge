@@ -18,7 +18,7 @@ function Block:init(x, y)
     for i = 0, C_BLOCK_SIZE - 1 do
         self.tiles[i] = {}
         for j = 0, C_BLOCK_SIZE - 1 do
-            self.tiles[i][j] = { floor = nil, object = nil, overlay = nil, block = true, event = nil }
+            self.tiles[i][j] = { floor = nil, object = nil, overlay = nil, block = true, event = nil, npc = nil }
         end
     end
 end

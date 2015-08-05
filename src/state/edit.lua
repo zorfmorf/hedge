@@ -74,6 +74,8 @@ function st_edit:update(dt)
                 hud_edit:addNpc(tx, ty)
             elseif game.brush == -6 then
                 hud_edit:placeTransition(tx, ty)
+            elseif game.brush == -7 then    
+                game.map:delObj(tx, ty)
             else
                 local brush = game:getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
