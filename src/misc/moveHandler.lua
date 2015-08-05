@@ -28,7 +28,7 @@ local function move(entity, dt, xd, yd)
        (xd > 0 and entity.posd.x >= entity.pos.x) or
        (yd < 0 and entity.posd.y <= entity.pos.y) or
        (yd > 0 and entity.posd.y >= entity.pos.y) then
-        entity.posd = entity.pos
+        entity.posd = { x=entity.pos.x, y=entity.pos.y }
         entity.walking = false
         local blocks = eventHandler.walkedOnTile(entity.pos)
         if not blocks then

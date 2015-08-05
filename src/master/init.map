@@ -36,4 +36,5 @@ nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|
 nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;2,0,16|nil|nil|1|nil|nil;2,0,18|nil|nil|1|nil|nil;
 nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;nil|nil|nil|1|nil|nil;2,1,16|nil|nil|1|nil|nil;2,1,17|4,0,29|nil|1|nil|nil;
 # Spawns
-1;0;3
+1;1;0
+2;0;3

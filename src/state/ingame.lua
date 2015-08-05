@@ -38,6 +38,8 @@ function st_ingame:enter()
         game.map.entities[player.id] = player
     end
     
+     st_ingame:updateCamera()
+    
 end
 
 
@@ -82,6 +84,14 @@ function st_ingame:update(dt)
     for id,entity in pairs(game.map.entities) do
         entity:update(dt)
     end
+    
+    -- update camera
+    st_ingame:updateCamera()
+end
+
+
+function st_ingame:updateCamera()
+    camera:lookAt(math.floor(player.posd.x * C_TILE_SIZE), math.floor(player.posd.y * C_TILE_SIZE))
 end
 
 
