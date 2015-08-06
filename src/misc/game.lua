@@ -11,8 +11,11 @@ function game:init(editmode)
     -- todo: account for different savegamefolders
     local path = C_MAP_CURRENT
     if editmode then path = C_MAP_MASTER end
-    
-    self.map = maploader:read(path, C_MAP_NAME_DEFAULT)
+    if var.get("current_map") then
+        self.map = maploader:read(path, var.get("current_map")..C_MAP_SUFFIX)
+    else
+        self.map = maploader:read(path, C_MAP_NAME_DEFAULT)
+    end
     self.atlanti = tilesetreader:read()
     self.brushes = {}
     

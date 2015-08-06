@@ -17,8 +17,8 @@ function var.load()
         local file = love.filesystem.newFile( path )
         file:open( "r" )
         for line in file:lines() do
-            local key, value = line:split(";")
-            vars[key] = value
+            local v = line:split(";")
+            vars[v[1]] = v[2]
         end
     end
 end
@@ -44,7 +44,6 @@ end
 
 function var.get(key)
     if vars[key] then return vars[key] end
-    return 0
 end
 
 

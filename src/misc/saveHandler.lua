@@ -55,6 +55,7 @@ end
 -- save current game
 function saveHandler.saveGame(slot)
     maploader:save(game.map, C_MAP_CURRENT)
+    var.set("current_map", game.map.name)
     var.save()
     if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
     copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..slot..'/')
