@@ -167,6 +167,15 @@ function st_edit:keypressed(key, isrepeat)
         if key == "right" then camera:move(C_CAM_SPEED, 0) end
         if key == "down" then camera:move(0, C_CAM_SPEED) end
         if key == "escape" then Gamestate.switch(st_menu_main) end
+        if tonumber(key) then
+            local number = tonumber(key)
+            if love.keyboard.isDown("lctrl") then
+                number = number * (-1)
+            end
+            if game.brushes[number] or (number < 0 and number > -8) then
+                game.brush = number
+            end
+        end
     end
 end
 
