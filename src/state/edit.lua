@@ -111,6 +111,12 @@ function st_edit:draw()
         love.graphics.draw(atlas.batch_overlay)
     end
     
+    -- draw brush preview
+    if game.brush > 0 then
+        local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
+        game.brushes[game.brush]:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+    end
+    
     -- draw walkable and event tile overlays if enabled
     drawHelper:drawToggles(hud_edit:showEvents(), hud_edit:showWalkable())
     
