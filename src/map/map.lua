@@ -53,7 +53,7 @@ end
 -- set some or all values for a tile.
 -- nil values won't override old values (intended)
 -- exception: block value WILL override for reaons
-function Map:setTile(x, y, tile, object, overlay, block, event, npc, delete)
+function Map:setTile(x, y, tile, tile2, object, overlay, block, event, npc, delete)
     
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
@@ -76,7 +76,7 @@ function Map:setTile(x, y, tile, object, overlay, block, event, npc, delete)
         end
         
         -- then set the tile
-        self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event, npc)
+        self.blocks[bx][by]:set(tx, ty, tile, tile2, object, overlay, block, event, npc)
     end
 end
 
@@ -113,7 +113,7 @@ function Map:deleteTile(x, y)
     local tile = self:getTile(x, y)
     if tile then
         
-        self:setTile(x, y, nil, nil, nil, nil, nil, nil, true)
+        self:setTile(x, y, nil, nil, nil, nil, nil, nil, nil, true)
         
         local bx = math.floor(x / C_BLOCK_SIZE)
         local by = math.floor(y / C_BLOCK_SIZE)

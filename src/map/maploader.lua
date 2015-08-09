@@ -56,14 +56,14 @@ function maploader:read( path, name )
                                     end
                                 end
                                 -- if we read an npc settings we need to handle the direction extra
-                                if k == 6 and params[6][1] and params[6][2] then
-                                    animations[params[6][1]] = params[6][2]
-                                    params[6] = params[6][1]
+                                if k == 7 and params[7][1] and params[7][2] then
+                                    animations[params[7][1]] = params[7][2]
+                                    params[7] = params[7][1]
                                 end
                             end
                         end
                         map:setTile(bx * C_BLOCK_SIZE + linex, 
-                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4] == 1, params[5], params[6])
+                            by * C_BLOCK_SIZE + y, params[1], params[2], params[3], params[4], params[5] == 1, params[6], params[7])
                     end
                     y = y + 1
                 end
@@ -115,6 +115,16 @@ function maploader:save(map, path)
                         file:write( block.floor[1] .."," )
                         file:write( block.floor[2] .."," )
                         file:write( block.floor[3] )
+                    else
+                        file:write( "nil" )
+                    end
+                    file:write( "|" )
+                    
+                    -- floor2 tiles
+                    if block.floor2 then 
+                        file:write( block.floor2[1] .."," )
+                        file:write( block.floor2[2] .."," )
+                        file:write( block.floor2[3] )
                     else
                         file:write( "nil" )
                     end

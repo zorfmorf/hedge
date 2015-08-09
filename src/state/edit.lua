@@ -78,7 +78,7 @@ function st_edit:update(dt)
                 game.map:delObj(tx, ty)
             else
                 local brush = game:getCurrentBrush()
-                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
+                if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getTile2(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
             end
         end
     end
@@ -100,6 +100,9 @@ function st_edit:draw()
     camera:attach()
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_floor)
+    end
+    for i,atlas in ipairs(game.atlanti) do
+        love.graphics.draw(atlas.batch_floor2)
     end
     for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)

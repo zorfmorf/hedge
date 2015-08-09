@@ -127,6 +127,9 @@ function st_ingame:draw()
         love.graphics.draw(atlas.batch_floor)
     end
     for i,atlas in ipairs(game.atlanti) do
+        love.graphics.draw(atlas.batch_floor2)
+    end
+    for i,atlas in ipairs(game.atlanti) do
         love.graphics.draw(atlas.batch_object)
     end
     for i,entity in pairs(game.map.sortedEntities) do

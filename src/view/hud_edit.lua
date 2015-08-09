@@ -376,7 +376,6 @@ local function tools()
             showEvents = not showEvents
         end
         
-        
         Gui.Label{ text = "" } -- to fill out the rest of the bar
     Gui.group.pop{}
     

@@ -19,6 +19,9 @@ function Brush:init(id)
     -- the floor tile(s) applied by this brush
     self.tiles = nil
     
+    -- the floor2 tile(s) applied by this brush
+    self.tiles2 = nil
+    
     -- the object tiles applied by this are drawn over floor (but under player)
     self.objects = nil
     
@@ -37,6 +40,12 @@ function Brush:addTile(at, tx, ty)
 end
 
 
+function Brush:addTile2(at, tx, ty)
+    if not self.tiles2 then self.tiles2 = {} end
+    table.insert(self.tiles2, {at, tx, ty})
+end
+
+
 function Brush:addObject(at, tx, ty)
     if not self.objects then self.objects = {} end
     table.insert(self.objects, {at, tx, ty})
@@ -52,6 +61,14 @@ end
 function Brush:getTile()
     if self.tiles then
         return self.tiles[math.random(1, #self.tiles)]
+    end
+    return nil
+end
+
+
+function Brush:getTile2()
+    if self.tiles2 then
+        return self.tiles2[math.random(1, #self.tiles2)]
     end
     return nil
 end
@@ -78,6 +95,7 @@ end
 function Brush:drawPreview(x, y, default)
     local t = nil
     if self.tiles and self.tiles[1] then t = self.tiles end
+    if not t and self.tiles2 and self.tiles2[1] then t = self.tiles2 end
     if not t and self.objects and self.objects[1] then t = self.objects end
     if not t and self.overlays and self.overlays[1] then t = self.overlays end
     
@@ -126,6 +144,7 @@ function Brush:toLine()
     local line = self.name:gsub('%W','')..";" --strip special chars from name
     line = line .. tostring(self.blocking)..";"
     line = line .. lineFromLayer(self.tiles)..";"
+    line = line .. lineFromLayer(self.tiles2)..";"
     line = line .. lineFromLayer(self.objects)..";"
     line = line .. lineFromLayer(self.overlays)..";"
     line = line .. tostring(self.event)
@@ -142,8 +161,9 @@ function Brush:fromLine(line)
             if entry == "true" then self.blocking = true end
         end
         if i == 3 then self.tiles = layerFromLine(entry) end
-        if i == 4 then self.objects = layerFromLine(entry) end
-        if i == 5 then self.overlays = layerFromLine(entry) end
-        if i == 6 and not entry == "nil" then self.event = tonumber(entry) end
+        if i == 4 then self.tiles2 = layerFromLine(entry) end
+        if i == 5 then self.objects = layerFromLine(entry) end
+        if i == 6 then self.overlays = layerFromLine(entry) end
+        if i == 7 and not entry == "nil" then self.event = tonumber(entry) end
     end
 end
