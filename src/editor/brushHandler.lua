@@ -24,6 +24,11 @@ function brushHandler.init()
 end
 
 
+function brushHandler.clear()
+    brushes = {}
+end
+
+
 function brushHandler.currentBrushId()
     return brush
 end
@@ -41,6 +46,13 @@ end
 
 function brushHandler.delete(id)
     brushes[id] = nil
+    for i=10,1,-1 do
+        if last[i] then
+            if last[i] == id then
+                table.remove(last, i)
+            end
+        end
+    end
 end
 
 
@@ -54,9 +66,13 @@ function brushHandler.setBrush(brush, i)
         brushes[i] = brush
         brush.id = i
     else
+        local index = #brushes
         table.insert(brushes, brush)
-        brush.id = #brushes
+        brush.id = index + 1
     end
+    
+    -- small hack to fix naming issue for loaded brushes
+    if brush.name == "Brush0" then brush.name = "Brush"..brush.id end
 end
 
 
@@ -77,6 +93,11 @@ end
 
 function brushHandler.getRecentBrushes()
     return last
+end
+
+
+function brushHandler.setRecentBrushes(newlist)
+    last = newlist
 end
 
 

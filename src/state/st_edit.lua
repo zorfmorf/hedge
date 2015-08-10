@@ -59,7 +59,7 @@ function st_edit:update(dt)
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
         if isNewTile(tx, ty) then
-            local brush = brushHandler.currentBrushId
+            local brush = brushHandler.currentBrushId()
             if brush == -1 then
                 game.map:deleteTile(tx, ty)
             elseif brush == -2 then
@@ -75,7 +75,7 @@ function st_edit:update(dt)
             elseif brush == -7 then    
                 game.map:delObj(tx, ty)
             else
-                local brush = game:getCurrentBrush()
+                local brush = brushHandler.getCurrentBrush()
                 if brush then game.map:setTile(tx, ty, brush:getTile(), brush:getTile2(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event) end
             end
         end
@@ -113,7 +113,7 @@ function st_edit:draw()
     end
     
     -- draw brush preview
-    if brushHandler.currentBrushId() > 0 then
+    if brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
         local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
         brushHandler.getCurrentBrush():drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
     end
@@ -218,6 +218,16 @@ function st_edit:saveSettings()
         file:write(brushHandler.currentBrushId().."\n")
         file:write(tostring(editorHandler:showWalkable()).."\n")
         file:write(tostring(editorHandler:showEvents()).."\n")
+        local isFirst = true
+        for i,k in ipairs(brushHandler.getRecentBrushes()) do
+            if isFirst then
+                isFirst = false
+            else
+                file:write(';')
+            end
+            file:write(k)
+        end
+        file:write("\n")
         for i,brush in ipairs(brushHandler.getBrushes()) do
             file:write(brush:toLine().."\n")
         end
@@ -232,6 +242,8 @@ function st_edit:loadSettings()
     local result = file:open("r")
     if result then
         local i = 1
+        local last = {}
+        local cleared = false
         for line in file:lines() do
             if i == 1 then
                 brushHandler.selectBrush(tonumber(line))
@@ -239,13 +251,22 @@ function st_edit:loadSettings()
                 editorHandler:setWalkable(line == "true")
             elseif i == 3 then
                 editorHandler:setEvents(line == "true")
+            elseif i == 4 then
+                for k,j in ipairs(line:split(';')) do
+                    table.insert(last, tonumber(j))
+                end
             else
-                local brush = Brush(i - 3)
+                if not cleared then 
+                    brushHandler.clear()
+                    cleared = true
+                end
+                local brush = Brush(0)
                 brush:fromLine(line)
-                brushHandler.setBrush(brush, i - 3)
+                brushHandler.setBrush(brush, brush.id)
             end
             i = i + 1
         end
+        brushHandler.setRecentBrushes(last)
     else
         log:msg("verbose", "Could not find editor.settings")
     end

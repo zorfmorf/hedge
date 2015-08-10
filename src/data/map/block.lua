@@ -81,7 +81,7 @@ function Block:draw()
                 at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
             if tile.floor2 then 
-                at[tile.floor[1]]:addFloorQuad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                at[tile.floor2[1]]:addFloorQuad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
             if tile.object then 
                 at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
