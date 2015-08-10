@@ -1,7 +1,4 @@
 
-require "events.eventHandler"
-require "view.animationHelper"
-
 st_ingame = {}
 
 camera = nil

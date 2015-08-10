@@ -1,5 +1,5 @@
 
-local color = {
+Color = {
         GREY = {0, 0, 0, 175},
         BLACK = {0, 0, 0, 255},
         WHITE = {255, 255, 255, 255},
@@ -7,5 +7,3 @@ local color = {
         RED = {255, 100, 100, 125},
         RED_HARD = {255, 100, 100, 255}
     }
-
-return color

@@ -1,7 +1,7 @@
 
 Gui.core.style = require "view.style"
 
-hud_edit = {}
+editorHandler = {}
 
 -- icons
 local icon = {
@@ -52,42 +52,42 @@ local function buttonWidth(text)
     return math.max(love.graphics.getFont():getWidth(text) + 10, 110)
 end
 
-function hud_edit:setMapName(text)
+function editorHandler:setMapName(text)
     mapname.text = text
 end
 
 
-function hud_edit:getMapName()
+function editorHandler:getMapName()
     return mapname.text
 end
 
 
-function hud_edit:showWalkable()
+function editorHandler:showWalkable()
     return showWalkable
 end
 
 
-function hud_edit:showEvents()
+function editorHandler:showEvents()
     return showEvents
 end
 
 
-function hud_edit:setWalkable(value)
+function editorHandler:setWalkable(value)
     showWalkable = value
 end
 
 
-function hud_edit:setEvents(value)
+function editorHandler:setEvents(value)
     showEvents = value
 end
 
 
-function hud_edit:addEvent(tx, ty)
+function editorHandler:addEvent(tx, ty)
     game.map:changeEvent(tx, ty, eventtarget)
 end
 
 
-function hud_edit:addNpc(tx, ty)
+function editorHandler:addNpc(tx, ty)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.npc then
         local npc = entityHandler.get(tile.npc)
@@ -99,7 +99,7 @@ function hud_edit:addNpc(tx, ty)
 end
 
 
-function hud_edit:placeTransition(tx, ty)
+function editorHandler:placeTransition(tx, ty)
     if transitiontarget then
         local t = {}
         t[1] = transitiontarget.name
@@ -397,7 +397,7 @@ local function tools()
 end
 
 
-function hud_edit:drawEventTooltip()
+function editorHandler:drawEventTooltip()
     local mx, my = camera:mousepos()
     local tx = math.floor(mx / C_TILE_SIZE)
     local ty = math.floor(my / C_TILE_SIZE)
@@ -420,7 +420,7 @@ function hud_edit:drawEventTooltip()
 end
 
 
-function hud_edit:drawNpcTooltip()
+function editorHandler:drawNpcTooltip()
     local mx, my = camera:mousepos()
     local tx = math.floor(mx / C_TILE_SIZE)
     local ty = math.floor(my / C_TILE_SIZE)
@@ -437,7 +437,7 @@ function hud_edit:drawNpcTooltip()
 end
 
 
-function hud_edit:update(dt)
+function editorHandler:update(dt)
     
     if menus.tiles then tileselector() end
     if menus.load then mapselector() end
@@ -457,7 +457,7 @@ end
 
 
 -- whether a menu dialog is currently open
-function hud_edit:menuOpen()
+function editorHandler:menuOpen()
     for i,item in pairs(menus) do
         if item then return true end
     end
@@ -466,8 +466,8 @@ end
 
 
 -- don't place tiles when interacting with menus
-function hud_edit:mouseIsOnMenu()
-    if hud_edit:menuOpen() then
+function editorHandler:mouseIsOnMenu()
+    if editorHandler:menuOpen() then
         return true
     end
     if love.mouse.getY() > screen.h - C_TILE_SIZE then 
@@ -477,7 +477,7 @@ function hud_edit:mouseIsOnMenu()
 end
 
 
-function hud_edit:mousepressed(x, y, button)
+function editorHandler:mousepressed(x, y, button)
     
     -- if in tileselection mode
     if menus.tiles then
@@ -516,7 +516,7 @@ function hud_edit:mousepressed(x, y, button)
     end
     
     
-    if not hud_edit:menuOpen() then
+    if not editorHandler:menuOpen() then
         if button == "r" then
             local mx, my = camera:mousepos()
             local tx = math.floor(mx / C_TILE_SIZE)
@@ -534,7 +534,7 @@ end
 
 
 -- Give the hud the ability to intercept key presses
-function hud_edit:catchKey(key, isrepeat)
+function editorHandler:catchKey(key, isrepeat)
     
     -- switch tile atlanti on key press
     if menus.tiles and key == "left" then

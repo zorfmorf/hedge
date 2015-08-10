@@ -7,7 +7,7 @@ Map = Class{}
 
 function Map:init(name)
     self.name = name
-    hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
+    editorHandler:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
     self.entities = {}
