@@ -157,71 +157,286 @@ local function brusheditor()
     local brush = brushHandler.getBrush(menus.brushedit)
     Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE} }
         Gui.Label{ text = "Brush editor menu", size = { "tight" } }
-        
-        local input = {text = brush.name}
-        Gui.Input{ info = input, size = {100} }
-        brush.name = input.text
-        
-         -- brush walkable
-        if Gui.Checkbox{ checked = not brush.blocking, text = "isWalkable", size = { "tight" } } then brush.blocking = not brush.blocking end
-        
-        
-        -- brush tiles
         Gui.group.push{ grow = "right" }
-            Gui.Label{ text = "Floor:", size = {100} }
-            if brush.tiles then
-                for i,tile in ipairs(brush.tiles) do
-                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                        table.remove(brush.tiles, i)
-                        i = i - 1
+            Gui.group.push{ grow = "down" }
+                
+                local input = {text = brush.name}
+                Gui.Input{ info = input, size = {100} }
+                brush.name = input.text
+                
+                 -- brush walkable
+                if Gui.Checkbox{ checked = not brush.blocking, text = "isWalkable", size = { "tight" } } then brush.blocking = not brush.blocking end
+                
+                
+                -- brush tiles
+                Gui.group.push{ grow = "right" }
+                    Gui.Label{ text = "Floor:", size = {100} }
+                    if brush.tiles then
+                        for i,tile in ipairs(brush.tiles) do
+                            if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                table.remove(brush.tiles, i)
+                                i = i - 1
+                            end
+                            if i%5 == 0 then
+                                Gui.group.pop{}
+                                Gui.group.push{ grow = "right" }
+                                Gui.Label{ text = "", size = {100} }
+                            end
+                        end
                     end
-                end
-            end
-            if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "tiles", menus.brushedit } end
-        Gui.group.pop{}
-        
-        -- brush2 tiles
-        Gui.group.push{ grow = "right" }
-            Gui.Label{ text = "Floor2:", size = {100} }
-            if brush.tiles2 then
-                for i,tile in ipairs(brush.tiles2) do
-                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                        table.remove(brush.tiles2, i)
-                        i = i - 1
+                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "tiles", menus.brushedit } end
+                Gui.group.pop{}
+                
+                -- brush2 tiles
+                Gui.group.push{ grow = "right" }
+                    Gui.Label{ text = "Floor2:", size = {100} }
+                    if brush.tiles2 then
+                        for i,tile in ipairs(brush.tiles2) do
+                            if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                table.remove(brush.tiles2, i)
+                                i = i - 1
+                            end
+                            if i%5 == 0 then
+                                Gui.group.pop{}
+                                Gui.group.push{ grow = "right" }
+                                Gui.Label{ text = "", size = {100} }
+                            end
+                        end
                     end
-                end
-            end
-            if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "tiles2", menus.brushedit } end
-        Gui.group.pop{}
+                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "tiles2", menus.brushedit } end
+                Gui.group.pop{}
+                    
+                    
+                -- object tiles
+                Gui.group.push{ grow = "right" }
+                    Gui.Label{ text = "Object:", size = {100} }
+                    if brush.objects then
+                        for i,tile in ipairs(brush.objects) do
+                            if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                table.remove(brush.objects, i)
+                                i = i - 1
+                            end
+                            if i%5 == 0 then
+                                Gui.group.pop{}
+                                Gui.group.push{ grow = "right" }
+                                Gui.Label{ text = "", size = {100} }
+                            end
+                        end
+                    end
+                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "objects", menus.brushedit } end
+                Gui.group.pop{}
+                    
+                -- overlay tiles
+                Gui.group.push{ grow = "right" }
+                    Gui.Label{ text = "Overlay:", size = {100} }
+                    if brush.overlays then
+                        for i,tile in ipairs(brush.overlays) do
+                            if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                table.remove(brush.overlays, i)
+                                i = i - 1
+                            end
+                            if i%5 == 0 then
+                                Gui.group.pop{}
+                                Gui.group.push{ grow = "right" }
+                                Gui.Label{ text = "", size = {100} }
+                            end
+                        end
+                    end
+                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "overlays", menus.brushedit } end
+                Gui.group.pop{}
+                
+            Gui.group.pop{}
             
+            --spacer
+            Gui.Label{ text="", size = {50}}
             
-        -- object tiles
-        Gui.group.push{ grow = "right" }
-            Gui.Label{ text = "Object:", size = {100} }
-            if brush.objects then
-                for i,tile in ipairs(brush.objects) do
-                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                        table.remove(brush.objects, i)
-                        i = i - 1
+            -- intelligent border tools
+            Gui.group.push{ grow = "down" }
+                if Gui.Checkbox{ checked = brush.border, text = "Intelligent Border" } then 
+                    if brush.border then
+                        brush.border = nil
+                    else
+                        brush:addBorder()
                     end
                 end
-            end
-            if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "objects", menus.brushedit } end
-        Gui.group.pop{}
-            
-        -- overlay tiles
-        Gui.group.push{ grow = "right" }
-            Gui.Label{ text = "Overlay:", size = {100} }
-            if brush.overlays then
-                for i,tile in ipairs(brush.overlays) do
-                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                        table.remove(brush.overlays, i)
-                        i = i - 1
-                    end
+                if brush.border then
+                    Gui.Label{ text = "Intelligent borders are applied on the tile2 layer surrounding tiles drawn with this brush" }
+                    Gui.group.push{ grow = "right"}
+                        
+                        -- inner border
+                        Gui.group.push{ grow = "down" }
+                            Gui.Label{ text="Inner" }
+                            Gui.group.push{ grow = "right" }
+                            
+                                -- upper left
+                                if brush.border.inner.ul then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.inner.ul) } then
+                                        brush.border.inner.ul = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.inner.ul", menus.brushedit }
+                                    end
+                                end
+                                
+                                -- upper right
+                                if brush.border.inner.ur then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.inner.ur) } then
+                                        brush.border.inner.ur = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.inner.ur", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                            Gui.group.push{ grow = "right" }
+                                
+                                -- lower left
+                                if brush.border.inner.ll then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.inner.ll) } then
+                                        brush.border.inner.ll = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.inner.ll", menus.brushedit }
+                                    end
+                                end
+                                
+                                -- lower right
+                                if brush.border.inner.lr then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.inner.lr) } then
+                                        brush.border.inner.lr = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.inner.lr", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                        Gui.group.pop{}
+                        
+                        -- outer border
+                        Gui.group.push{ grow = "down" }
+                            Gui.Label{ text="Outer" }
+                            Gui.group.push{ grow = "right" }
+                            
+                                -- upper left
+                                if brush.border.outer.ul then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.outer.ul) } then
+                                        brush.border.outer.ul = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.outer.ul", menus.brushedit }
+                                    end
+                                end
+                                
+                                -- upper right
+                                if brush.border.outer.ur then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.outer.ur) } then
+                                        brush.border.outer.ur = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.outer.ur", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                            Gui.group.push{ grow = "right" }
+                                
+                                -- lower left
+                                if brush.border.outer.ll then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.outer.ll) } then
+                                        brush.border.outer.ll = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.outer.ll", menus.brushedit }
+                                    end
+                                end
+                                
+                                -- lower right
+                                if brush.border.outer.lr then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.outer.lr) } then
+                                        brush.border.outer.lr = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.outer.lr", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                        Gui.group.pop{}
+                        
+                        -- side border
+                        Gui.group.push{ grow = "down" }
+                            Gui.Label{ text="Side" }
+                            Gui.group.push{ grow = "right" }
+                            
+                                -- upper
+                                Gui.Label{ text="", size={C_TILE_SIZE}}
+                                if brush.border.side.u then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.side.u) } then
+                                        brush.border.side.u = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.side.u", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                            Gui.group.push{ grow = "right" }
+                                
+                                -- left/right
+                                if brush.border.side.l then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.side.l) } then
+                                        brush.border.side.l = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.side.l", menus.brushedit }
+                                    end
+                                end
+                                Gui.Label{ text="", size={C_TILE_SIZE}}
+                                if brush.border.side.r then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.side.r) } then
+                                        brush.border.side.r= nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.side.r", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                            Gui.group.push{ grow = "right" }
+                                
+                                -- lower
+                                Gui.Label{ text="", size={C_TILE_SIZE}}
+                                if brush.border.side.d then
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(brush.border.side.d) } then
+                                        brush.border.side.d = nil
+                                    end
+                                else
+                                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then
+                                        menus.tiles = { "border.side.d", menus.brushedit }
+                                    end
+                                end
+                                
+                            Gui.group.pop{}
+                        Gui.group.pop{}
+                        
+                    Gui.group.pop{}
                 end
-            end
-            if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then menus.tiles = { "overlays", menus.brushedit } end
+            Gui.group.pop{}
         Gui.group.pop{}
+        
         
         if Gui.Button{ text = "Okay" } then menus.brushedit = false end
         Gui.Label{ text = " " }
@@ -231,6 +446,7 @@ local function brusheditor()
             brushHandler.delete(menus.brushedit)
             menus.brushedit = false
         end
+        
     Gui.group.pop{}
 end
 
@@ -534,6 +750,42 @@ function editorHandler:mousepressed(x, y, button)
             end
             if menus.tiles[1] == "overlays" then
                 brush:addOverlay(currentatlas, tx, ty)
+            end
+            if menus.tiles[1] == "border.inner.ul" then
+                brush.border.inner.ul = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.inner.ur" then
+                brush.border.inner.ur = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.inner.ll" then
+                brush.border.inner.ll = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.inner.lr" then
+                brush.border.inner.lr = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.outer.ul" then
+                brush.border.outer.ul = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.outer.ur" then
+                brush.border.outer.ur = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.outer.ll" then
+                brush.border.outer.ll = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.outer.lr" then
+                brush.border.outer.lr = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.side.u" then
+                brush.border.side.u = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.side.l" then
+                brush.border.side.l = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.side.r" then
+                brush.border.side.r = {currentatlas, tx, ty}
+            end
+            if menus.tiles[1] == "border.side.d" then
+                brush.border.side.d = {currentatlas, tx, ty}
             end
             
             menus.tiles = false

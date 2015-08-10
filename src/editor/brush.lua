@@ -25,6 +25,9 @@ function Brush:init(id)
     -- the object tiles applied by this are drawn over floor (but under player)
     self.objects = nil
     
+    -- border tiles for intelligent brush
+    self.border = nil
+    
     -- overlays are drawn over the player
     self.overlays = nil
     
@@ -90,6 +93,14 @@ function Brush:getOverlay()
 end
 
 
+function Brush:addBorder()
+    self.border = {}
+    self.border.inner = {}
+    self.border.outer = {}
+    self.border.side = {}
+end
+
+
 -- preview the brash by drawing the first tile that can be found
 -- x,y coordinates to draw to and the default to use if not found
 function Brush:drawPreview(x, y, default)
@@ -125,6 +136,102 @@ local function lineFromLayer(layer)
 end
 
 
+local function strFromBorderpart(part)
+    local str = "-1,-1,-1"
+    if part then
+        str = part[1]..","..part[2]..","..part[3]
+    end
+    return str
+end
+
+
+local function lineFromBorder(border)
+    local line = "nil"
+    if border then
+        line = strFromBorderpart(border.inner.ul)..","
+        line = line .. strFromBorderpart(border.inner.ur)..","
+        line = line .. strFromBorderpart(border.inner.ll)..","
+        line = line .. strFromBorderpart(border.inner.lr)..","
+        line = line .. strFromBorderpart(border.outer.ul)..","
+        line = line .. strFromBorderpart(border.outer.ur)..","
+        line = line .. strFromBorderpart(border.outer.ll)..","
+        line = line .. strFromBorderpart(border.outer.lr)..","
+        line = line .. strFromBorderpart(border.side.u)..","
+        line = line .. strFromBorderpart(border.side.l)..","
+        line = line .. strFromBorderpart(border.side.r)..","
+        line = line .. strFromBorderpart(border.side.d)
+    end
+    return line
+end
+
+
+local function borderFromLine(line)
+    local border = nil
+    if not (line == "nil") then
+        border = {}
+        border.inner = {}
+        border.outer = {}
+        border.side = {}
+        local v = line:split(',')
+        local i = 1
+        
+        -- inner
+        if not (tonumber(v[i]) == -1) then
+            border.inner.ul = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.inner.ur = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.inner.ll = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.inner.lr = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        
+        -- outer
+        if not (tonumber(v[i]) == -1) then
+            border.outer.ul = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.outer.ur = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.outer.ll = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.outer.lr = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        
+        -- outer
+        if not (tonumber(v[i]) == -1) then
+            border.side.u = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.side.l = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.side.r = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+        i = i + 3
+        if not (tonumber(v[i]) == -1) then
+            border.side.d = {tonumber(v[i]), tonumber(v[i+1]), tonumber(v[i+2])}
+        end
+    end
+    return border
+end
+
+
 local function layerFromLine(line)
     local result = {}
     local current = {}
@@ -148,7 +255,7 @@ function Brush:toLine()
     line = line .. lineFromLayer(self.tiles2)..";"
     line = line .. lineFromLayer(self.objects)..";"
     line = line .. lineFromLayer(self.overlays)..";"
-    line = line .. tostring(self.event)
+    line = line .. lineFromBorder(self.border)
     return line
 end
 
@@ -166,6 +273,6 @@ function Brush:fromLine(line)
         if i == 5 then self.tiles2 = layerFromLine(entry) end
         if i == 6 then self.objects = layerFromLine(entry) end
         if i == 7 then self.overlays = layerFromLine(entry) end
-        if i == 8 and not entry == "nil" then self.event = tonumber(entry) end
+        if i == 8 then self.border = borderFromLine(entry) end
     end
 end

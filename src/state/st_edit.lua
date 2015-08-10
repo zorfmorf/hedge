@@ -113,7 +113,7 @@ function st_edit:draw()
     end
     
     -- draw brush preview
-    if brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
+    if not editorHandler:menuOpen() and brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
         local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
         brushHandler.getCurrentBrush():drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
     end
@@ -135,7 +135,6 @@ function st_edit:draw()
     else
         drawHelper:toolbarBkg()
     end
-    
     
     -- draw hud
     Gui.core.draw()
