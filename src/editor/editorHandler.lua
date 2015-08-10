@@ -18,7 +18,8 @@ local icon = {
 
 -- list of all menu dialogs
 local menus = { }
-menus.brush = false -- brush configurator
+menus.brush = false -- brush selector
+menus.brushedit = false -- brush editor
 menus.tiles = false -- tile for brush selector
 menus.load = false -- map load
 menus.npc = false -- npc selector
@@ -127,7 +128,7 @@ end
 -- creates a customized draw function for the brush menu
 local function brushTile_drawFunction(tile)
     return  function(state, title, x,y,w,h)
-                local atlas = game.atlanti[tile[1]]
+                local atlas = brushHandler.getAtlanti()[tile[1]]
                 local quad = love.graphics.newQuad(tile[2] * C_TILE_SIZE, 
                     tile[3] * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, 
                     atlas.img:getWidth(), atlas.img:getHeight())
@@ -136,97 +137,138 @@ local function brushTile_drawFunction(tile)
 end
 
 
+-- draw function for icon buttons
+local function icon_func(img, brush, highlight)
+    return  function(state, title, x,y,w,h)
+                love.graphics.setColor(Color.WHITE)
+                if state == "active" or highlight then
+                    love.graphics.setColor(Color.RED)
+                end
+                if img then love.graphics.draw(img, x, y) end
+                if brush then brush:drawPreview(x, y, icon.palette) end
+                if state == "hot" or highlight then
+                    love.graphics.rectangle("line", x, y, 32, 31)
+                end
+            end
+end
+
+
+local function brusheditor()
+    local brush = brushHandler.getCurrentBrush()
+    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE} }
+        Gui.Label{ text = "Brush editor menu", size = { "tight" } }
+        
+        local input = {text = brush.name}
+        Gui.Input{ info = input, size = {80} }
+        brush.name = input.text
+        
+         -- brush walkable
+        if Gui.Checkbox{ checked = not brush.blocking, text = "isWalkable", size = { "tight" } } then brush.blocking = not brush.blocking end
+        
+        
+        -- brush tiles
+        Gui.group.push{ grow = "right" }
+            Gui.Label{ text = "Floor:", size = {'tight'} }
+            if brush.tiles then
+                for i,tile in ipairs(brush.tiles) do
+                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                        table.remove(brush.tiles, i)
+                        i = i - 1
+                    end
+                end
+            end
+            if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "tiles", menus.brushedit } end
+        Gui.group.pop{}
+        
+        -- brush2 tiles
+        Gui.group.push{ grow = "right" }
+            Gui.Label{ text = "Floor2:", size = {'tight'} }
+            if brush.tiles then
+                for i,tile in ipairs(brush.tiles2) do
+                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                        table.remove(brush.tiles2, i)
+                        i = i - 1
+                    end
+                end
+            end
+            if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "tiles2", menus.brushedit } end
+        Gui.group.pop{}
+            
+            
+        -- object tiles
+        Gui.group.push{ grow = "right" }
+            Gui.Label{ text = "Object:", size = {'tight'} }
+            if brush.objects then
+                for i,tile in ipairs(brush.objects) do
+                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                        table.remove(brush.objects, i)
+                        i = i - 1
+                    end
+                end
+            end
+            if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "objects", menus.brushedit } end
+        Gui.group.pop{}
+            
+        -- overlay tiles
+        Gui.group.push{ grow = "right" }
+            Gui.Label{ text = "Overlay:", size = {'tight'} }
+            if brush.overlays then
+                for i,tile in ipairs(brush.overlays) do
+                    if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                        table.remove(brush.overlays, i)
+                        i = i - 1
+                    end
+                end
+            end
+            if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "overlays", menus.brushedit } end
+        Gui.group.pop{}
+        
+        if Gui.Button{ text = "Okay" } then menus.brushedit = false end
+        Gui.Label{ text = " " }
+        
+        -- delete brush
+        if Gui.Button{ text = "Delete" } then 
+            brushHandler.delete(menus.brushedit)
+            menus.brushedit = false
+        end
+    Gui.group.pop{}
+end
+
+
 -- menu where you can edit existing brushes
 local function brushmenu()
-    Gui.group.push{ grow = "down", pos = { C_TILE_SIZE, C_TILE_SIZE } }
-        Gui.Label{ text = "Currently defined brushes:" }
-        
-        for i,brush in ipairs(game.brushes) do
-            Gui.group.push{ grow = "right", size = {130}, spacing = 10 }
-                
-                -- brush name
-                local input = {text = brush.name}
-                Gui.Input{ info = input, size = {100} }
-                brush.name = input.text
-                
-                -- brush walkable
-                if Gui.Checkbox{ checked = not brush.blocking, text = "isWalkable", size = { "tight" } } then brush.blocking = not brush.blocking end
-                
-                Gui.Label{ text = "  ", size = { "tight" } }
-                
-                
-                Gui.group.push{ grow = "down" }
-                
-                
-                    -- brush tiles
-                    Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Floor:" }
-                        if brush.tiles then
-                            for i,tile in ipairs(brush.tiles) do
-                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                                    table.remove(brush.tiles, i)
-                                    i = i - 1
-                                end
-                            end
-                        end
-                        if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "tiles", i } end
-                    Gui.group.pop{}
-                    
-                    
-                    -- object tiles
-                    Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Object:" }
-                        if brush.objects then
-                            for i,tile in ipairs(brush.objects) do
-                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                                    table.remove(brush.objects, i)
-                                    i = i - 1
-                                end
-                            end
-                        end
-                        if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "objects", i } end
-                    Gui.group.pop{}
-                    
-                    
-                    -- overlay tiles
-                    Gui.group.push{ grow = "right" }
-                        Gui.Label{ text = "Overlay:" }
-                        if brush.overlays then
-                            for i,tile in ipairs(brush.overlays) do
-                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                                    table.remove(brush.overlays, i)
-                                    i = i - 1
-                                end
-                            end
-                        end
-                        if Gui.Button{ text = " + ", size = {'tight'} } then menus.tiles = { "overlays", i} end
-                    Gui.group.pop{}
-                    
+    Gui.Label{ text = "Currently defined brushes:" }
+    Gui.group.push{ grow = "right", pos = {C_TILE_SIZE, C_TILE_SIZE}}
+        Gui.group.push{ grow = "down"}
+            for i,brush in ipairs(brushHandler.getBrushes()) do
+                Gui.group.push{ grow = "right" }
+                    Gui.Label{ text = brush.name }
+                    if Gui.Button{ text = brush.name, size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(nil, brush, brushHandler.currentBrushId() == i) } then
+                        brushHandler.selectBrush(i)
+                        menus.brush = false
+                    end
+                    if Gui.Button{ text = "Edit" } then
+                        menus.brushedit = i
+                    end
                 Gui.group.pop{}
-                
-                Gui.Label{ text = "    ", size = { "tight" } }
-                
-                local event = { text = "" }
-                if brush.event then event.text = tostring(brush.event) end
-                Gui.Input{ info = event, size = {100} }
-                brush.event = tonumber(event.text)
-                
-                Gui.Label{ text = "    ", size = { "tight" } }
-                
-                -- delete brush
-                if Gui.Button{ text = "Delete" } then table.remove(game.brushes, i) i = i - 1 end
-                
-            Gui.group.pop{}
-        end
-        if Gui.Button{ text = "Add new brush" } then table.insert(game.brushes, Brush(#game.brushes + 1)) end
-        if Gui.Button{ text = "Okay" } then menus.brush = false end
-        
+                if i % 12 == 0 then
+                    Gui.group.pop{}
+                    Gui.group.push{ grow = "down", pos = { 2, 2 } }
+                end
+            end
+            if Gui.Button{ text = "Add" } then
+                local id = #brushHandler.getBrushes() + 1
+                brushHandler.setBrush(Brush(id), id)
+                menus.brushedit = id
+            end
+            if Gui.Button{ text = "Close" } then menus.brush = false end
+        Gui.group.pop{}
     Gui.group.pop{}
 end
 
 
 local function tileselector()
-    local atlas = game.atlanti[currentatlas]
+    local atlas = brushHandler.getAtlanti()[currentatlas]
     Gui.Label{ text = "", draw = function() love.graphics.clear() love.graphics.draw(atlas.img, atlaspos[1], atlaspos[2]) end}
     Gui.Label{ text = "Mousewheel: Switch atlas\nArrow keys: Move atlas", pos = {screen.w - 200, 0} }
 end
@@ -310,22 +352,6 @@ local function mapselector()
 end
 
 
--- draw function for icon buttons
-local function icon_func(img, brush, highlight)
-    return  function(state, title, x,y,w,h)
-                love.graphics.setColor(Color.WHITE)
-                if state == "active" or highlight then
-                    love.graphics.setColor(Color.RED)
-                end
-                if img then love.graphics.draw(img, x, y) end
-                if brush then brush:drawPreview(x, y, icon.palette) end
-                if state == "hot" or highlight then
-                    love.graphics.rectangle("line", x, y, 32, 31)
-                end
-            end
-end
-
-
 local function drawTooltip(title)
     local mx,my = love.mouse.getPosition()
     Gui.Label{text = title, pos = {mx+10,my-40}}
@@ -337,34 +363,35 @@ local function tools()
     Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE } }
         
         Gui.Label{ text = "Tools:", size = {60} }
-        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, game.brush == -1) } then
-            game.brush = -1
+        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, brushHandler.currentBrushId() == -1) } then
+            brushHandler.selectBrush(-1)
         end
-        if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, game.brush == -7) } then
-            game.brush = -7
+        if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, brushHandler.currentBrushId() == -7) } then
+            brushHandler.selectBrush(-7)
         end
-        if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, game.brush == -2) } then
-            game.brush = -2
+        if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, brushHandler.currentBrushId() == -2) } then
+            brushHandler.selectBrush(-2)
         end
-        if Gui.Button{ id = "tool_event", text = "Add/Remove Event", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, game.brush == -3) } then
-            game.brush = -3
+        if Gui.Button{ id = "tool_event", text = "Add/Remove Event", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.event, nil, brushHandler.currentBrushId() == -3) } then
+            brushHandler.selectBrush(-3)
             menus.event = true
         end
-        if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, game.brush == -4)} then
-            game.brush = -4
+        if Gui.Button{ id = "tool_spawn", text = "Add/Remove Spawn", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.spawn, nil, brushHandler.currentBrushId() == -4)} then
+            brushHandler.selectBrush(-4)
         end
-        if Gui.Button{ id = "tool_transition", text = "Add/Remove transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, game.brush == -6)} then
-            game.brush = -6
+        if Gui.Button{ id = "tool_transition", text = "Add/Remove transition", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.transition, nil, brushHandler.currentBrushId() == -6)} then
+            brushHandler.selectBrush(-6)
             menus.transition = true
         end
-        if Gui.Button{ id = "tool_npc", text = "Add/Remove Npc", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.npc, nil, game.brush == -5)} then
-            game.brush = -5
+        if Gui.Button{ id = "tool_npc", text = "Add/Remove Npc", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.npc, nil, brushHandler.currentBrushId() == -5)} then
+            brushHandler.selectBrush(-5)
         end
         
         Gui.Label{ text = "Brushes:", size = {60} }
-        for i,brush in ipairs(game.brushes) do
-            if Gui.Button{ id = "tool_brush_"..i, text = brush.name, size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(nil, brush, game.brush == i) } then
-                game.brush = i
+        for k,i in pairs(brushHandler.getRecentBrushes()) do
+            local brush = brushHandler.getBrush(i)
+            if Gui.Button{ id = "tool_brush_"..i, text = brush.name, size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(nil, brush, brushHandler.currentBrushId() == i) } then
+                brushHandler.selectBrush(i)
             end
         end
         
@@ -391,7 +418,7 @@ local function tools()
     if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     if Gui.mouse.isHot("tool_delete_obj") then drawTooltip("Delete object & overlay & event of tile") end
-    for i,brush in ipairs(game.brushes) do
+    for i,brush in ipairs(brushHandler.getBrushes()) do
         if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end
 end
@@ -444,8 +471,9 @@ function editorHandler:update(dt)
     if menus.npc then npcselector() end
     if menus.transition then transitionselector() end
     if menus.event then eventselector() end
+    if menus.brushedit then brusheditor() end
         
-    if not (menus.tiles or menus.load or menus.npc or menus.transition or menus.event) then
+    if not (menus.tiles or menus.load or menus.npc or menus.transition or menus.event or menus.brushedit) then
         
         if menus.brush then brushmenu() return end
         
@@ -488,14 +516,18 @@ function editorHandler:mousepressed(x, y, button)
             local tx = math.floor((x - atlaspos[1]) / C_TILE_SIZE)
             local ty = math.floor((y - atlaspos[2]) / C_TILE_SIZE)
             
+            local brush = brushHandler.getBrush(menus.tiles[2])
             if menus.tiles[1] == "tiles" then
-                game.brushes[menus.tiles[2]]:addTile(currentatlas, tx, ty)
+                brush:addTile(currentatlas, tx, ty)
+            end
+            if menus.tiles[1] == "tiles2" then
+                brush:addTile2(currentatlas, tx, ty)
             end
             if menus.tiles[1] == "objects" then
-                game.brushes[menus.tiles[2]]:addObject(currentatlas, tx, ty)
+                brush:addObject(currentatlas, tx, ty)
             end
             if menus.tiles[1] == "overlays" then
-                game.brushes[menus.tiles[2]]:addOverlay(currentatlas, tx, ty)
+                brush:addOverlay(currentatlas, tx, ty)
             end
             
             menus.tiles = false
@@ -505,13 +537,13 @@ function editorHandler:mousepressed(x, y, button)
         if button == "wu" then
             currentatlas = currentatlas - 1
             atlaspos = {0, 0}
-            if currentatlas < 1 then currentatlas = #game.atlanti end
+            if currentatlas < 1 then currentatlas = #brushHandler.getAtlanti() end
         end
         
         if button == "wd" then
             currentatlas = currentatlas + 1
             atlaspos = {0, 0}
-            if currentatlas > #game.atlanti then currentatlas = 1 end
+            if currentatlas > #brushHandler.getAtlanti() then currentatlas = 1 end
         end
     end
     
@@ -522,10 +554,10 @@ function editorHandler:mousepressed(x, y, button)
             local tx = math.floor(mx / C_TILE_SIZE)
             local ty = math.floor(my / C_TILE_SIZE)
             -- delete npc on rightclick
-            if game.brush == -5 then
+            if brushHandler.currentBrushId() == -5 then
                 game.map:removeEntity(tx, ty)
             end
-            if game.brush == -3 then
+            if brushHandler.currentBrushId() == -3 then
                 game.map:changeEvent(tx, ty, nil)
             end
         end

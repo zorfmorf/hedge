@@ -41,6 +41,7 @@ function st_edit:enter()
     animationHelper.init()
     eventHandler:init()
     game:init(true)
+    brushHandler.init()
     self:loadSettings()
     
     camera = Camera(0, 0)
@@ -58,19 +59,20 @@ function st_edit:update(dt)
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
         if isNewTile(tx, ty) then
-            if game.brush == -1 then
+            local brush = brushHandler.currentBrushId
+            if brush == -1 then
                 game.map:deleteTile(tx, ty)
-            elseif game.brush == -2 then
+            elseif brush == -2 then
                 game.map:toggleWalkable(tx, ty)
-            elseif game.brush == -3 then
+            elseif brush == -3 then
                 editorHandler:addEvent(tx, ty)
-            elseif game.brush == -4 then
+            elseif brush == -4 then
                 game.map:toggleSpawn(tx, ty)
-            elseif game.brush == -5 then
+            elseif brush == -5 then
                 editorHandler:addNpc(tx, ty)
-            elseif game.brush == -6 then
+            elseif brush == -6 then
                 editorHandler:placeTransition(tx, ty)
-            elseif game.brush == -7 then    
+            elseif brush == -7 then    
                 game.map:delObj(tx, ty)
             else
                 local brush = game:getCurrentBrush()
@@ -87,33 +89,33 @@ function st_edit:draw()
     screen:update()
     
     -- clear spritebatches and draw tiles to batch
-    for i,atlas in pairs(game.atlanti) do
+    for i,atlas in pairs(brushHandler.getAtlanti()) do
         atlas:clear()
     end
     game.map:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_floor)
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_floor2)
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_object)
     end
     for id,entity in pairs(game.map.entities) do
         entity:draw()
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_overlay)
     end
     
     -- draw brush preview
-    if game.brush > 0 then
+    if brushHandler.currentBrushId() > 0 then
         local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
-        game.brushes[game.brush]:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+        brushHandler.getCurrentBrush():drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
     end
     
     -- draw walkable and event tile overlays if enabled
@@ -171,8 +173,8 @@ function st_edit:keypressed(key, isrepeat)
             if love.keyboard.isDown("lctrl") then
                 number = number * (-1)
             end
-            if game.brushes[number] or (number < 0 and number > -8) then
-                game.brush = number
+            if brushHandler.getBrush(number) or (number < 0 and number > -8) then
+                brushHandler.selectBrush(number)
             end
         end
     end
@@ -213,10 +215,10 @@ function st_edit:saveSettings()
     local file = love.filesystem.newFile("editor.settings")
     if file then
         file:open("w")
-        file:write(game.brush.."\n")
+        file:write(brushHandler.currentBrushId().."\n")
         file:write(tostring(editorHandler:showWalkable()).."\n")
         file:write(tostring(editorHandler:showEvents()).."\n")
-        for i,brush in ipairs(game.brushes) do
+        for i,brush in ipairs(brushHandler.getBrushes()) do
             file:write(brush:toLine().."\n")
         end
     else
@@ -232,7 +234,7 @@ function st_edit:loadSettings()
         local i = 1
         for line in file:lines() do
             if i == 1 then
-                game.brush = tonumber(line)
+                brushHandler.selectBrush(tonumber(line))
             elseif i == 2 then
                 editorHandler:setWalkable(line == "true")
             elseif i == 3 then
@@ -240,7 +242,7 @@ function st_edit:loadSettings()
             else
                 local brush = Brush(i - 3)
                 brush:fromLine(line)
-                game.brushes[i - 3] = brush
+                brushHandler.setBrush(brush, i - 3)
             end
             i = i + 1
         end

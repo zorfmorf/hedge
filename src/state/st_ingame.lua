@@ -113,26 +113,26 @@ function st_ingame:draw()
     screen:update()
     
     -- clear spritebatches and draw tiles to batch
-    for i,atlas in pairs(game.atlanti) do
+    for i,atlas in pairs(brushHandler.getAtlanti()) do
         atlas:clear()
     end
     game.map:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_floor)
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_floor2)
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_object)
     end
     for i,entity in pairs(game.map.sortedEntities) do
         entity:draw()
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_overlay)
     end
     

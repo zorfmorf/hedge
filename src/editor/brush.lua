@@ -100,7 +100,7 @@ function Brush:drawPreview(x, y, default)
     if not t and self.overlays and self.overlays[1] then t = self.overlays end
     
     if t and t[1] then
-        local atl = game.atlanti[t[1][1]]
+        local atl = brushHandler.getAtlanti()[t[1][1]]
         local quad = love.graphics.newQuad( t[1][2] * C_TILE_SIZE, t[1][3] * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, atl.img:getWidth(), atl.img:getHeight() )
         love.graphics.draw(atl.img, quad, x, y)
     elseif default then
