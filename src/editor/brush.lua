@@ -120,6 +120,37 @@ function Brush:drawPreview(x, y, default)
 end
 
 
+local function brushEqTile(brushtiles, tile)
+    for i,texture in pairs(brushtiles) do
+        if texture[1] == tile[1] and texture[2] == tile[2] and texture[3] == tile[3] then
+            return true
+        end
+    end
+    return false
+end
+
+
+-- return true if the given tile has textures from this brush
+function Brush:onTile(tx, ty)
+    local tile = game.map:getTile(tx, ty)
+    if tile then 
+        if self.tiles and tile.floor then 
+            if brushEqTile(self.tiles, tile.floor) then return true end
+        end
+        if self.tiles2 and tile.floor2 then 
+            if brushEqTile(self.tiles2, tile.floor2) then return true end
+        end
+        if self.objects and tile.object then 
+            if brushEqTile(self.objects, tile.object) then return true end
+        end
+        if self.overlays and tile.overlay then 
+            if brushEqTile(self.overlays, tile.overlay) then return true end
+        end
+    end
+    return false
+end
+
+
 local function lineFromLayer(layer)
     local line = "nil"
     if layer then

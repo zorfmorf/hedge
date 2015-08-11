@@ -39,6 +39,7 @@ function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
     local tile = self.tiles[x][y]
     if floor then tile.floor = floor end
     if floor2 then tile.floor2 = floor2 end
+    if floor and not floor2 then tile.floor2 = nil end
     if object then tile.object = object end
     if overlay then tile.overlay = overlay end
     tile.block = block
