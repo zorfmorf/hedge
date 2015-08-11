@@ -145,3 +145,27 @@ function mapHelper:createBorder(tx, ty, brush)
         end
     end
 end
+
+
+function mapHelper:createObject(tx, ty, brush)
+    for x=1,brush.xsize do
+        for y=1,brush.ysize do
+            if brush.tile[x] and brush.tile[x][y] then
+                local tile = game.map:getTile(tx + (x-1), ty + (y-1))
+                if tile then
+                    if brush.tile[x][y].overlay then
+                        tile.overlay = brush.tile[x][y]
+                    else
+                        tile.object = brush.tile[x][y]
+                    end
+                else
+                    if brush.tile[x][y].overlay then
+                        game.map:setTile(tx + (x-1), ty + (y-1), nil, nil, nil, brush.tile[x][y])
+                    else
+                        game.map:setTile(tx + (x-1), ty + (y-1), nil, nil, brush.tile[x][y])
+                    end
+                end
+            end
+        end
+    end
+end

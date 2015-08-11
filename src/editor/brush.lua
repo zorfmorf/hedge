@@ -281,29 +281,73 @@ end
 function Brush:toLine()
     local line = tostring(self.id)..";"
     line = line .. self.name:gsub('%W','')..";" --strip special chars from name
-    line = line .. tostring(self.blocking)..";"
-    line = line .. lineFromLayer(self.tiles)..";"
-    line = line .. lineFromLayer(self.tiles2)..";"
-    line = line .. lineFromLayer(self.objects)..";"
-    line = line .. lineFromLayer(self.overlays)..";"
-    line = line .. lineFromBorder(self.border)
+    if self.tile then
+        line = line .. "obrush;"..self.xsize..";"..self.ysize..";"
+        local isFirst = true
+        for x,row in pairs(self.tile) do
+            for y,tile in pairs(row) do
+                if isFirst then isFirst = false else line = line .. "," end
+                line = line..tile[1]..","..tile[2]..","..tile[3]..","
+                if tile.overlay then
+                    line = line.."true"
+                else
+                    line = line.."false"
+                end
+            end
+        end
+    else
+        line = line .. tostring(self.blocking)..";"
+        line = line .. lineFromLayer(self.tiles)..";"
+        line = line .. lineFromLayer(self.tiles2)..";"
+        line = line .. lineFromLayer(self.objects)..";"
+        line = line .. lineFromLayer(self.overlays)..";"
+        line = line .. lineFromBorder(self.border)
+    end
     return line
 end
 
 
 -- read brush settings from a line representation
 function Brush:fromLine(line)
-    for i,entry in ipairs(line:split(";")) do
-        if i == 1 then self.id = tonumber(entry) end
-        if i == 2 then self.name = entry end
-        if i == 3 then 
-            self.blocking = false
-            if entry == "true" then self.blocking = true end
+    local v = line:split(";")
+    
+    if v[3] == "obrush" then
+        Class.include(self, OBrush)
+        self.id = tonumber(v[1])
+        self.name = v[2]
+        self.xsize = tonumber(v[4])
+        self.ysize = tonumber(v[5])
+        self.tile = {}
+        self.isObjectBrush = function() return true end
+        local x = 1
+        local y = 1
+        local en = v[6]:split(',')
+        for i=1,#en,4 do
+            self:set(x, y, { tonumber(en[i]), tonumber(en[i+1]), tonumber(en[i+2]), tonumber(en[i+3]) })
+            x = x + 1
+            if x > self.xsize then
+                x = 1
+                y = y + 1
+            end
         end
-        if i == 4 then self.tiles = layerFromLine(entry) end
-        if i == 5 then self.tiles2 = layerFromLine(entry) end
-        if i == 6 then self.objects = layerFromLine(entry) end
-        if i == 7 then self.overlays = layerFromLine(entry) end
-        if i == 8 then self.border = borderFromLine(entry) end
+    else
+        for i,entry in ipairs(v) do
+            if i == 1 then self.id = tonumber(entry) end
+            if i == 2 then self.name = entry end
+            if i == 3 then 
+                self.blocking = false
+                if entry == "true" then self.blocking = true end
+            end
+            if i == 4 then self.tiles = layerFromLine(entry) end
+            if i == 5 then self.tiles2 = layerFromLine(entry) end
+            if i == 6 then self.objects = layerFromLine(entry) end
+            if i == 7 then self.overlays = layerFromLine(entry) end
+            if i == 8 then self.border = borderFromLine(entry) end
+        end
     end
+end
+
+
+function Brush:isObjectBrush()
+    return false
 end

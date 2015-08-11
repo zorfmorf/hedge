@@ -77,12 +77,16 @@ function st_edit:update(dt)
             else
                 local brush = brushHandler.getCurrentBrush()
                 if brush then 
-                    game.map:setTile(tx, ty, brush:getTile(), brush:getTile2(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event)
-                    if brush.border then
-                        for x=-1,1 do
-                            for y=-1,1 do
-                                if not (x == 0 and y == 0) then
-                                    mapHelper:createBorder(tx+x, ty+y, brush)
+                    if brush:isObjectBrush() then
+                        mapHelper:createObject(tx, ty, brush)
+                    else
+                        game.map:setTile(tx, ty, brush:getTile(), brush:getTile2(), brush:getObject(), brush:getOverlay(), brush.blocking, brush.event)
+                        if brush.border then
+                            for x=-1,1 do
+                                for y=-1,1 do
+                                    if not (x == 0 and y == 0) then
+                                        mapHelper:createBorder(tx+x, ty+y, brush)
+                                    end
                                 end
                             end
                         end
