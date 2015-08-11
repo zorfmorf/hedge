@@ -130,7 +130,14 @@ function st_edit:draw()
     -- draw brush preview
     if not editorHandler:menuOpen() and brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
         local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
-        brushHandler.getCurrentBrush():drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+        local brush = brushHandler.getCurrentBrush()
+        if brush:isObjectBrush() then
+            love.graphics.setColor(Color.RED)
+            love.graphics.rectangle("fill", tx * C_TILE_SIZE, ty * C_TILE_SIZE, brush.xsize * C_TILE_SIZE, brush.ysize * C_TILE_SIZE)
+        else
+            brush:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+        end
+        love.graphics.setColor(Color.WHITE)
     end
     
     -- draw walkable and event tile overlays if enabled

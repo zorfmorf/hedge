@@ -5,8 +5,6 @@ function mapHelper:createBorder(tx, ty, brush)
     print ( "inspecting", tx, ty)
     
     local tile = game.map:getTile(tx, tx)
-    local block = true
-    if tile then block = tile.block end
     if brush:onTile(tx, ty) then return end
     
     -- side.l
@@ -15,7 +13,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx, ty + 1) and
            not brush:onTile(tx - 1, ty) and
            brush:onTile(tx + 1, ty) then
-            game.map:setTile(tx, ty, nil, brush.border.side.l, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.side.l, nil, nil, true)
         end
     end
     
@@ -25,7 +23,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx, ty + 1) and
            not brush:onTile(tx + 1, ty) and
            brush:onTile(tx - 1, ty) then
-            game.map:setTile(tx, ty, nil, brush.border.side.r, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.side.r, nil, nil, true)
         end
     end
     
@@ -35,7 +33,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty) and
            not brush:onTile(tx + 1, ty) and
            brush:onTile(tx, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.side.u, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.side.u, nil, nil, true)
         end
     end
     
@@ -45,7 +43,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty) and
            not brush:onTile(tx + 1, ty) and
            brush:onTile(tx, ty - 1) then
-            game.map:setTile(tx, ty, nil, brush.border.side.d, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.side.d, nil, nil, true)
         end
     end
     
@@ -55,7 +53,7 @@ function mapHelper:createBorder(tx, ty, brush)
            brush:onTile(tx - 1, ty) and
            not brush:onTile(tx + 1, ty) and
            not brush:onTile(tx, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.inner.ul, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.inner.ul, nil, nil, true)
         end
     end
     
@@ -65,7 +63,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty) and
            brush:onTile(tx + 1, ty) and
            not brush:onTile(tx, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.inner.ur, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.inner.ur, nil, nil, true)
         end
     end
     
@@ -75,7 +73,7 @@ function mapHelper:createBorder(tx, ty, brush)
            brush:onTile(tx - 1, ty) and
            not brush:onTile(tx + 1, ty) and
            brush:onTile(tx, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.inner.ll, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.inner.ll, nil, nil, true)
         end
     end
     
@@ -85,7 +83,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty) and
            brush:onTile(tx + 1, ty) and
            brush:onTile(tx, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.inner.lr, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.inner.lr, nil, nil, true)
         end
     end
     
@@ -99,7 +97,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty + 1) and
            not brush:onTile(tx, ty + 1) and
            brush:onTile(tx + 1, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.outer.ul, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.outer.ul, nil, nil, true)
         end
     end
     
@@ -113,7 +111,7 @@ function mapHelper:createBorder(tx, ty, brush)
            brush:onTile(tx - 1, ty + 1) and
            not brush:onTile(tx, ty + 1) and
            not brush:onTile(tx + 1, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.outer.ur, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.outer.ur, nil, nil, true)
         end
     end
     
@@ -127,7 +125,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty + 1) and
            not brush:onTile(tx, ty + 1) and
            not brush:onTile(tx + 1, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.outer.ll, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.outer.ll, nil, nil, true)
         end
     end
     
@@ -141,7 +139,7 @@ function mapHelper:createBorder(tx, ty, brush)
            not brush:onTile(tx - 1, ty + 1) and
            not brush:onTile(tx, ty + 1) and
            not brush:onTile(tx + 1, ty + 1) then
-            game.map:setTile(tx, ty, nil, brush.border.outer.lr, nil, nil, block)
+            game.map:setTile(tx, ty, nil, brush.border.outer.lr, nil, nil, true)
         end
     end
 end
