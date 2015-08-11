@@ -1,7 +1,4 @@
 
-require "events.eventHandler"
-require "view.animationHelper"
-
 st_ingame = {}
 
 camera = nil
@@ -37,6 +34,8 @@ function st_ingame:enter()
         st_ingame:placePlayer(1)
         game.map.entities[player.id] = player
     end
+    
+     st_ingame:updateCamera()
     
 end
 
@@ -82,6 +81,29 @@ function st_ingame:update(dt)
     for id,entity in pairs(game.map.entities) do
         entity:update(dt)
     end
+    
+    -- update camera
+    st_ingame:updateCamera()
+end
+
+
+function st_ingame:updateCamera()
+    local x = player.posd.x * C_TILE_SIZE
+    local y = player.posd.y * C_TILE_SIZE
+    
+    local min = game.map.bound.min
+    local max = game.map.bound.max
+    
+    -- adjust camera max and min dependent on map boundary
+    -- do this only if the map is larger than the screen
+    if (max.x - min.x) * C_TILE_SIZE > screen.w and (max.y - min.y) * C_TILE_SIZE > screen.h then
+        if x - screen.w * 0.5 < min.x * C_TILE_SIZE then x = min.x * C_TILE_SIZE +  screen.w * 0.5 end
+        if y - screen.h * 0.5 < min.y * C_TILE_SIZE then y = min.y * C_TILE_SIZE +  screen.h * 0.5 end
+        if x + screen.w * 0.5 > (max.x + 1) * C_TILE_SIZE then x = (max.x + 1) * C_TILE_SIZE -  screen.w * 0.5 end
+        if y + screen.h * 0.5 > (max.y + 1) * C_TILE_SIZE then y = (max.y + 1) * C_TILE_SIZE -  screen.h * 0.5 end
+    end
+    
+    camera:lookAt(math.floor(x), math.floor(y))
 end
 
 
@@ -91,23 +113,26 @@ function st_ingame:draw()
     screen:update()
     
     -- clear spritebatches and draw tiles to batch
-    for i,atlas in pairs(game.atlanti) do
+    for i,atlas in pairs(brushHandler.getAtlanti()) do
         atlas:clear()
     end
     game.map:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_floor)
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
+        love.graphics.draw(atlas.batch_floor2)
+    end
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_object)
     end
     for i,entity in pairs(game.map.sortedEntities) do
         entity:draw()
     end
-    for i,atlas in ipairs(game.atlanti) do
+    for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_overlay)
     end
     

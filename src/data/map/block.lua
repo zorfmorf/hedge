@@ -18,7 +18,7 @@ function Block:init(x, y)
     for i = 0, C_BLOCK_SIZE - 1 do
         self.tiles[i] = {}
         for j = 0, C_BLOCK_SIZE - 1 do
-            self.tiles[i][j] = { floor = nil, object = nil, overlay = nil, block = true, event = nil }
+            self.tiles[i][j] = { floor = nil, floor2 = nil, object = nil, overlay = nil, block = true, event = nil, npc = nil }
         end
     end
 end
@@ -35,9 +35,11 @@ end
 -- overlay : { textureatlas_index, texture_x, texture_y }
 -- block : if the tile blocks movement
 -- event : id of event triggered by this tile
-function Block:set(x, y, floor, object, overlay, block, event, npc)
+function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
     local tile = self.tiles[x][y]
     if floor then tile.floor = floor end
+    if floor2 then tile.floor2 = floor2 end
+    if floor and not floor2 then tile.floor2 = nil end
     if object then tile.object = object end
     if overlay then tile.overlay = overlay end
     tile.block = block
@@ -78,6 +80,9 @@ function Block:draw()
         for j,tile in pairs(row) do
             if tile.floor then 
                 at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+            end
+            if tile.floor2 then 
+                at[tile.floor2[1]]:addFloorQuad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
             end
             if tile.object then 
                 at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)

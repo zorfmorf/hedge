@@ -21,6 +21,7 @@ function Player:place(x, y)
     self.pos = { x=x, y=y }
     self.posd = { x=x, y=y }
     if game.map then game.map:addEntity(x, y, self.id) end
+    if camera then st_ingame:updateCamera() end
 end
 
 

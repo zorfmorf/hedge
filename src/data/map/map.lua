@@ -7,10 +7,13 @@ Map = Class{}
 
 function Map:init(name)
     self.name = name
-    hud_edit:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
+    editorHandler:setMapName(name) -- dirty to do it this way, what happens if we have multiple map objects simultaneously?
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
     self.entities = {}
+    
+    -- set boundaries for camera
+    self.bound = { min={ x=0, y=0 }, max={ x=0, y=0 }}
 end
 
 
@@ -50,7 +53,7 @@ end
 -- set some or all values for a tile.
 -- nil values won't override old values (intended)
 -- exception: block value WILL override for reaons
-function Map:setTile(x, y, tile, object, overlay, block, event, npc, delete)
+function Map:setTile(x, y, tile, tile2, object, overlay, block, event, npc, delete)
     
     local bx = math.floor(x / C_BLOCK_SIZE)
     local by = math.floor(y / C_BLOCK_SIZE)
@@ -64,7 +67,16 @@ function Map:setTile(x, y, tile, object, overlay, block, event, npc, delete)
     if delete then
         self.blocks[bx][by]:delete(tx, ty)
     else
-        self.blocks[bx][by]:set(tx, ty, tile, object, overlay, block, event, npc)
+        -- adjust map boundary if necessary
+        if tile or object or overlay then
+            if x < self.bound.min.x then self.bound.min.x = x end
+            if y < self.bound.min.y then self.bound.min.y = y end
+            if x > self.bound.max.x then self.bound.max.x = x end
+            if y > self.bound.max.y then self.bound.max.y = y end
+        end
+        
+        -- then set the tile
+        self.blocks[bx][by]:set(tx, ty, tile, tile2, object, overlay, block, event, npc)
     end
 end
 
@@ -101,7 +113,7 @@ function Map:deleteTile(x, y)
     local tile = self:getTile(x, y)
     if tile then
         
-        self:setTile(x, y, nil, nil, nil, nil, nil, nil, true)
+        self:setTile(x, y, nil, nil, nil, nil, nil, nil, nil, true)
         
         local bx = math.floor(x / C_BLOCK_SIZE)
         local by = math.floor(y / C_BLOCK_SIZE)
@@ -124,6 +136,17 @@ function Map:toggleSpawn(x, y)
         i = i + 1
     end
     self.spawns[i] = { x=x, y=y}
+end
+
+
+-- deletes object, overlay, event of tile
+function Map:delObj(x, y)
+    local tile = self:getTile(x, y)
+    if tile then
+        tile.object = nil
+        tile.overlay = nil
+        tile.event = nil
+    end
 end
 
 

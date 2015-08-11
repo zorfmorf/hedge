@@ -14,6 +14,7 @@ TexAtlas = Class{}
 function TexAtlas:init(path)
     self.img = love.graphics.newImage(path)
     self.batch_floor = love.graphics.newSpriteBatch(self.img)
+    self.batch_floor2 = love.graphics.newSpriteBatch(self.img)
     self.batch_object = love.graphics.newSpriteBatch(self.img)
     self.batch_overlay = love.graphics.newSpriteBatch(self.img)
     
@@ -38,6 +39,11 @@ function TexAtlas:addFloorQuad(x, y, i, j)
 end
 
 
+function TexAtlas:addFloor2Quad(x, y, i, j)
+    self.batch_floor2:add(self.quads[x][y], i * C_TILE_SIZE, j * C_TILE_SIZE)
+end
+
+
 function TexAtlas:addObjectQuad(x, y, i, j)
     self.batch_object:add(self.quads[x][y], i * C_TILE_SIZE, j * C_TILE_SIZE)
 end
@@ -50,6 +56,7 @@ end
 
 function TexAtlas:clear()
     self.batch_floor:clear()
+    self.batch_floor2:clear()
     self.batch_object:clear()
     self.batch_overlay:clear()
 end

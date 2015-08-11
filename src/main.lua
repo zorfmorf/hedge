@@ -4,35 +4,39 @@ Gamestate = require "lib.hump.gamestate"
 Class = require "lib.hump.class"
 Gui = require "lib.quickie"
 Camera = require "lib.hump.camera"
-Color = require "misc.color"
 
 -- require everything in the given subdirectory
 local function requireDirectory( dir )
     dir = dir or ""
     local entities = love.filesystem.getDirectoryItems(dir)
 
-    for k, ents in ipairs(entities) do
-        local trim = string.gsub( ents, ".lua", "")
-        require(dir .. "/" .. trim)
+    for k, ent in ipairs(entities) do
+        if love.filesystem.isFile(dir.."/"..ent) then
+            local trim = string.gsub( ent, ".lua", "")
+            require(dir .. "/" .. trim)
+        end
     end
 end
 
-
-requireDirectory( 'state' )
 requireDirectory( 'misc' )
-requireDirectory( 'map' )
-requireDirectory( 'class' )
-require "events.eventHandler" -- dont require the events itself
-require "npc.entityHandler" -- dont require the actual npcs itself
-require "dialog.dialogHandler" -- dont require the actual dialogs itself
+requireDirectory( 'data' )
+requireDirectory( 'data/dialog' )
+requireDirectory( 'data/entity' )
+requireDirectory( 'data/event' )
+requireDirectory( 'data/map' )
+requireDirectory( 'data/texture' )
+requireDirectory( 'editor' )
+requireDirectory( 'game' )
+requireDirectory( 'view' )
+requireDirectory( 'state' )
 
 
 -- load hook. executed once on startup
 function love.load()
     log.init()
     Gamestate.registerEvents()
-    Gamestate.switch(st_menu_main)
-    --Gamestate.switch(st_edit)
+    --Gamestate.switch(st_menu_main)
+    Gamestate.switch(st_edit)
 end
 
 
