@@ -60,7 +60,7 @@ end
 
 
 function timeHandler.sleep()
-    if hour > 8 then 
+    if hour >= 8 then 
         timeHandler.advanceDay(1)
     end
     minute = 1

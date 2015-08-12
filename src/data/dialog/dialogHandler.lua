@@ -6,7 +6,7 @@ local dialogs = nil
 function dialogHandler.load()
     dialogs = {}
     
-    local dir = "dialog/all/"
+    local dir = "data/dialog/all/"
     local files = love.filesystem.getDirectoryItems(dir)
 
     for k, ents in ipairs(files) do

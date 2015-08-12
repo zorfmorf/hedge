@@ -5,7 +5,7 @@ eventHandler = {}
 local events = nil
 
 local function loadEvents()
-    local dir = "events/event"
+    local dir = "data/event/all"
     local entities = love.filesystem.getDirectoryItems(dir)
 
     for k, ents in ipairs(entities) do
