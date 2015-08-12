@@ -135,6 +135,8 @@ local function brushTile_drawFunction(tile)
                 if tile.overlay then
                     love.graphics.setColor(150, 150, 255, 255)
                     love.graphics.rectangle("fill", x, y, C_TILE_SIZE, C_TILE_SIZE)
+                else
+                    love.graphics.setColor(Color.WHITE)
                 end
                 love.graphics.draw(atlas.img, quad, x, y)
                 love.graphics.setColor(Color.WHITE)

@@ -43,7 +43,12 @@ end
 
 
 function var.get(key)
-    if vars[key] then return vars[key] end
+    local value = vars[key]
+    if value then
+        if tonumber(value) then return tonumber(value) end
+        return value
+    end
+    return nil
 end
 
 

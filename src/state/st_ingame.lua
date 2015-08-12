@@ -35,8 +35,7 @@ function st_ingame:enter()
         game.map.entities[player.id] = player
     end
     
-     st_ingame:updateCamera()
-    
+    st_ingame:updateCamera()
 end
 
 
@@ -84,6 +83,9 @@ function st_ingame:update(dt)
     
     -- update camera
     st_ingame:updateCamera()
+    
+    -- update time
+    timeHandler.update(dt)
 end
 
 
@@ -147,6 +149,7 @@ function st_ingame:draw()
     -- draw hud
     Gui.core.draw()
     love.graphics.print(math.floor(love.timer.getFPS()), screen.w - 50, 5)
+    love.graphics.print(timeHandler.tostr(), screen.w - 300, 5)
 end
 
 

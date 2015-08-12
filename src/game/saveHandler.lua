@@ -48,6 +48,7 @@ function saveHandler.newGame()
     dialogHandler.load()
     entityHandler.load()
     var.new()
+    timeHandler.load()
 end
 
 -- TODO handle different savespots
@@ -55,6 +56,7 @@ end
 -- save current game
 function saveHandler.saveGame(slot)
     maploader:save(game.map, C_MAP_CURRENT)
+    timeHandler.save()
     var.set("current_map", game.map.name)
     var.save()
     if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
@@ -69,4 +71,5 @@ function saveHandler.loadGame(name)
     dialogHandler.load()
     entityHandler.load()
     var.load()
+    timeHandler.load()
 end

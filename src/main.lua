@@ -35,8 +35,8 @@ requireDirectory( 'state' )
 function love.load()
     log.init()
     Gamestate.registerEvents()
-    --Gamestate.switch(st_menu_main)
-    Gamestate.switch(st_edit)
+    Gamestate.switch(st_menu_main)
+    --Gamestate.switch(st_edit)
 end
 
 
