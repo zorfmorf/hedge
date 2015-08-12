@@ -6,6 +6,11 @@ Dialog = Class{}
 
 function Dialog:init(lines)
     self.lines = lines
+    self:ready()
+end
+
+
+function Dialog:ready()
     self.cursor = 1 -- selected option
     self.pos = 1
 end
