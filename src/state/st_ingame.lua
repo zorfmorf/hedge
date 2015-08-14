@@ -147,16 +147,18 @@ function st_ingame:draw()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
-    if self.dialog then self.dialog:draw() end
+    if self.dialog then
+        self.dialog:draw()
+    else
+        drawHelper:timeAndDate()
+    end
     
     if self.transition then self.transition:draw() end
     
     if self.menu:isOpen() then self.menu:draw() end
-    
+        
     -- draw hud
     Gui.core.draw()
-    love.graphics.print(math.floor(love.timer.getFPS()), screen.w - 50, 5)
-    love.graphics.print(timeHandler.tostr(), screen.w - 300, 5)
 end
 
 

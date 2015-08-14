@@ -38,7 +38,7 @@ KEY_EXIT = "escape"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
-CHAR_ANIM = 15 -- animation speed
+CHAR_ANIM = 17 -- animation speed
 
 -- dialog settings
 C_DIALOG_PAD = 10

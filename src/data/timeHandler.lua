@@ -8,8 +8,18 @@ local hour = nil -- 60m
 local minute = nil
 
 
+local function countToString(value)
+    local str = tostring(value)
+    if value % 10 == 0 or value % 10 > 3 or value == 11 or value == 12 or value == 13 then str = str.."th" end
+    if value % 10 == 1 and not (value == 11) then str = str .. "st" end
+    if value % 10 == 2 and not (value == 12)  then str = str .. "nd" end
+    if value % 10 == 3 and not (value == 13)  then str = str .. "rd" end
+    return str
+end
+
+
 function timeHandler.tostr()
-    return "Year "..year..", Month "..month..", Day "..day..", "..hour..":"..minute
+    return countToString(hour) .. " Hour, Day " .. day .. ", Month " .. month
 end
 
 
@@ -20,7 +30,7 @@ function timeHandler.load()
     hour = var.get("hour")
     minute = var.get("minute")
     if not year then year = 1 end
-    if not month then month = 6 end
+    if not month then month = 1 end
     if not day then day = 1 end
     if not hour then hour = 8 end
     if not minute then minute = 1 end
@@ -59,7 +69,7 @@ function timeHandler.advanceDay(value)
     if day > 30 then
         month = month + 1
         day = day - 30
-        if month > 12 then
+        if month > 4 then
             year = year + 1
             month = 1
         end
