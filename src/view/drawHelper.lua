@@ -62,8 +62,19 @@ function drawHelper:toolbarBkg()
 end
 
 
+function drawHelper:update(dt)
+    self.targetTimeFactor = timeHandler.getTimeFactor()
+    if self.targetTimeFactor > 13 then self.targetTimeFactor = 13 - (self.targetTimeFactor - 13) end
+    if not self.currentTimeFactor then self.currentTimeFactor = self.targetTimeFactor end
+    local diff = self.targetTimeFactor - self.currentTimeFactor
+    self.currentTimeFactor = self.currentTimeFactor + diff * math.min(1, dt)
+end
+
+
 -- day/evening/night effect
 function drawHelper:dayCycle()
-    love.graphics.setColor(100, 100, 255, 150)
+    local x = math.min(190, ((self.currentTimeFactor - 15)^2) * 1.5)
+    love.graphics.setColor(4, 37, 70, math.floor(x))
     love.graphics.rectangle("fill", 0, 0, screen.w, screen.h)
+    love.graphics.setColor(Color.WHITE)
 end

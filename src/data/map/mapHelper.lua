@@ -2,7 +2,6 @@
 mapHelper = {}
 
 function mapHelper:createBorder(tx, ty, brush)
-    print ( "inspecting", tx, ty)
     
     local tile = game.map:getTile(tx, tx)
     if brush:onTile(tx, ty) then return end

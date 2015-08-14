@@ -41,6 +41,14 @@ function timeHandler.addTime(minutes)
 end
 
 
+-- returns time and hours as a factor for light multiplication
+function timeHandler.getTimeFactor()
+    local time = hour
+    time = time + minute / 60
+    return time
+end
+
+
 function timeHandler.update(dt)
     
 end
