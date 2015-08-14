@@ -25,6 +25,7 @@ menus.load = false -- map load
 menus.npc = false -- npc selector
 menus.transition = false -- transition placer
 menus.event = false -- event placer
+menus.settings = false -- map settings menu
 
 
 -- currently selected tile atlas
@@ -117,7 +118,7 @@ local function topbar()
         Gui.Input{info = mapname, size = {200} }
         if Gui.Button{ text = "Save", size = {100} } then st_edit:saveMap() end
         if Gui.Button{ text = "Load", size = {100} } then menus.load = not menus.load end
-        Gui.Button{ text = "Options", size = {100} }
+        if Gui.Button{ text = "Settings", size = {100} } then menus.settings = not menus.settings end
         if Gui.Button{ text = "Brushes", size = {100} } then menus.brush = not menus.brush end
         if Gui.Button{ text = "Quit", size = {100} } then Gamestate.switch(st_menu_main) end
         Gui.Label{ text = "FPS: " .. love.timer.getFPS() }
@@ -535,6 +536,20 @@ local function brushmenu()
 end
 
 
+local function settingsmenu()
+    Gui.group.push{ grow = "down", pos = {C_TILE_SIZE, C_TILE_SIZE}}
+    Gui.Label{ text = "Map-wide settings" }
+    if Gui.Checkbox{ checked = game.map:getSetting("simulate_day"), text = "Simulate day/night cycle" } then 
+        if game.map:getSetting("simulate_day") then
+            game.map:setSetting("simulate_day", nil)
+        else
+            game.map:setSetting("simulate_day", true)
+        end
+    end
+    Gui.group.pop{}
+end
+
+
 local function tileselector()
     local atlas = brushHandler.getAtlanti()[currentatlas]
     Gui.Label{ text = "", draw = function() love.graphics.clear() love.graphics.draw(atlas.img, atlaspos[1], atlaspos[2]) end}
@@ -750,6 +765,7 @@ function editorHandler:update(dt)
     if not (menus.tiles or menus.load or menus.npc or menus.transition or menus.event or menus.brushedit) then
         
         if menus.brush then brushmenu() return end
+        if menus.settings then settingsmenu() end
         
         topbar()
         tools()

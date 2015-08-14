@@ -123,6 +123,7 @@ function st_ingame:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
+    love.graphics.setColor(Color.WHITE)
     for i,atlas in ipairs(brushHandler.getAtlanti()) do
         love.graphics.draw(atlas.batch_floor)
     end
@@ -140,6 +141,8 @@ function st_ingame:draw()
     end
     
     camera:detach()
+    
+    if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
     if self.dialog then self.dialog:draw() end
     

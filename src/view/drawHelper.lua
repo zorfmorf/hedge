@@ -60,3 +60,10 @@ function drawHelper:toolbarBkg()
     love.graphics.rectangle("fill", 0, screen.h - C_TILE_SIZE, screen.w, C_TILE_SIZE)
     love.graphics.setColor(Color.WHITE)
 end
+
+
+-- day/evening/night effect
+function drawHelper:dayCycle()
+    love.graphics.setColor(100, 100, 255, 150)
+    love.graphics.rectangle("fill", 0, 0, screen.w, screen.h)
+end

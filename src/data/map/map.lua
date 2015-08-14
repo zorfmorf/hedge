@@ -11,6 +11,7 @@ function Map:init(name)
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
     self.entities = {}
+    self.settings = {} -- contains map wide settings
     
     -- set boundaries for camera
     self.bound = { min={ x=0, y=0 }, max={ x=0, y=0 }}
@@ -21,6 +22,16 @@ end
 function Map:createBlock(x, y)
     if not self.blocks[x] then self.blocks[x] = {} end
     self.blocks[x][y] = Block(x, y)
+end
+
+
+function Map:getSetting(value)
+    return self.settings[value]
+end
+
+
+function Map:setSetting(key, value)
+    self.settings[key] = value
 end
 
 

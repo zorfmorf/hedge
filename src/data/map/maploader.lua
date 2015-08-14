@@ -19,10 +19,13 @@ function maploader:read( path, name )
         local linex = 0
         
         local readspawns = false
+        local readsettings = false
         
         for line in file:lines( ) do
             if line:sub(1, 8) == "# Tiles" then
-                
+                readsettings = false
+            elseif line:sub(1, 10) == "# Settings" then
+                readsettings = true
             elseif line:sub(1, 8) == "# Spawns" then
                 readspawns = true
             elseif line:sub(1, 8) == "# Block " then 
@@ -30,6 +33,12 @@ function maploader:read( path, name )
                 bx = tonumber(bx)
                 by = tonumber(by)
                 linex = -1
+            elseif readsettings then
+                local values = line:split(";")
+                if tonumber(values[1]) then values[1] = tonumber(values[1]) end
+                if tonumber(values[2]) then values[2] = tonumber(values[2]) end
+                if values[2] == "true" then values[2] = true end
+                map:setSetting(values[1], values[2])
             elseif readspawns then
                 log:msg("verbose", "Found spawn at", line)
                 local values = line:split(";")
@@ -97,6 +106,12 @@ function maploader:save(map, path)
     local file = love.filesystem.newFile( path..map.name..C_MAP_SUFFIX )
     local okay, err = file:open( "w" )
     if not okay then log:msg("error", "Error saving map", map.name, "to", path, "-", err) end
+    
+    -- writing settings
+    file:write( "# Settings\n" )
+    for key,value in pairs(map.settings) do
+        file:write( tostring(key) .. ";" .. tostring(value) .. "\n" )
+    end
     
     -- writing file content
     file:write( "# Tiles\n" )
