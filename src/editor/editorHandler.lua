@@ -649,7 +649,7 @@ local function tools()
         if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, brushHandler.currentBrushId() == -1) } then
             brushHandler.selectBrush(-1)
         end
-        if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, brushHandler.currentBrushId() == -7) } then
+        if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay/npc/event", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, brushHandler.currentBrushId() == -7) } then
             brushHandler.selectBrush(-7)
         end
         if Gui.Button{ id = "tool_walkable", text = "Switch walkable", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.boot, nil, brushHandler.currentBrushId() == -2) } then

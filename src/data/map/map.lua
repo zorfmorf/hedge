@@ -157,6 +157,7 @@ function Map:delObj(x, y)
         tile.object = nil
         tile.overlay = nil
         tile.event = nil
+        tile.npc = nil
     end
 end
 
