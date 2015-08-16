@@ -11,12 +11,12 @@ end
 
 
 local function use(tx, ty)
-    st_ingame:startDialog("d_example")
+    
 end
 
 
 return {
-        id = 1,
+        id = 4,
         init = init,
         use = use,
         walk = walk

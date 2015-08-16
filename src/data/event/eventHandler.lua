@@ -36,13 +36,13 @@ end
 
 -- !!! use this only for use events, not for walking events !!!
 -- there is a separate walkedOnTile function
-function eventHandler.triggerEvent(id, walked)
+function eventHandler.triggerEvent(id, walked, tx, ty)
     if events[id] then
         log:msg("verbose", "Triggered event", events[id].name)
         if walked then
-            events[id].walk()
+            events[id].walk(tx, ty)
         else
-            events[id].use()
+            events[id].use(tx, ty)
         end
     end
 end
@@ -59,7 +59,7 @@ function eventHandler.walkedOnTile(pos)
                     end)
             return true
         else
-            eventHandler.triggerEvent(tile.event, true)
+            eventHandler.triggerEvent(tile.event, true, pos.x, pos.y)
             return false
         end
     end
