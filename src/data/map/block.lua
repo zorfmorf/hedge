@@ -75,8 +75,11 @@ end
 function Block:draw()
     
     if not game.editmode then
-        for i,row in pairs(self.tiles) do
-            for j,tile in pairs(row) do
+        for i = 0, C_BLOCK_SIZE - 1 do
+            for j = 0, C_BLOCK_SIZE - 1 do
+                
+                local tile = self.tiles[i][j]
+                
                 if tile.floor then
                     local t = game.mapping[tile.floor[1]][tile.floor[2]][tile.floor[3]]
                     game.atlas:addFloorQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)

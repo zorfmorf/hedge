@@ -33,6 +33,9 @@ requireDirectory( 'state' )
 
 -- load hook. executed once on startup
 function love.load()
+    -- DEBUG
+    --if arg[#arg] == "-debug" then require("mobdebug").start() end
+    
     log.init()
     Gamestate.registerEvents()
     Gamestate.switch(st_menu_main)
