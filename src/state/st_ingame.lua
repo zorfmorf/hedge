@@ -119,29 +119,19 @@ function st_ingame:draw()
     screen:update()
     
     -- clear spritebatches and draw tiles to batch
-    for i,atlas in pairs(brushHandler.getAtlanti()) do
-        atlas:clear()
-    end
+    game.atlas:clear()
     game.map:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
     love.graphics.setColor(Color.WHITE)
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_floor)
-    end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_floor2)
-    end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_object)
-    end
+    love.graphics.draw(game.atlas.batch_floor)
+    love.graphics.draw(game.atlas.batch_floor2)
+    love.graphics.draw(game.atlas.batch_object)
     for i,entity in pairs(game.map.sortedEntities) do
         entity:draw()
     end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_overlay)
-    end
+    love.graphics.draw(game.atlas.batch_overlay)
     
     camera:detach()
     
@@ -159,6 +149,8 @@ function st_ingame:draw()
         
     -- draw hud
     Gui.core.draw()
+    
+    love.graphics.print(love.timer.getFPS(), 5, 5)
 end
 
 

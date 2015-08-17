@@ -8,8 +8,17 @@ game = {}
 
 function game:init(editmode)
     
+    self.editmode = editmode
+    
     local path = C_MAP_CURRENT
-    if editmode then path = C_MAP_MASTER end
+    
+    if editmode then
+        path = C_MAP_MASTER 
+    else
+        self.atlas = TexAtlas(C_MAP_CURRENT..C_MAP_GAME_ATLAS )
+        self.mapping = tilesetPacker.read( C_MAP_CURRENT..C_MAP_GAME_ATLAS_MAPPING )
+    end
+    
     if var.get("current_map") then
         self.map = maploader:read(path, var.get("current_map")..C_MAP_SUFFIX)
     else

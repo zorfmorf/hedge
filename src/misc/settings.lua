@@ -11,6 +11,8 @@ C_MAP_NAME_DEFAULT = 'init.map' -- the map loaded on first startup
 C_MAP_CURRENT = 'current/' -- currently played game is here
 C_MAP_SUFFIX = '.map' -- file name of maps
 C_MAP_VAR = 'var.file' -- contains game variables
+C_MAP_GAME_ATLAS = 'atlas.png' -- name of the generated game atlas
+C_MAP_GAME_ATLAS_MAPPING = 'atlas.txt' -- maping for atlas
 
 -- amount of individual tiles in a block
 C_BLOCK_SIZE = 8
