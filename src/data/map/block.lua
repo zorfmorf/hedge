@@ -11,7 +11,6 @@ Block = Class{}
 
 -- x and y parameter of block position in overworld
 function Block:init(x, y)
-    -- print( "Block init", x, y )
     self.x = x
     self.y = y
     self.tiles = {}

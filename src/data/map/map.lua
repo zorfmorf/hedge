@@ -44,7 +44,6 @@ end
 -- Draw all blocks that are at least partially on the screen
 function Map:draw()
     love.graphics.setColor(Color.WHITE)
-    --[[
     local wx, wy = camera:pos()
     local bx = math.floor(((wx - screen.w * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
     local by = math.floor(((wy - screen.h * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
@@ -55,12 +54,6 @@ function Map:draw()
             if self.blocks[x] and self.blocks[x][y] then
                 self.blocks[x][y]:draw()
             end
-        end
-    end]]--
-    
-    for i,row in pairs(self.blocks) do
-        for j,block in pairs(row) do
-            block:draw()
         end
     end
 end

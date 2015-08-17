@@ -8,6 +8,8 @@ game = {}
 
 function game:init(editmode)
     
+    log:msg("verbose", "Initiating game container")
+    
     self.editmode = editmode
     
     local path = C_MAP_CURRENT

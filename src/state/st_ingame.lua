@@ -124,6 +124,7 @@ function st_ingame:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
+    
     love.graphics.setColor(Color.WHITE)
     love.graphics.draw(game.atlas.batch_floor)
     love.graphics.draw(game.atlas.batch_floor2)
@@ -135,22 +136,22 @@ function st_ingame:draw()
     
     camera:detach()
     
-    --if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
+    if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
     if self.dialog then
-        --self.dialog:draw()
+        self.dialog:draw()
     else
-        --drawHelper:timeAndDate()
+        drawHelper:timeAndDate()
     end
     
-    --if self.transition then self.transition:draw() end
+    if self.transition then self.transition:draw() end
     
-    --if self.menu:isOpen() then self.menu:draw() end
+    if self.menu:isOpen() then self.menu:draw() end
         
     -- draw hud
-    --Gui.core.draw()
+    Gui.core.draw()
     
-    --love.graphics.print(love.timer.getFPS(), 5, 5)
+    love.graphics.print(love.timer.getFPS(), 5, 5)
 end
 
 

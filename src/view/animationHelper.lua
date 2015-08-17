@@ -17,11 +17,7 @@ end
 
 
 function animationHelper.draw(entity)
-    if quads[math.floor(entity.cycle + 1)] and quads[math.floor(entity.cycle + 1)][entity.anim] then
-        love.graphics.draw(charset, quads[math.floor(entity.cycle + 1)][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
-    else
-        print( "Error, no anim for", math.floor(entity.cycle + 1), entity.anim)
-    end
+    love.graphics.draw(charset, quads[math.floor(entity.cycle + 1)][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
 end
 
 
