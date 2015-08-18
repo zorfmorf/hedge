@@ -95,6 +95,8 @@ end
 
 -- create texture mapping
 function tilesetPacker.pack()
+    
+    -- add all textures used in maps
     st_edit:reloadMapIndex()
     mapping = {}
     count = 0
@@ -115,5 +117,12 @@ function tilesetPacker.pack()
             end
         end
     end
+    
+    -- add all hardcoded (and therefore required) textures
+    for name,v in pairs(texture) do
+        tilesetPacker.addTexture(v)
+    end
+    
+    -- finally do the packing
     tilesetPacker.create()
 end

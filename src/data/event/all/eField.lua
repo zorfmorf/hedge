@@ -11,7 +11,10 @@ end
 
 
 local function use(tx, ty)
-    
+    local tile = game.map:getTile(tx, ty)
+    if true then -- TODO if correct tool equipped
+        tile.floor = deepcopy(texture["field.patch"])
+    end
 end
 
 
