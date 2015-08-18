@@ -36,7 +36,16 @@ end
 -- event : id of event triggered by this tile
 function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
     local tile = self.tiles[x][y]
-    if floor then tile.floor = floor end
+    if floor then 
+        tile.floor = floor
+        
+        -- dirty hack to make comparisons easier
+        for name,v in pairs(texture) do
+            if isEqual(floor, v) then
+                tile.plowed = true
+            end
+        end
+    end
     if floor2 then tile.floor2 = floor2 end
     if floor and not floor2 then tile.floor2 = nil end
     if object then tile.object = object end
