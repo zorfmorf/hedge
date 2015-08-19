@@ -173,17 +173,21 @@ function mapHelper:updateFieldTile(tx, ty)
     if tile and tile.plowed then
         
         -- inner plowed
-        if game.map:getTile(tx-1,ty).plowed and
-            game.map:getTile(tx+1,ty).plowed and
-            game.map:getTile(tx,ty-1).plowed and
-            game.map:getTile(tx,ty+1).plowed then
+        if game.map:getTile(tx-1,ty-1).plowed and
+           game.map:getTile(tx,ty-1).plowed and
+           game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx-1,ty).plowed and
+           game.map:getTile(tx+1,ty).plowed and
+           game.map:getTile(tx-1,ty+1).plowed and
+           game.map:getTile(tx,ty+1).plowed and
+           game.map:getTile(tx+1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.inner"])
+            tile.plantable = true
         end
         
         -- outer ul
-        if not game.map:getTile(tx-1,ty).plowed and
+        if not (game.map:getTile(tx-1,ty).plowed and game.map:getTile(tx,ty-1).plowed) and
             game.map:getTile(tx+1,ty).plowed and
-            not game.map:getTile(tx,ty-1).plowed and
             game.map:getTile(tx,ty+1).plowed and
             game.map:getTile(tx+1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.outer.ul"])
@@ -191,77 +195,92 @@ function mapHelper:updateFieldTile(tx, ty)
         
         -- outer ur
         if game.map:getTile(tx-1,ty).plowed and
-            not game.map:getTile(tx+1,ty).plowed and
-            not game.map:getTile(tx,ty-1).plowed and
+            not (game.map:getTile(tx+1,ty).plowed and game.map:getTile(tx,ty-1).plowed) and
             game.map:getTile(tx,ty+1).plowed and
             game.map:getTile(tx-1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.outer.ur"])
         end
         
         -- outer ll
-        if not game.map:getTile(tx-1,ty).plowed and
+        if not (game.map:getTile(tx-1,ty).plowed and game.map:getTile(tx,ty+1).plowed ) and
             game.map:getTile(tx+1,ty).plowed and
             game.map:getTile(tx,ty-1).plowed and
-            not game.map:getTile(tx,ty+1).plowed and
             game.map:getTile(tx+1,ty-1).plowed then
             tile.floor = deepcopy(texture["field.outer.ll"])
         end
         
         -- outer lr
         if game.map:getTile(tx-1,ty).plowed and
-            not game.map:getTile(tx+1,ty).plowed and
+            not (game.map:getTile(tx+1,ty).plowed and game.map:getTile(tx,ty+1).plowed) and
             game.map:getTile(tx,ty-1).plowed and
-            not game.map:getTile(tx,ty+1).plowed and
             game.map:getTile(tx-1,ty-1).plowed then
             tile.floor = deepcopy(texture["field.outer.lr"])
         end
         
         -- inner ul
-        if game.map:getTile(tx-1,ty).plowed and
-           game.map:getTile(tx+1,ty).plowed and
+        if game.map:getTile(tx-1,ty-1).plowed and
            game.map:getTile(tx,ty-1).plowed and
+           game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx-1,ty).plowed and
+           game.map:getTile(tx+1,ty).plowed and
+           game.map:getTile(tx-1,ty+1).plowed and
            game.map:getTile(tx,ty+1).plowed and
            not game.map:getTile(tx+1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.inner.ul"])
         end
         
         -- inner ur
-        if game.map:getTile(tx-1,ty).plowed and
-           game.map:getTile(tx+1,ty).plowed and
+        if game.map:getTile(tx-1,ty-1).plowed and
            game.map:getTile(tx,ty-1).plowed and
+           game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx-1,ty).plowed and
+           game.map:getTile(tx+1,ty).plowed and
+           not game.map:getTile(tx-1,ty+1).plowed and
            game.map:getTile(tx,ty+1).plowed and
-           not game.map:getTile(tx-1,ty+1).plowed then
+           game.map:getTile(tx+1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.inner.ur"])
         end
         
         -- inner ll
-        if game.map:getTile(tx-1,ty).plowed and
-           game.map:getTile(tx+1,ty).plowed and
+        if game.map:getTile(tx-1,ty-1).plowed and
            game.map:getTile(tx,ty-1).plowed and
+           not game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx-1,ty).plowed and
+           game.map:getTile(tx+1,ty).plowed and
+           game.map:getTile(tx-1,ty+1).plowed and
            game.map:getTile(tx,ty+1).plowed and
-           not game.map:getTile(tx+1,ty-1).plowed then
+           game.map:getTile(tx+1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.inner.ll"])
         end
         
         -- inner lr
-        if game.map:getTile(tx-1,ty).plowed and
-           game.map:getTile(tx+1,ty).plowed and
+        if not game.map:getTile(tx-1,ty-1).plowed and
            game.map:getTile(tx,ty-1).plowed and
+           game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx-1,ty).plowed and
+           game.map:getTile(tx+1,ty).plowed and
+           game.map:getTile(tx-1,ty+1).plowed and
            game.map:getTile(tx,ty+1).plowed and
-           not game.map:getTile(tx-1,ty-1).plowed then
+           game.map:getTile(tx+1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.inner.lr"])
         end
         
         -- outer u
         if game.map:getTile(tx-1,ty).plowed and
            game.map:getTile(tx+1,ty).plowed and
-           not game.map:getTile(tx,ty-1).plowed and
-           game.map:getTile(tx,ty+1).plowed then
+           not (game.map:getTile(tx,ty-1).plowed and game.map:getTile(tx-1,ty-1).plowed) and
+           not (game.map:getTile(tx,ty-1).plowed and game.map:getTile(tx+1,ty-1).plowed) and
+           game.map:getTile(tx,ty+1).plowed and
+           game.map:getTile(tx+1,ty+1).plowed and
+           game.map:getTile(tx-1,ty+1).plowed then
             tile.floor = deepcopy(texture["field.outer.u"])
         end
         
         -- outer l
-        if not game.map:getTile(tx-1,ty).plowed and
+        if not (game.map:getTile(tx-1,ty).plowed and game.map:getTile(tx-1,ty-1).plowed) and
+           not (game.map:getTile(tx-1,ty).plowed and game.map:getTile(tx-1,ty+1).plowed) and
+           game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx+1,ty+1).plowed and
            game.map:getTile(tx+1,ty).plowed and
            game.map:getTile(tx,ty-1).plowed and
            game.map:getTile(tx,ty+1).plowed then
@@ -270,17 +289,23 @@ function mapHelper:updateFieldTile(tx, ty)
         
         -- outer r
         if game.map:getTile(tx-1,ty).plowed and
-           not game.map:getTile(tx+1,ty).plowed and
+           not (game.map:getTile(tx+1,ty).plowed and game.map:getTile(tx+1,ty+1).plowed) and
+           not (game.map:getTile(tx+1,ty).plowed and game.map:getTile(tx+1,ty-1).plowed) and
+           game.map:getTile(tx-1,ty-1).plowed and
+           game.map:getTile(tx-1,ty+1).plowed and
            game.map:getTile(tx,ty-1).plowed and
            game.map:getTile(tx,ty+1).plowed then
             tile.floor = deepcopy(texture["field.outer.r"])
         end
         
         -- outer d
-        if game.map:getTile(tx-1,ty).plowed and
-           game.map:getTile(tx+1,ty).plowed and
+        if game.map:getTile(tx-1,ty-1).plowed and
            game.map:getTile(tx,ty-1).plowed and
-           not game.map:getTile(tx,ty+1).plowed then
+           game.map:getTile(tx+1,ty-1).plowed and
+           game.map:getTile(tx-1,ty).plowed and
+           game.map:getTile(tx+1,ty).plowed and
+           not (game.map:getTile(tx,ty+1).plowed and game.map:getTile(tx+1,ty+1).plowed) and
+           not (game.map:getTile(tx,ty+1).plowed and game.map:getTile(tx-1,ty+1).plowed) then
             tile.floor = deepcopy(texture["field.outer.d"])
         end
     end
