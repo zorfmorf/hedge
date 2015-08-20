@@ -45,7 +45,7 @@ function timeHandler.addTime(minutes)
         hour = hour + 1
         if hour > 23 then
             hour = 0
-            day = day + 1
+            timeHandler.advanceDay(1)
         end
     end
 end
@@ -65,6 +65,7 @@ end
 
 
 function timeHandler.advanceDay(value)
+    game:newDay()
     day = day + value
     if day > 30 then
         month = month + 1
@@ -78,7 +79,7 @@ end
 
 
 function timeHandler.sleep()
-    if hour >= 8 then 
+    if hour >= 8 then
         timeHandler.advanceDay(1)
     end
     minute = 1

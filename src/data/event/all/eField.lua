@@ -15,7 +15,9 @@ local function use(tx, ty)
     
     -- plow field
     if tile.plowed then
-    
+        if tile.plantable and not tile.object then
+            table.insert(game.plants, Potatoe(tx, ty))
+        end
     else --TODO if correct tool equipped        
         tile.floor = deepcopy(texture["field.patch"])
         tile.plowed = true

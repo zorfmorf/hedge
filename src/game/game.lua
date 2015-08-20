@@ -29,4 +29,13 @@ function game:init(editmode)
     
     if not brushHandler.getAtlanti() then brushHandler.init() end
     
+    self.plants = {}
+    
+end
+
+
+function game:newDay()
+    for i,plant in pairs(self.plants) do
+        plant:update()
+    end
 end

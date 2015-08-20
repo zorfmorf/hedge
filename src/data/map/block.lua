@@ -41,8 +41,11 @@ function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
         
         -- dirty hack to make comparisons easier
         for name,v in pairs(texture) do
-            if isEqual(floor, v) then
+            if name:sub(1, 6) == "field." and isEqual(floor, v) then
                 tile.plowed = true
+                if name == "field.inner" then
+                    tile.plantable = true
+                end
             end
         end
     end
