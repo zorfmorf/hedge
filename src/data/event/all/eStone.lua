@@ -5,12 +5,12 @@ local function init()
 end
 
 
-local function walk()
+local function walk(tx, ty)
     
 end
 
 
-local function use()
+local function use(tx, ty)
     st_ingame:startDialog("d_example")
 end
 

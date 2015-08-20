@@ -27,6 +27,8 @@ end
 
 function Player:use()
     local tile = nil
+    local tx = nil
+    local ty = nil
     if math.floor(self.pos.x) == self.pos.x and math.floor(self.pos.y) == self.pos.y then
         local target = {}
         target.x = self.pos.x
@@ -36,10 +38,12 @@ function Player:use()
         if self.anim == 3 then target.y = target.y + 1 end
         if self.anim == 4 then target.x = target.x + 1 end
         tile = game.map:getTile(target.x, target.y)
+        tx = target.x
+        ty = target.y
     end
     if tile then
         if tile.npc and not(tile.npc == self.id) then game.map.entities[tile.npc]:use() end
-        if not tile.npc and tile.event then eventHandler.triggerEvent(tile.event, false) end
+        if not tile.npc and tile.event then eventHandler.triggerEvent(tile.event, false, tx, ty) end
     end
 end
 

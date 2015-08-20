@@ -19,7 +19,7 @@ function st_edit:reloadMapIndex()
     self.maps = {}
     local files = love.filesystem.getDirectoryItems( C_MAP_MASTER )
     for i,item in ipairs(files) do
-        if love.filesystem.isFile(C_MAP_MASTER..item) then
+        if love.filesystem.isFile(C_MAP_MASTER..item) and item:find(C_MAP_SUFFIX) then
             local map = maploader:read(C_MAP_MASTER, item)
             self.maps[map.name] = map
         end
@@ -298,6 +298,7 @@ end
 function st_edit:leave()
     self:saveMap()
     self:saveSettings()
+    tilesetPacker.pack()
 end
 
 

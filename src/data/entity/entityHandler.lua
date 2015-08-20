@@ -9,7 +9,7 @@ function entityHandler.load()
     player = Player()
     entities[1] = player
     
-    local dir = "npc/all/"
+    local dir = "data/entity/all/"
     local files = love.filesystem.getDirectoryItems(dir)
 
     for k, ents in ipairs(files) do

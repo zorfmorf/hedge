@@ -24,6 +24,7 @@ requireDirectory( 'data/dialog' )
 requireDirectory( 'data/entity' )
 requireDirectory( 'data/event' )
 requireDirectory( 'data/map' )
+requireDirectory( 'data/plant' )
 requireDirectory( 'data/texture' )
 requireDirectory( 'editor' )
 requireDirectory( 'game' )
@@ -33,10 +34,13 @@ requireDirectory( 'state' )
 
 -- load hook. executed once on startup
 function love.load()
+    -- DEBUG
+    --if arg[#arg] == "-debug" then require("mobdebug").start() end
+    
     log.init()
     Gamestate.registerEvents()
-    --Gamestate.switch(st_menu_main)
-    Gamestate.switch(st_edit)
+    Gamestate.switch(st_menu_main)
+    --Gamestate.switch(st_edit)
 end
 
 

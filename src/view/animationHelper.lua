@@ -28,7 +28,7 @@ function animationHelper.update(entity, dt)
     if entity.dir == "right" then entity.anim = 12 end
     if entity.walking then
         entity.cycle = entity.cycle + dt * CHAR_ANIM
-        if entity.cycle >= 9 then entity.cycle = entity.cycle - 9 end
+        while entity.cycle >= 9 do entity.cycle = entity.cycle - 9 end
     else
         entity.cycle = 1
         if entity.anim > 4 then entity.anim = entity.anim - 8 end

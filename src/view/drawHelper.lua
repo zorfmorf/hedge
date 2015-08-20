@@ -1,5 +1,8 @@
 
 local location_icon = love.graphics.newImage("img/icon/position-marker.png")
+local font = love.graphics.newFont("font/alagard.ttf", 15)
+local img = {}
+img.date = love.graphics.newImage("img/ui/datetime.png")
 
 drawHelper = {}
 
@@ -59,4 +62,34 @@ function drawHelper:toolbarBkg()
     love.graphics.setColor(Color.GREY)
     love.graphics.rectangle("fill", 0, screen.h - C_TILE_SIZE, screen.w, C_TILE_SIZE)
     love.graphics.setColor(Color.WHITE)
+end
+
+
+function drawHelper:update(dt)
+    self.targetTimeFactor = timeHandler.getTimeFactor()
+    if self.targetTimeFactor > 13 then self.targetTimeFactor = 13 - (self.targetTimeFactor - 13) end
+    if not self.currentTimeFactor then self.currentTimeFactor = self.targetTimeFactor end
+    local diff = self.targetTimeFactor - self.currentTimeFactor
+    self.currentTimeFactor = self.currentTimeFactor + diff * math.min(1, dt)
+end
+
+
+-- day/evening/night effect
+function drawHelper:dayCycle()
+    local x = math.min(190, ((self.currentTimeFactor - 15)^2) * 1.5)
+    love.graphics.setColor(4, 37, 70, math.floor(x))
+    love.graphics.rectangle("fill", 0, 0, screen.w, screen.h)
+    love.graphics.setColor(Color.WHITE)
+end
+
+
+function drawHelper:timeAndDate()
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.draw(img.date, screen.w - img.date:getWidth() - 5, 5)
+    love.graphics.setFont(font)
+    local str = timeHandler.tostr()
+    love.graphics.setColor(Color.BLACK)
+    love.graphics.print(str, screen.w - (font:getWidth(str) + 20), 15)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.print(str, screen.w - (font:getWidth(str) + 19), 16)
 end

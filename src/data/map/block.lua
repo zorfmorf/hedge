@@ -11,7 +11,6 @@ Block = Class{}
 
 -- x and y parameter of block position in overworld
 function Block:init(x, y)
-    -- print( "Block init", x, y )
     self.x = x
     self.y = y
     self.tiles = {}
@@ -37,7 +36,19 @@ end
 -- event : id of event triggered by this tile
 function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
     local tile = self.tiles[x][y]
-    if floor then tile.floor = floor end
+    if floor then 
+        tile.floor = floor
+        
+        -- dirty hack to make comparisons easier
+        for name,v in pairs(texture) do
+            if name:sub(1, 6) == "field." and isEqual(floor, v) then
+                tile.plowed = true
+                if name == "field.inner" then
+                    tile.plantable = true
+                end
+            end
+        end
+    end
     if floor2 then tile.floor2 = floor2 end
     if floor and not floor2 then tile.floor2 = nil end
     if object then tile.object = object end
@@ -74,21 +85,47 @@ end
 
 function Block:draw()
     
-    local at = tilesetreader:getAtlanti()
-    
-    for i,row in pairs(self.tiles) do
-        for j,tile in pairs(row) do
-            if tile.floor then 
-                at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+    if not game.editmode then
+        for i = 0, C_BLOCK_SIZE - 1 do
+            for j = 0, C_BLOCK_SIZE - 1 do
+                
+                local tile = self.tiles[i][j]
+                
+                if tile.floor then
+                    local t = game.mapping[tile.floor[1]][tile.floor[2]][tile.floor[3]]
+                    game.atlas:addFloorQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
+                if tile.floor2 then
+                    local t = game.mapping[tile.floor2[1]][tile.floor2[2]][tile.floor2[3]]
+                    game.atlas:addFloor2Quad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
+                if tile.object then
+                    local t = game.mapping[tile.object[1]][tile.object[2]][tile.object[3]]
+                    game.atlas:addObjectQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
+                if tile.overlay then
+                    local t = game.mapping[tile.overlay[1]][tile.overlay[2]][tile.overlay[3]]
+                    game.atlas:addOverlayQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
             end
-            if tile.floor2 then 
-                at[tile.floor2[1]]:addFloorQuad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-            end
-            if tile.object then 
-                at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-            end
-            if tile.overlay then 
-                at[tile.overlay[1]]:addOverlayQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+        end
+        
+    else
+        local at = tilesetreader:getAtlanti()
+        for i,row in pairs(self.tiles) do
+            for j,tile in pairs(row) do
+                if tile.floor then 
+                    at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
+                if tile.floor2 then 
+                    at[tile.floor2[1]]:addFloor2Quad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
+                if tile.object then 
+                    at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
+                if tile.overlay then 
+                    at[tile.overlay[1]]:addOverlayQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                end
             end
         end
     end

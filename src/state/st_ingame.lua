@@ -35,14 +35,14 @@ function st_ingame:enter()
         game.map.entities[player.id] = player
     end
     
-     st_ingame:updateCamera()
-    
+    st_ingame:updateCamera()
 end
 
 
 function st_ingame:startDialog(dialog)
     local d = dialogHandler.get(dialog)
     if d then
+        d:ready()
         self.dialog = d
     else
         log:msg("error", "Dialog not found:", dialog)
@@ -84,6 +84,12 @@ function st_ingame:update(dt)
     
     -- update camera
     st_ingame:updateCamera()
+    
+    -- update time
+    timeHandler.update(dt)
+    
+    -- draw helper needs to update daylight factors based on time and dt
+    drawHelper:update(dt)
 end
 
 
@@ -113,40 +119,39 @@ function st_ingame:draw()
     screen:update()
     
     -- clear spritebatches and draw tiles to batch
-    for i,atlas in pairs(brushHandler.getAtlanti()) do
-        atlas:clear()
-    end
+    game.atlas:clear()
     game.map:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_floor)
-    end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_floor2)
-    end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_object)
-    end
+    
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.draw(game.atlas.batch_floor)
+    love.graphics.draw(game.atlas.batch_floor2)
+    love.graphics.draw(game.atlas.batch_object)
     for i,entity in pairs(game.map.sortedEntities) do
         entity:draw()
     end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_overlay)
-    end
+    love.graphics.draw(game.atlas.batch_overlay)
     
     camera:detach()
     
-    if self.dialog then self.dialog:draw() end
+    if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
+    
+    if self.dialog then
+        self.dialog:draw()
+    else
+        drawHelper:timeAndDate()
+    end
     
     if self.transition then self.transition:draw() end
     
     if self.menu:isOpen() then self.menu:draw() end
-    
+        
     -- draw hud
     Gui.core.draw()
-    love.graphics.print(math.floor(love.timer.getFPS()), screen.w - 50, 5)
+    
+    love.graphics.print(love.timer.getFPS(), 5, 5)
 end
 
 
@@ -160,6 +165,7 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_UP then self.dialog:up() end
         if key == KEY_DOWN then self.dialog:down() end
     else
+        if key == "t" then timeHandler.addTime(60) end -- TODO: remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end
         if key == KEY_DOWN and not isrepeat then player:move("down") end

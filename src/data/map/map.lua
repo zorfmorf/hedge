@@ -11,6 +11,7 @@ function Map:init(name)
     self.blocks = {} -- actual block data
     self.spawns = {} -- spawn points, <id><pos> table. if none are set, player spawns at 0, 0
     self.entities = {}
+    self.settings = {} -- contains map wide settings
     
     -- set boundaries for camera
     self.bound = { min={ x=0, y=0 }, max={ x=0, y=0 }}
@@ -24,6 +25,16 @@ function Map:createBlock(x, y)
 end
 
 
+function Map:getSetting(value)
+    return self.settings[value]
+end
+
+
+function Map:setSetting(key, value)
+    self.settings[key] = value
+end
+
+
 -- 
 function Map:update(dt)
     
@@ -33,12 +44,11 @@ end
 -- Draw all blocks that are at least partially on the screen
 function Map:draw()
     love.graphics.setColor(Color.WHITE)
-    local wx, wy = camera:worldCoords(0, 0)
-    local bx = math.floor((wx / C_BLOCK_SIZE) / C_TILE_SIZE)
-    local by = math.floor((wy / C_BLOCK_SIZE) / C_TILE_SIZE)
-    local bxe = math.floor(((wx + screen.w) / C_BLOCK_SIZE) / C_TILE_SIZE)
-    local bye = math.floor(((wy + screen.h) / C_BLOCK_SIZE) / C_TILE_SIZE)
-    
+    local wx, wy = camera:pos()
+    local bx = math.floor(((wx - screen.w * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
+    local by = math.floor(((wy - screen.h * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
+    local bxe = math.floor(((wx + screen.w * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
+    local bye = math.floor(((wy + screen.h * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
     for x = bx, bxe do
         for y = by, bye do
             if self.blocks[x] and self.blocks[x][y] then
@@ -46,7 +56,6 @@ function Map:draw()
             end
         end
     end
-    
 end
 
 
@@ -146,6 +155,7 @@ function Map:delObj(x, y)
         tile.object = nil
         tile.overlay = nil
         tile.event = nil
+        tile.npc = nil
     end
 end
 

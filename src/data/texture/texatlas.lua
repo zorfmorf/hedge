@@ -13,7 +13,7 @@ TexAtlas = Class{}
 
 function TexAtlas:init(path)
     self.img = love.graphics.newImage(path)
-    self.batch_floor = love.graphics.newSpriteBatch(self.img)
+    self.batch_floor = love.graphics.newSpriteBatch(self.img, 2000)
     self.batch_floor2 = love.graphics.newSpriteBatch(self.img)
     self.batch_object = love.graphics.newSpriteBatch(self.img)
     self.batch_overlay = love.graphics.newSpriteBatch(self.img)

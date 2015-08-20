@@ -19,10 +19,13 @@ function maploader:read( path, name )
         local linex = 0
         
         local readspawns = false
+        local readsettings = false
         
         for line in file:lines( ) do
             if line:sub(1, 8) == "# Tiles" then
-                
+                readsettings = false
+            elseif line:sub(1, 10) == "# Settings" then
+                readsettings = true
             elseif line:sub(1, 8) == "# Spawns" then
                 readspawns = true
             elseif line:sub(1, 8) == "# Block " then 
@@ -30,6 +33,12 @@ function maploader:read( path, name )
                 bx = tonumber(bx)
                 by = tonumber(by)
                 linex = -1
+            elseif readsettings then
+                local values = line:split(";")
+                if tonumber(values[1]) then values[1] = tonumber(values[1]) end
+                if tonumber(values[2]) then values[2] = tonumber(values[2]) end
+                if values[2] == "true" then values[2] = true end
+                map:setSetting(values[1], values[2])
             elseif readspawns then
                 log:msg("verbose", "Found spawn at", line)
                 local values = line:split(";")
@@ -98,60 +107,66 @@ function maploader:save(map, path)
     local okay, err = file:open( "w" )
     if not okay then log:msg("error", "Error saving map", map.name, "to", path, "-", err) end
     
+    -- writing settings
+    file:write( "# Settings\n" )
+    for key,value in pairs(map.settings) do
+        file:write( tostring(key) .. ";" .. tostring(value) .. "\n" )
+    end
+    
     -- writing file content
     file:write( "# Tiles\n" )
     local blkcntr = 0
-    for i, row in pairs(map.blocks) do
+    for i,row in pairs(map.blocks) do
         for j,entry in pairs(row) do
             file:write( "# Block " .. i .. " " .. j .. "\n" )
             blkcntr = blkcntr + 1
             for x = 0, C_BLOCK_SIZE - 1 do
                 for y = 0, C_BLOCK_SIZE - 1 do
                     
-                    local block = entry.tiles[x][y]
+                    local tile = entry.tiles[x][y]
                     
                     -- floor tiles
-                    if block.floor then 
-                        file:write( block.floor[1] .."," )
-                        file:write( block.floor[2] .."," )
-                        file:write( block.floor[3] )
+                    if tile.floor then 
+                        file:write( tile.floor[1] .."," )
+                        file:write( tile.floor[2] .."," )
+                        file:write( tile.floor[3] )
                     else
                         file:write( "nil" )
                     end
                     file:write( "|" )
                     
                     -- floor2 tiles
-                    if block.floor2 then 
-                        file:write( block.floor2[1] .."," )
-                        file:write( block.floor2[2] .."," )
-                        file:write( block.floor2[3] )
+                    if tile.floor2 then 
+                        file:write( tile.floor2[1] .."," )
+                        file:write( tile.floor2[2] .."," )
+                        file:write( tile.floor2[3] )
                     else
                         file:write( "nil" )
                     end
                     file:write( "|" )
                     
                     -- object tiles
-                    if block.object then 
-                        file:write( block.object[1] .."," )
-                        file:write( block.object[2] .."," )
-                        file:write( block.object[3] )
+                    if tile.object then 
+                        file:write( tile.object[1] .."," )
+                        file:write( tile.object[2] .."," )
+                        file:write( tile.object[3] )
                     else
                         file:write( "nil" )
                     end
                     file:write( "|" )
                     
                     -- overlay tiles
-                    if block.overlay then 
-                        file:write( block.overlay[1] .."," )
-                        file:write( block.overlay[2] .."," )
-                        file:write( block.overlay[3] )
+                    if tile.overlay then 
+                        file:write( tile.overlay[1] .."," )
+                        file:write( tile.overlay[2] .."," )
+                        file:write( tile.overlay[3] )
                     else
                         file:write( "nil" )
                     end
                     file:write( "|" )
                     
                     -- walkable
-                    if block.block then 
+                    if tile.block then 
                         file:write( 1 )
                     else
                         file:write( 0 )
@@ -159,11 +174,11 @@ function maploader:save(map, path)
                     file:write( "|" )
                     
                     -- event number
-                    if block.event then
-                        if type(block.event) == "table" then
-                            file:write( block.event[1]..','..tostring(block.event[2]) )
+                    if tile.event then
+                        if type(tile.event) == "table" then
+                            file:write( tile.event[1]..','..tostring(tile.event[2]) )
                         else
-                            file:write( block.event )
+                            file:write( tile.event )
                         end
                     else
                         file:write( "nil" )
@@ -171,8 +186,8 @@ function maploader:save(map, path)
                     file:write( "|" )
                     
                     -- npc number
-                    if block.npc and map.entities[block.npc] then
-                        file:write( block.npc..","..map.entities[block.npc].anim )
+                    if tile.npc and map.entities[tile.npc] then
+                        file:write( tile.npc..","..map.entities[tile.npc].anim )
                     else
                         file:write( "nil" )
                     end
