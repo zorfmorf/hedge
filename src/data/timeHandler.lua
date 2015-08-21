@@ -65,7 +65,7 @@ end
 
 
 function timeHandler.advanceDay(value)
-    game:newDay()
+    game:updatePlants(1)
     day = day + value
     if day > 30 then
         month = month + 1

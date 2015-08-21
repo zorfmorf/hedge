@@ -34,8 +34,8 @@ function game:init(editmode)
 end
 
 
-function game:newDay()
+function game:updatePlants(value)
     for i,plant in pairs(self.plants) do
-        plant:update()
+        plant:update(value)
     end
 end

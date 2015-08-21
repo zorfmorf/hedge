@@ -67,7 +67,7 @@ function Menu:update(dt)
         if self.current == "save" then
             for i,slot in ipairs(self.slots) do
                 if not (slot == "auto") then
-                        if Gui.Button{text = slot} then
+                    if Gui.Button{text = slot} then
                         saveHandler.saveGame(slot)
                         self.active = false
                     end
