@@ -51,7 +51,7 @@ end
 function Player:update(dt)
     animationHelper.update(self, dt)
     moveHandler.update(self, dt)
-    if not self.walking then
+    if not self.walking and not self.dircd then
         if love.keyboard.isDown(KEY_LEFT) then self:move("left") end
         if love.keyboard.isDown(KEY_RIGHT) then self:move("right") end
         if love.keyboard.isDown(KEY_UP) then self:move("up") end
