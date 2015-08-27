@@ -28,6 +28,7 @@ function Potatoe:update(value)
         local tile = game.map:getTile(self.tx, self.ty)
         if tile then
             tile.object = deepcopy(texture["plant.potatoe."..self.state])
+            tile.block = self.state > 1
         end
     end
 end

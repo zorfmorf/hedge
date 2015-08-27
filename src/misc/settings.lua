@@ -42,7 +42,7 @@ KEY_EXIT = "escape"
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
 CHAR_ANIM = 17 -- animation speed
-CHAR_MOVE_DIRCHANGE_THRESHOLD = 0.15 -- time buffer when changing direction in case it's just a direction change
+CHAR_MOVE_DIRCHANGE_THRESHOLD = 0.13 -- time buffer when changing direction in case it's just a direction change
 
 -- dialog settings
 C_DIALOG_PAD = 10
