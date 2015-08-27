@@ -29,7 +29,8 @@ function game:init(editmode)
     
     if not brushHandler.getAtlanti() then brushHandler.init() end
     
-    self.plants = {}
+    if not self.plants then self.plants = {} end
+    self:updatePlants()
     
 end
 

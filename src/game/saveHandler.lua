@@ -57,6 +57,7 @@ end
 function saveHandler.saveGame(slot)
     maploader:save(game.map, C_MAP_CURRENT)
     timeHandler.save()
+    plantHandler.save()
     var.set("current_map", game.map.name)
     var.save()
     if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
@@ -72,4 +73,5 @@ function saveHandler.loadGame(name)
     entityHandler.load()
     var.load()
     timeHandler.load()
+    plantHandler.load()
 end
