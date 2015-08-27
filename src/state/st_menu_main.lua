@@ -1,6 +1,7 @@
 
 local saveslots = nil
 local showLoad = false
+local options = false
 
 st_menu_main = {}
 
@@ -41,6 +42,8 @@ function st_menu_main:update(dt)
     
         if showLoad then 
             loadMenu()
+        elseif options then
+            options = settings:show()
         else
             if Gui.Button{text = "Play"} then 
                 saveHandler.newGame()
@@ -52,7 +55,10 @@ function st_menu_main:update(dt)
                 end
             end
             if C_DEBUG and Gui.Button{text = "Editor"} then Gamestate.switch(st_edit) end
-            Gui.Button{text = "Options"}
+            if Gui.Button{text = "Options"} then
+                options = true
+                settings:read()
+            end
             if Gui.Button{text = "Exit"} then love.event.push("quit") end
         end
         
