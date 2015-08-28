@@ -1,4 +1,5 @@
 
+local font = love.graphics.newFont("font/alagard.ttf", 15)
 
 Player = Class{}
 
@@ -14,6 +15,9 @@ function Player:init()
     self.anim = 3 -- corresponding animation set
     self.next = nil -- queued movement
     self.cycle = 0 -- anim cycle
+    
+    -- floating texts
+    self.floats = {}
 end
 
 
@@ -57,11 +61,24 @@ function Player:update(dt)
         if love.keyboard.isDown(KEY_UP) then self:move("up") end
         if love.keyboard.isDown(KEY_DOWN) then self:move("down") end
     end
+    for i,float in ipairs(self.floats)do
+        float.time = float.time + dt * CHAR_FLOAT_TIME
+        if float.time > 1 then
+            table.remove(self.floats, i)
+        end
+    end
 end
 
 
 function Player:draw()
     animationHelper.draw(self)
+    love.graphics.setFont(font)
+    for i,float in ipairs(self.floats) do
+        love.graphics.setColor(0, 0, 0, math.max(0, math.floor(255 - (255 * float.time))))
+        love.graphics.print(float.value, self.posd.x * C_TILE_SIZE + (C_TILE_SIZE / 2), self.posd.y * C_TILE_SIZE - math.floor(C_TILE_SIZE * float.time), 0, 1, 1, math.floor(font:getWidth(float.value) / 2), C_TILE_SIZE + 10)
+        love.graphics.setColor(255, 255, 255, math.max(0, math.floor(255 - (255 * float.time))))
+        love.graphics.print(float.value, self.posd.x * C_TILE_SIZE + (C_TILE_SIZE / 2)+1, self.posd.y * C_TILE_SIZE - math.floor(C_TILE_SIZE * float.time)+1, 0, 1, 1, math.floor(font:getWidth(float.value) / 2), C_TILE_SIZE + 10)
+    end
 end
 
 
@@ -72,4 +89,9 @@ end
 
 function Player:unmove(direction)
     moveHandler.unmove(self, direction)
+end
+
+
+function Player:addFloatingText(value)
+    table.insert(self.floats, 1, { time=0, value=value })
 end
