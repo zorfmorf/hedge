@@ -13,10 +13,7 @@ TexAtlas = Class{}
 
 function TexAtlas:init(path)
     self.img = love.graphics.newImage(path)
-    self.batch_floor = love.graphics.newSpriteBatch(self.img, 2000)
-    self.batch_floor2 = love.graphics.newSpriteBatch(self.img)
-    self.batch_object = love.graphics.newSpriteBatch(self.img)
-    self.batch_overlay = love.graphics.newSpriteBatch(self.img)
+    self:update()
     
     self.quads = {}
     for i = 0, math.floor(self.img:getWidth() / C_TILE_SIZE) - 1 do
@@ -29,8 +26,13 @@ end
 
 
 -- 
-function TexAtlas:update(dt)
-    
+function TexAtlas:update()
+    local factor = math.floor((screen.w * screen.h) * 2 / (C_TILE_SIZE * C_TILE_SIZE))
+    self.batch_floor = love.graphics.newSpriteBatch(self.img, factor * 2)
+    self.batch_floor2 = love.graphics.newSpriteBatch(self.img, factor)
+    self.batch_object = love.graphics.newSpriteBatch(self.img, factor)
+    self.batch_overlay = love.graphics.newSpriteBatch(self.img, factor)
+    log:msg("verbose", "Updated texatlas size with factor", factor)
 end
 
 

@@ -94,10 +94,19 @@ function settings:show()
             end
             if Gui.Button{ text="Apply" } then
                 open = false
+                local newResolution = false
+                if not (self.settings.width == self.settings.modes[self.settings.modeindex].width) or
+                   not (self.settings.height == self.settings.modes[self.settings.modeindex].height) then
+                    newResolution = true
+                end
                 self.settings.width = self.settings.modes[self.settings.modeindex].width
                 self.settings.height = self.settings.modes[self.settings.modeindex].height
                 self.settings.mode.fsaa = self.settings.fsaa
                 love.window.setMode( self.settings.width, self.settings.height, self.settings.mode )
+                if newResolution and game.atlas then
+                    screen:update()
+                    game.atlas:update()
+                end
             end
         Gui.group.pop{}
     Gui.group.pop{}
