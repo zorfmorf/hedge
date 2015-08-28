@@ -14,6 +14,7 @@ C_MAP_VAR = 'var.file' -- contains game variables
 C_MAP_GAME_ATLAS = 'atlas.png' -- name of the generated game atlas
 C_MAP_GAME_ATLAS_MAPPING = 'atlas.file' -- maping for atlas
 C_MAP_PLANTS = 'plants.file' -- contains all plants
+C_MAP_SETTINGS = 'settings.file' --contains video settings
 
 -- amount of individual tiles in a block
 C_BLOCK_SIZE = 8

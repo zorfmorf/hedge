@@ -96,6 +96,7 @@ function settings:show()
                 open = false
                 self.settings.width = self.settings.modes[self.settings.modeindex].width
                 self.settings.height = self.settings.modes[self.settings.modeindex].height
+                self.settings.mode.fsaa = self.settings.fsaa
                 love.window.setMode( self.settings.width, self.settings.height, self.settings.mode )
             end
         Gui.group.pop{}
@@ -106,5 +107,46 @@ end
 
 
 function settings:save()
+    local file = love.filesystem.newFile(C_MAP_SETTINGS)
+    if file then
+        file:open('w')
+        local w, h, f = love.window.getMode()
+        file:write("width;"..w.."\n")
+        file:write("height;"..h.."\n")
+        for name,value in pairs(f) do
+            file:write(name..";"..tostring(value).."\n")
+        end
+        file:close()
+    end
+end
+
+
+function settings:load()
     
+    local file = love.filesystem.newFile(C_MAP_SETTINGS)
+    if love.filesystem.isFile(C_MAP_SETTINGS) and file then
+        file:open('r')
+        local i = 1
+        local width = nil
+        local height = nil
+        local mode = {}
+        for line in file:lines() do
+            local v = line:split(';')
+            if i == 1 then
+                width = tonumber(v[2])
+            end
+            if i == 2 then
+                height = tonumber(v[2])
+            end
+            if i > 2 then
+                local value = v[2]
+                if tonumber(v[2]) then value = tonumber(v[2]) end
+                if v[2] == "false" then value = false end
+                mode[v[1]] = value
+            end
+            i = i + 1
+        end
+        love.window.setMode(width, height, mode)
+        file:close()
+    end
 end

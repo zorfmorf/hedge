@@ -59,7 +59,10 @@ function st_menu_main:update(dt)
                 options = true
                 settings:read()
             end
-            if Gui.Button{text = "Exit"} then love.event.push("quit") end
+            if Gui.Button{text = "Exit"} then
+                settings:save()
+                love.event.push("quit")
+            end
         end
         
     Gui.group.pop{}
@@ -77,6 +80,7 @@ function st_menu_main:keypressed(key, isrepeat)
         if showLoad then
             showLoad = false
         else
+            settings:save()
             love.event.push("quit")
         end
     end
