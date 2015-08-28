@@ -38,7 +38,7 @@ end
 -- there is a separate walkedOnTile function
 function eventHandler.triggerEvent(id, walked, tx, ty)
     if events[id] then
-        log:msg("verbose", "Triggered event", events[id].name)
+        log:msg("verbose", "Triggered event", events[id].name, "at", tx, ty)
         if walked then
             events[id].walk(tx, ty)
         else
@@ -62,7 +62,6 @@ function eventHandler.walkedOnTile(pos)
             return true
         else
             eventHandler.triggerEvent(tile.event, true, pos.x, pos.y)
-            return false
         end
     end
     return false

@@ -22,6 +22,7 @@ function TexAtlas:init(path)
             self.quads[i][j] = love.graphics.newQuad( i * C_TILE_SIZE, j * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, self.img:getDimensions())
         end
     end
+    log:msg("verbose", "Initiated texture atlas", path)
 end
 
 

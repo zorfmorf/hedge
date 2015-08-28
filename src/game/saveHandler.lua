@@ -49,6 +49,7 @@ function saveHandler.newGame()
     entityHandler.load()
     var.new()
     timeHandler.load()
+    inventory:init()
 end
 
 -- TODO handle different savespots
@@ -60,6 +61,7 @@ function saveHandler.saveGame(slot)
     plantHandler.save()
     var.set("current_map", game.map.name)
     var.save()
+    inventory:save()
     if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
     copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..slot..'/')
 end
@@ -74,4 +76,5 @@ function saveHandler.loadGame(name)
     var.load()
     timeHandler.load()
     plantHandler.load()
+    inventory:load()
 end

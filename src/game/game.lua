@@ -27,8 +27,6 @@ function game:init(editmode)
         self.map = maploader:read(path, C_MAP_NAME_DEFAULT)
     end
     
-    if not brushHandler.getAtlanti() then brushHandler.init() end
-    
     if not self.plants then self.plants = {} end
     self:updatePlants()
     

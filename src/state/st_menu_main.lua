@@ -38,7 +38,7 @@ function st_menu_main:update(dt)
     
     screen:update()
     
-    Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.4}}
+    Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.2}}
     
         if showLoad then 
             loadMenu()

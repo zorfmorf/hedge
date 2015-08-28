@@ -23,6 +23,5 @@ texture["plant.potatoe.1"] = { 1, 9, 24 }
 texture["plant.potatoe.2"] = { 1, 9, 25 }
 texture["plant.potatoe.3"] = { 1, 9, 26 }
 texture["plant.potatoe.4"] = { 1, 9, 27 }
-texture["plant.potatoe.5"] = { 1, 9, 28 }
-texture["plant.potatoe.6"] = { 1, 9, 29 }
+texture["plant.potatoe.5"] = { 1, 9, 29 }
 texture["produce.potatoe"] = { 1, 9, 30 }

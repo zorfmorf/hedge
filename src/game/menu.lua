@@ -34,7 +34,7 @@ end
 
 
 function Menu:update(dt)
-    Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.4}}
+    Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.2}}
         if self.current == "settings" then
             if not settings:show() then
                 self.current = "default"

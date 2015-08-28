@@ -144,6 +144,8 @@ function st_ingame:draw()
         drawHelper:timeAndDate()
     end
     
+    inventory:draw()
+    
     if self.transition then self.transition:draw() end
     
     if self.menu:isOpen() then self.menu:draw() end

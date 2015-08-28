@@ -19,8 +19,8 @@ function Potatoe:update(value)
     
     if value and value > 0 then 
         self.days = self.days + value
-        if self.state < 5 then
-            self.state = math.min(5, 1 + math.floor(self.days / 2))
+        if self.state < 4 then
+            self.state = math.min(4, 1 + math.floor(self.days / 2))
         end
     end
     
@@ -28,12 +28,19 @@ function Potatoe:update(value)
         local tile = game.map:getTile(self.tx, self.ty)
         if tile then
             tile.object = deepcopy(texture["plant.potatoe."..self.state])
-            tile.block = self.state > 1
+            tile.block = self.state > 1 and self.state < 5
         end
     end
 end
 
 
 function Potatoe:isHarvestable()
-    return self.state == 5
+    return self.state == 4
+end
+
+
+function Potatoe:harvest()
+    self.state = 5
+    local tile = game.map:getTile(self.tx, self.ty)
+    inventory:add("Potatoes")
 end

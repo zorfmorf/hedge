@@ -157,5 +157,6 @@ function settings:load()
         end
         love.window.setMode(width, height, mode)
         file:close()
+        log:msg("verbose", "Read video settins from file")
     end
 end
