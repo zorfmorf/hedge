@@ -27,15 +27,14 @@ function game:init(editmode)
         self.map = maploader:read(path, C_MAP_NAME_DEFAULT)
     end
     
-    if not brushHandler.getAtlanti() then brushHandler.init() end
-    
-    self.plants = {}
+    if not self.plants then self.plants = {} end
+    self:updatePlants()
     
 end
 
 
-function game:newDay()
+function game:updatePlants(value)
     for i,plant in pairs(self.plants) do
-        plant:update()
+        plant:update(value)
     end
 end

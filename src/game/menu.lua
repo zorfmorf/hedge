@@ -34,7 +34,12 @@ end
 
 
 function Menu:update(dt)
-    Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.4}}
+    Gui.group.push{grow = "down", pos = {screen.w * 0.2, screen.h * 0.2}}
+        if self.current == "settings" then
+            if not settings:show() then
+                self.current = "default"
+            end
+        end
         if self.current == "default" then
             if Gui.Button{text = "Resume"} then 
                 self.active = false
@@ -44,6 +49,10 @@ function Menu:update(dt)
             end
             if Gui.Button{text = "Load"} then
                 self.current = "load"
+            end
+            if Gui.Button{text = "Settings" } then
+                self.current = "settings"
+                settings:read()
             end
             if Gui.Button{text = "Exit"} then
                 saveHandler.saveGame()
@@ -67,7 +76,7 @@ function Menu:update(dt)
         if self.current == "save" then
             for i,slot in ipairs(self.slots) do
                 if not (slot == "auto") then
-                        if Gui.Button{text = slot} then
+                    if Gui.Button{text = slot} then
                         saveHandler.saveGame(slot)
                         self.active = false
                     end

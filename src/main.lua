@@ -38,6 +38,7 @@ function love.load()
     --if arg[#arg] == "-debug" then require("mobdebug").start() end
     
     log.init()
+    settings:load()
     Gamestate.registerEvents()
     Gamestate.switch(st_menu_main)
     --Gamestate.switch(st_edit)

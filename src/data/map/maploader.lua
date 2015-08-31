@@ -81,6 +81,7 @@ function maploader:read( path, name )
         end
         
         file:close()
+        log:msg("verbose", "Finished loading map", map.name)
     else
         log:msg("debug", "Map not found:", path..name)
         map:createBlock(0, 0)

@@ -12,7 +12,10 @@ C_MAP_CURRENT = 'current/' -- currently played game is here
 C_MAP_SUFFIX = '.map' -- file name of maps
 C_MAP_VAR = 'var.file' -- contains game variables
 C_MAP_GAME_ATLAS = 'atlas.png' -- name of the generated game atlas
-C_MAP_GAME_ATLAS_MAPPING = 'atlas.txt' -- maping for atlas
+C_MAP_GAME_ATLAS_MAPPING = 'atlas.file' -- maping for atlas
+C_MAP_PLANTS = 'plants.file' -- contains all plants
+C_MAP_SETTINGS = 'settings.file' --contains video settings
+C_MAP_INVENTORY = 'inventory.file' --contains video settings
 
 -- amount of individual tiles in a block
 C_BLOCK_SIZE = 8
@@ -37,10 +40,13 @@ KEY_DOWN = "down"
 KEY_UP = "up"
 KEY_USE = "return"
 KEY_EXIT = "escape"
+KEY_INVENTORY = "i"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
 CHAR_ANIM = 17 -- animation speed
+CHAR_MOVE_DIRCHANGE_THRESHOLD = 0.13 -- time buffer when changing direction in case it's just a direction change
+CHAR_FLOAT_TIME = 0.4 -- floating time of pickup texts
 
 -- dialog settings
 C_DIALOG_PAD = 10

@@ -38,7 +38,7 @@ end
 -- there is a separate walkedOnTile function
 function eventHandler.triggerEvent(id, walked, tx, ty)
     if events[id] then
-        log:msg("verbose", "Triggered event", events[id].name)
+        log:msg("verbose", "Triggered event", events[id].name, "at", tx, ty)
         if walked then
             events[id].walk(tx, ty)
         else
@@ -54,13 +54,14 @@ function eventHandler.walkedOnTile(pos)
         if type(tile.event) == "table" then
             log:msg("verbose", "Triggered transition to", tile.event[1]..":"..tile.event[2])
             st_ingame.transition = Transition("fade_out", function()
+                        maploader:save(game.map, C_MAP_CURRENT)
                         game.map = maploader:read(C_MAP_CURRENT, tile.event[1]..C_MAP_SUFFIX)
                         st_ingame:placePlayer(tile.event[2])
+                        game:updatePlants()
                     end)
             return true
         else
             eventHandler.triggerEvent(tile.event, true, pos.x, pos.y)
-            return false
         end
     end
     return false
