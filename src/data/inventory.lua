@@ -13,6 +13,7 @@ function inventory:init()
     self.items = {}
     self.count = 0
     self.maxitems = 10
+    self.open = false
 end
 
 
@@ -62,6 +63,24 @@ function inventory:draw()
     love.graphics.print(line, screen.w - (16 + backpack:getWidth() / 2), screen.h - math.floor(1), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     love.graphics.setColor(Color.WHITE)
     love.graphics.print(line, screen.w - (15 + backpack:getWidth() / 2), screen.h - math.floor(2), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    
+    if self.open then
+        love.graphics.setColor(Color.BLACK)
+        love.graphics.rectangle("fill", screen.w * 0.25, screen.h * 0.25, screen.w * 0.5, screen.h * 0.5 )
+        love.graphics.setColor(Color.WHITE)
+        for i,item in ipairs(self.items) do
+            love.graphics.print(item.id.." x"..item.count, screen.w * 0.25 + 10, screen.h * 0.25 + i * font:getHeight())
+        end
+    end
+end
+
+
+function inventory:trigger(value)
+    if value then
+        self.open = value
+    else
+        self.open = not self.open
+    end
 end
 
 

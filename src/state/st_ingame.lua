@@ -173,7 +173,14 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_DOWN and not isrepeat then player:move("down") end
         if key == KEY_UP and not isrepeat then player:move("up") end
         if key == KEY_USE then player:use() end
-        if key == KEY_EXIT then self.menu:open() end
+        if key == KEY_INVENTORY then inventory:trigger() end
+        if key == KEY_EXIT then
+            if inventory.open then
+                inventory:trigger(false)
+            else
+                self.menu:open()
+            end
+        end
     end
 end
 

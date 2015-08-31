@@ -39,6 +39,7 @@ KEY_DOWN = "down"
 KEY_UP = "up"
 KEY_USE = "return"
 KEY_EXIT = "escape"
+KEY_INVENTORY = "i"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second
