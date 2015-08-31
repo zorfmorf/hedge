@@ -308,6 +308,32 @@ function mapHelper:updateFieldTile(tx, ty)
            not (game.map:getTile(tx,ty+1).plowed and game.map:getTile(tx-1,ty+1).plowed) then
             tile.floor = deepcopy(texture["field.outer.d"])
         end
+        
+        -- outer uldr
+        if game.map:getTile(tx-1,ty-1).plowed and 
+            game.map:getTile(tx,ty-1).plowed and
+            not game.map:getTile(tx+1,ty-1).plowed and
+            game.map:getTile(tx-1,ty).plowed and
+            game.map:getTile(tx,ty).plowed and
+            game.map:getTile(tx+1,ty).plowed and
+            not game.map:getTile(tx-1,ty+1).plowed and
+            game.map:getTile(tx,ty+1).plowed and
+            game.map:getTile(tx+1,ty+1).plowed then
+            tile.floor = deepcopy(texture["field.trans.uldr"])
+        end
+        
+        -- outer urdl
+        if not game.map:getTile(tx-1,ty-1).plowed and 
+            game.map:getTile(tx,ty-1).plowed and
+            game.map:getTile(tx+1,ty-1).plowed and
+            game.map:getTile(tx-1,ty).plowed and
+            game.map:getTile(tx,ty).plowed and
+            game.map:getTile(tx+1,ty).plowed and
+            game.map:getTile(tx-1,ty+1).plowed and
+            game.map:getTile(tx,ty+1).plowed and
+            not game.map:getTile(tx+1,ty+1).plowed then
+            tile.floor = deepcopy(texture["field.trans.urdl"])
+        end
     end
 end
 

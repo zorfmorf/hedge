@@ -17,6 +17,8 @@ texture["field.outer.l"] = { 1, 5, 18 }
 texture["field.outer.r"] = { 1, 7, 18 }
 texture["field.outer.d"] = { 1, 6, 19 }
 texture["field.inner"] = { 1, 6, 18 }
+texture["field.trans.uldr"] = {7, 0, 0}
+texture["field.trans.urdl"] = {7, 1, 0}
  
 -- potato plant
 texture["plant.potatoe.1"] = { 1, 9, 24 }
