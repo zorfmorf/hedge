@@ -85,10 +85,38 @@ end
 
 
 function inventory:save()
-    -- TODO implement
+    local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
+    file:open("w")
+    file:write(self.count..";")
+    file:write(self.maxitems.."\n")
+    for i,item in pairs(self.items) do
+        file:write(item.id..';')
+        file:write(tostring(item.count)..'\n')
+    end
+    file:close()
 end
 
 
 function inventory:load()
-    self:init() -- TODO implement
+    self:init()
+    if love.filesystem.isFile( C_MAP_CURRENT..C_MAP_INVENTORY )then
+        local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
+        file:open("r")
+        local firstLine = true
+        for line in file:lines( ) do
+            local values = line:split(";")
+            if #values == 2 then
+                if firstLine then
+                    self.count = tonumber(values[1])
+                    self.maxitems = tonumber(values[2])
+                    firstLine = false
+                end
+                local item = {}
+                item.id = values[1]
+                item.count = tonumber(values[2])
+                table.insert(self.items, item)
+            end
+        end
+        file:close()
+    end
 end

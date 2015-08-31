@@ -24,15 +24,17 @@ end
 
 
 function plantHandler.save()
-    local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_PLANTS )
-    file:open("w")
-    for i,plant in pairs(game.plants) do
-        file:write(plant.type..';')
-        file:write(plant.map..';')
-        file:write(tostring(plant.tx)..';')
-        file:write(tostring(plant.ty)..';')
-        file:write(tostring(plant.days)..';')
-        file:write(tostring(plant.state)..'\n')
+    if love.filesystem.isFile( C_MAP_CURRENT..C_MAP_PLANTS )then
+        local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_PLANTS )
+        file:open("w")
+        for i,plant in pairs(game.plants) do
+            file:write(plant.type..';')
+            file:write(plant.map..';')
+            file:write(tostring(plant.tx)..';')
+            file:write(tostring(plant.ty)..';')
+            file:write(tostring(plant.days)..';')
+            file:write(tostring(plant.state)..'\n')
+        end
+        file:close()
     end
-    file:close()
 end
