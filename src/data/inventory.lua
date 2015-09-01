@@ -17,24 +17,25 @@ function inventory:init()
 end
 
 
-function inventory:add(id, count)
-    self.count = self.count + count
-    player:addFloatingText(id.." x"..tostring(count))
+function inventory:add(itemobj)
+    self.count = self.count + itemobj.count
+    player:addFloatingText(itemobj.id.." x"..tostring(itemobj.count))
     for i,item in ipairs(self.items) do
-        if item.id == id then
-            item.count = item.count + count
+        if item.id == itemobj.id then
+            item.count = item.count + itemobj.count
             return
         end
     end
-    table.insert(self.items, { id=id, count=count })
+    table.insert(self.items, itemobj)
 end
 
 
-function inventory:remove(id)
+function inventory:remove(id, amount)
     for i,item in ipairs(self.items) do
         if item.id == id then
-            item.count = item.count - 1
-            self.count = self.count - 1
+            local am = math.min(amount, item.count)
+            item.count = item.count - am
+            self.count = self.count - am
             if item.count < 1 then
                 table.remove(self.items, i)
                 return
@@ -90,6 +91,7 @@ function inventory:save()
     file:write(self.count..";")
     file:write(self.maxitems.."\n")
     for i,item in pairs(self.items) do
+        file:write(item.type..';')
         file:write(item.id..';')
         file:write(tostring(item.count)..'\n')
     end
@@ -105,16 +107,17 @@ function inventory:load()
         local firstLine = true
         for line in file:lines( ) do
             local values = line:split(";")
-            if #values == 2 then
-                if firstLine then
-                    self.count = tonumber(values[1])
-                    self.maxitems = tonumber(values[2])
-                    firstLine = false
-                end
-                local item = {}
-                item.id = values[1]
-                item.count = tonumber(values[2])
+            if firstLine then
+                self.count = tonumber(values[1])
+                self.maxitems = tonumber(values[2])
+                firstLine = false
+            end
+            local item = nil
+            if values[1] == "produce" then item = Produce(values[2], tonumber(values[3])) end
+            if item then
                 table.insert(self.items, item)
+            else
+                log:msg("error", "Failed to load item line", line)
             end
         end
         file:close()
