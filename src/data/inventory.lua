@@ -3,10 +3,22 @@
 -- an inventory item is: { id=id, count=count}
 
 
-local backpack = love.graphics.newImage("img/ui/backpack.png")
+local backpack = nil
 local font = love.graphics.newFont("font/alagard.ttf", 25)
 
 inventory = {}
+
+
+local function loadImages()
+    local img = love.image.newImageData("img/icon/callum_icons.png")
+    for i=0,5,1 do
+        for j=0,2 do
+            local dat = love.image.newImageData(C_INVENTORY_SIZE, C_INVENTORY_SIZE)
+            dat:paste(img, 0, 0, i * C_INVENTORY_SIZE, j * C_INVENTORY_SIZE, C_INVENTORY_SIZE, C_INVENTORY_SIZE)
+            if i == 0 and j == 0 then backpack = love.graphics.newImage(dat) end
+        end
+    end
+end
 
 
 function inventory:init()
@@ -14,6 +26,7 @@ function inventory:init()
     self.count = 0
     self.maxitems = 10
     self.open = false
+    loadImages()
 end
 
 
