@@ -24,6 +24,8 @@ local function use(tx, ty)
             tile.floor = deepcopy(texture["field.patch"])
             tile.plowed = true
             mapHelper:plowedFieldTile(tx, ty)
+            inventory:usedCurrentTool()
+            timeHandler.addTime(20)
         end
     end
 end

@@ -84,6 +84,16 @@ function inventory:removeAll(id)
 end
 
 
+function inventory:selectAnyTool()
+    for i=1,#self.items do
+        if self.items[i].type == "tool" then
+            self.tool = i
+            return
+        end
+    end
+end
+
+
 function inventory:nextTool()
     if self.tool then
         local i = self.tool + 1
@@ -95,6 +105,8 @@ function inventory:nextTool()
             end
             i = i + 1
         end
+    else
+        inventory:selectAnyTool()
     end
 end
 
@@ -110,12 +122,27 @@ function inventory:previousTool()
             end
             i = i - 1
         end
+    else
+        inventory:selectAnyTool()
     end
 end
 
 
 function inventory:usesTool(tool)
     return self.tool and self.items[self.tool] and self.items[self.tool].id == tool
+end
+
+
+function inventory:usedCurrentTool()
+    if self.tool and self.items[self.tool] then
+        local destroyed = self.items[self.tool]:use()
+        if destroyed then
+            player:addFloatingText(self.items[self.tool]:getName().." broke")
+            table.remove(self.items, self.tool)
+            self.count = self.count - 1
+            inventory:selectAnyTool()
+        end
+    end
 end
 
 
@@ -126,14 +153,19 @@ function inventory:draw()
     love.graphics.setFont(font)
     love.graphics.setColor(Color.BLACK)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
-    love.graphics.print(line, screen.w - (16 + self.icon.backpack:getWidth() / 2), screen.h - math.floor(1), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (16 + self.icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     love.graphics.setColor(Color.WHITE)
-    love.graphics.print(line, screen.w - (15 + self.icon.backpack:getWidth() / 2), screen.h - math.floor(2), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (15 + self.icon.backpack:getWidth() / 2), screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     
     -- draw tool / seedbag
     if self.tool then
         local img = self.items[self.tool].icon
-        if img then love.graphics.draw(img, 15, screen.h - 10, 0, 1.5, 1.5, 0, img:getHeight()) end
+        if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight()) end
+        love.graphics.setColor(Color.BLACK)
+        local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
+        love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        love.graphics.setColor(Color.WHITE)
+        love.graphics.print(line, 14 + img:getWidth() / 2, screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     end
     
     if self.open then
@@ -165,7 +197,7 @@ function inventory:save()
     for i,item in pairs(self.items) do
         file:write(item.type..';')
         if item.type == "tool" then
-            file:write(item.id..","..tostring(item.level)..';')
+            file:write(item.id..","..tostring(item.level)..","..tostring(item.durability)..';')
         else
             file:write(item.id..';')
         end
@@ -194,6 +226,7 @@ function inventory:load()
             if values[1] == "tool" then
                 local vs = values[2]:split(",")
                 item = Tool(vs[1], tonumber(vs[2]))
+                item.durability = tonumber(vs[3])
             end
             if item then
                 table.insert(self.items, item)

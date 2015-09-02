@@ -15,9 +15,15 @@ local function use(tx, ty)
     
     if tile then
         if inventory:usesTool("Pickaxe") then
+            -- update tile
             tile.object = nil
             tile.block = false
             tile.event = 4 -- field event
+            
+            -- game logic
+            inventory:add(Produce("Stone", 1))
+            timeHandler.addTime(60)
+            inventory:usedCurrentTool()
         end
     end
 end
