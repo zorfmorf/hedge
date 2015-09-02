@@ -1,3 +1,5 @@
+-- set image filter before any images are loaded
+--love.graphics.setDefaultFilter( "nearest", "nearest" )
 
 -- require libraries
 Gamestate = require "lib.hump.gamestate"

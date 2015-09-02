@@ -15,3 +15,8 @@ function Produce:createIcon()
     self.icon = deepcopy(texture["item.default"])
     if self.id == "Potatoes" then self.icon = deepcopy(texture["produce.potatoe"]) end
 end
+
+
+function Produce:getName()
+    return self.id
+end

@@ -11,7 +11,10 @@ end
 
 
 local function use(tx, ty)
-    st_ingame:startDialog("d_chest")
+    inventory:add(Tool("Axe", 0))
+    inventory:add(Tool("Shovel", 0))
+    inventory:add(Tool("Pickaxe", 1))
+    inventory:add(Tool("Scythe", 2))
 end
 
 

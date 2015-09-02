@@ -1,21 +1,23 @@
 -- the global player inventory
--- an item is identified by a string
--- an inventory item is: { id=id, count=count}
 
-
-local backpack = nil
 local font = love.graphics.newFont("font/alagard.ttf", 25)
 
 inventory = {}
 
 
-local function loadImages()
-    local img = love.image.newImageData("img/icon/callum_icons.png")
+function inventory:loadImages()
+    self.icon = {}
+    local img = love.image.newImageData("img/icon/callum_icons_border.png")
     for i=0,5,1 do
         for j=0,2 do
             local dat = love.image.newImageData(C_INVENTORY_SIZE, C_INVENTORY_SIZE)
             dat:paste(img, 0, 0, i * C_INVENTORY_SIZE, j * C_INVENTORY_SIZE, C_INVENTORY_SIZE, C_INVENTORY_SIZE)
-            if i == 0 and j == 0 then backpack = love.graphics.newImage(dat) end
+            if i == 0 and j == 0 then self.icon.backpack = love.graphics.newImage(dat) end
+            if i == 1 and j == 0 then self.icon.seedbag = love.graphics.newImage(dat) end
+            if i == 2 then self.icon["Shovel"..tostring(j)] = love.graphics.newImage(dat) end
+            if i == 3 then self.icon["Pickaxe"..tostring(j)] = love.graphics.newImage(dat) end
+            if i == 4 then self.icon["Axe"..tostring(j)] = love.graphics.newImage(dat) end
+            if i == 5 then self.icon["Scythe"..tostring(j)] = love.graphics.newImage(dat) end
         end
     end
 end
@@ -23,23 +25,30 @@ end
 
 function inventory:init()
     self.items = {}
-    self.count = 0
-    self.maxitems = 10
-    self.open = false
-    loadImages()
+    self.count = 0 -- current item amount
+    self.maxitems = 10 -- current maximum item amount
+    self.open = false -- if the inventory is open (list of all items)
+    self.tool = nil -- currently selected tool index
+    self:loadImages()
 end
 
 
 function inventory:add(itemobj)
     self.count = self.count + itemobj.count
-    player:addFloatingText(itemobj.id.." x"..tostring(itemobj.count))
-    for i,item in ipairs(self.items) do
-        if item.id == itemobj.id then
-            item.count = item.count + itemobj.count
-            return
+    if itemobj.type == "tool" then
+        player:addFloatingText(itemobj:getName())
+        table.insert(self.items, itemobj)
+        if not self.tool then self.tool = #self.items end
+    else
+        player:addFloatingText(itemobj:getName().." x"..tostring(itemobj.count))
+        for i,item in ipairs(self.items) do
+            if item.id == itemobj.id then
+                item.count = item.count + itemobj.count
+                return
+            end
         end
+        table.insert(self.items, itemobj)
     end
-    table.insert(self.items, itemobj)
 end
 
 
@@ -49,6 +58,9 @@ function inventory:remove(id, amount)
             local am = math.min(amount, item.count)
             item.count = item.count - am
             self.count = self.count - am
+            if item.type == "tool" and i == self.tool then
+                self.tool = nil
+            end
             if item.count < 1 then
                 table.remove(self.items, i)
                 return
@@ -63,27 +75,73 @@ function inventory:removeAll(id)
         if item.id == id then
             self.count = self.count - item.count
             table.remove(self.items, i)
+            if item.type == "tool" and i == self.tool then
+                self.tool = nil
+            end
             return
         end
     end
 end
 
 
+function inventory:nextTool()
+    if self.tool then
+        local i = self.tool + 1
+        while not (i == self.tool) do
+            if not self.items[i] then i = 1 end
+            if self.items[i].type == "tool" then
+                self.tool = i
+                return
+            end
+            i = i + 1
+        end
+    end
+end
+
+
+function inventory:previousTool()
+    if self.tool then
+        local i = self.tool - 1
+        while not (i == self.tool) do
+            if not self.items[i] then i = #self.items end
+            if self.items[i].type == "tool" then
+                self.tool = i
+                return
+            end
+            i = i - 1
+        end
+    end
+end
+
+
+function inventory:usesTool(tool)
+    return self.tool and self.items[self.tool] and self.items[self.tool].id == tool
+end
+
+
 function inventory:draw()
-    love.graphics.draw(backpack, screen.w - 15, screen.h - 10, 0, 1, 1, backpack:getWidth(), backpack:getHeight())
+    
+    -- draw backpack
+    love.graphics.draw(self.icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, self.icon.backpack:getWidth(), self.icon.backpack:getHeight())
     love.graphics.setFont(font)
     love.graphics.setColor(Color.BLACK)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
-    love.graphics.print(line, screen.w - (16 + backpack:getWidth() / 2), screen.h - math.floor(1), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (16 + self.icon.backpack:getWidth() / 2), screen.h - math.floor(1), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     love.graphics.setColor(Color.WHITE)
-    love.graphics.print(line, screen.w - (15 + backpack:getWidth() / 2), screen.h - math.floor(2), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (15 + self.icon.backpack:getWidth() / 2), screen.h - math.floor(2), 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    
+    -- draw tool / seedbag
+    if self.tool then
+        local img = self.items[self.tool].icon
+        if img then love.graphics.draw(img, 15, screen.h - 10, 0, 1.5, 1.5, 0, img:getHeight()) end
+    end
     
     if self.open then
         love.graphics.setColor(Color.BLACK)
         love.graphics.rectangle("fill", screen.w * 0.25, screen.h * 0.25, screen.w * 0.5, screen.h * 0.5 )
         love.graphics.setColor(Color.WHITE)
         for i,item in ipairs(self.items) do
-            love.graphics.print(item.id.." x"..item.count, screen.w * 0.25 + 10, screen.h * 0.25 + i * font:getHeight())
+            love.graphics.print(item:getName().." x"..item.count, screen.w * 0.25 + 10, screen.h * 0.25 + i * font:getHeight())
         end
     end
 end
@@ -101,11 +159,16 @@ end
 function inventory:save()
     local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
     file:open("w")
+    file:write(self.tool..";")
     file:write(self.count..";")
     file:write(self.maxitems.."\n")
     for i,item in pairs(self.items) do
         file:write(item.type..';')
-        file:write(item.id..';')
+        if item.type == "tool" then
+            file:write(item.id..","..tostring(item.level)..';')
+        else
+            file:write(item.id..';')
+        end
         file:write(tostring(item.count)..'\n')
     end
     file:close()
@@ -121,12 +184,17 @@ function inventory:load()
         for line in file:lines( ) do
             local values = line:split(";")
             if firstLine then
-                self.count = tonumber(values[1])
-                self.maxitems = tonumber(values[2])
+                if tonumber(values[1]) then self.tool = tonumber(values[1]) end
+                self.count = tonumber(values[2])
+                self.maxitems = tonumber(values[3])
                 firstLine = false
             end
             local item = nil
             if values[1] == "produce" then item = Produce(values[2], tonumber(values[3])) end
+            if values[1] == "tool" then
+                local vs = values[2]:split(",")
+                item = Tool(vs[1], tonumber(vs[2]))
+            end
             if item then
                 table.insert(self.items, item)
             else

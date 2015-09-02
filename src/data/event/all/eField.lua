@@ -19,10 +19,12 @@ local function use(tx, ty)
             table.insert(game.plants, Potatoe(tx, ty))
             tile.event = 5 -- ePlant
         end
-    else --TODO if correct tool equipped        
-        tile.floor = deepcopy(texture["field.patch"])
-        tile.plowed = true
-        mapHelper:plowedFieldTile(tx, ty)
+    else
+        if inventory:usesTool("Shovel") then
+            tile.floor = deepcopy(texture["field.patch"])
+            tile.plowed = true
+            mapHelper:plowedFieldTile(tx, ty)
+        end
     end
 end
 
