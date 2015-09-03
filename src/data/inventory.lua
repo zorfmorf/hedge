@@ -188,16 +188,28 @@ function inventory:draw()
         for i,item in ipairs(self.items) do
             
             local text = item:getName().." x"..item.count
-            rowwidth = math.max(inventory_font:getWidth(text), rowwidth)
+            
+            -- draw icon first
+            local iconsize = C_TILE_SIZE
+            love.graphics.setColor(Color.WHITE)
+            if item.type == "tool" then
+                iconsize = item.icon:getWidth() * 0.5
+                love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
+            else
+                local t = game.mapping[item.icon[1]][item.icon[2]][item.icon[3]]
+                love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * iconsize+10))
+            end
+            
+            rowwidth = math.max(inventory_font:getWidth(text) + iconsize + 5, rowwidth)
             
             love.graphics.setColor(Color.BLACK)
-            love.graphics.print(text, math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * inventory_font:getHeight()+10))
+            love.graphics.print(text, math.floor(screen.w * 0.2 + 15 + col + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             
             love.graphics.setColor(Color.WHITE)
-            love.graphics.print(text, math.floor(screen.w * 0.2 + 11 + col), math.floor(screen.h * 0.2 + row * inventory_font:getHeight()+11))
+            love.graphics.print(text, math.floor(screen.w * 0.2 + 16 + col + iconsize), math.floor(screen.h * 0.2 + row * iconsize+11 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             
             row = row + 1
-            if row * inventory_font:getHeight() + 30 > self.box.img:getHeight() then
+            if row * iconsize + 30 > self.box.img:getHeight() then
                 row = 0
                 col = col + rowwidth + 20
                 rowwidth = 0
