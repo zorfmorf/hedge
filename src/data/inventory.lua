@@ -1,6 +1,7 @@
 -- the global player inventory
 
 local font = love.graphics.newFont("font/alagard.ttf", 25)
+local inventory_font = love.graphics.newFont("font/romulus.ttf", 22)
 
 inventory = {}
 
@@ -29,7 +30,16 @@ function inventory:init()
     self.maxitems = 10 -- current maximum item amount
     self.open = false -- if the inventory is open (list of all items)
     self.tool = nil -- currently selected tool index
+    self.box = nil -- contains inventory background draw object
     self:loadImages()
+end
+
+
+function inventory:update(dt)
+    if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
+        self.box = { w=screen.w, h=screen.h}
+        self.box.img = drawHelper:createGuiBox(math.floor(screen.w * 0.6), math.floor(screen.h * 0.6))
+    end
 end
 
 
@@ -160,7 +170,7 @@ function inventory:draw()
     -- draw tool / seedbag
     if self.tool then
         local img = self.items[self.tool].icon
-        if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight()) end
+        if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
         love.graphics.setColor(Color.BLACK)
         local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
         love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
@@ -169,11 +179,29 @@ function inventory:draw()
     end
     
     if self.open then
-        love.graphics.setColor(Color.BLACK)
-        love.graphics.rectangle("fill", screen.w * 0.25, screen.h * 0.25, screen.w * 0.5, screen.h * 0.5 )
         love.graphics.setColor(Color.WHITE)
+        love.graphics.draw(self.box.img, math.floor(screen.w * 0.2), math.floor(screen.h * 0.2))
+        love.graphics.setFont(inventory_font)
+        local col = 0
+        local row = 0
+        local rowwidth = 0
         for i,item in ipairs(self.items) do
-            love.graphics.print(item:getName().." x"..item.count, screen.w * 0.25 + 10, screen.h * 0.25 + i * font:getHeight())
+            
+            local text = item:getName().." x"..item.count
+            rowwidth = math.max(inventory_font:getWidth(text), rowwidth)
+            
+            love.graphics.setColor(Color.BLACK)
+            love.graphics.print(text, math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * inventory_font:getHeight()+10))
+            
+            love.graphics.setColor(Color.WHITE)
+            love.graphics.print(text, math.floor(screen.w * 0.2 + 11 + col), math.floor(screen.h * 0.2 + row * inventory_font:getHeight()+11))
+            
+            row = row + 1
+            if row * inventory_font:getHeight() + 30 > self.box.img:getHeight() then
+                row = 0
+                col = col + rowwidth + 20
+                rowwidth = 0
+            end
         end
     end
 end

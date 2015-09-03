@@ -90,6 +90,9 @@ function st_ingame:update(dt)
     
     -- draw helper needs to update daylight factors based on time and dt
     drawHelper:update(dt)
+    
+    -- update inventory so it maybe can redraw the inventory box
+    inventory:update(dt)
 end
 
 
@@ -166,8 +169,9 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_USE then self.dialog:advance() end
         if key == KEY_UP then self.dialog:up() end
         if key == KEY_DOWN then self.dialog:down() end
+    elseif inventory.open then
+        if key == KEY_INVENTORY or key == KEY_EXIT then inventory:trigger() end
     else
-        if key == "t" then timeHandler.addTime(60) end -- TODO: remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end
         if key == KEY_DOWN and not isrepeat then player:move("down") end
@@ -177,11 +181,7 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_PREVIOUS_TOOL then inventory:previousTool() end
         if key == KEY_INVENTORY then inventory:trigger() end
         if key == KEY_EXIT then
-            if inventory.open then
-                inventory:trigger(false)
-            else
-                self.menu:open()
-            end
+            self.menu:open()
         end
     end
 end
