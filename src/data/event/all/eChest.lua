@@ -15,6 +15,7 @@ local function use(tx, ty)
     inventory:add(Tool("Shovel", 0))
     inventory:add(Tool("Pickaxe", 1))
     inventory:add(Tool("Scythe", 2))
+    inventory:add(Seedbag())
 end
 
 

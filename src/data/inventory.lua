@@ -98,6 +98,7 @@ function inventory:selectAnyTool()
     for i=1,#self.items do
         if self.items[i].type == "tool" then
             self.tool = i
+            inventory:cycleSeed()
             return
         end
     end
@@ -111,12 +112,20 @@ function inventory:nextTool()
             if not self.items[i] then i = 1 end
             if self.items[i].type == "tool" then
                 self.tool = i
+                inventory:cycleSeed()
                 return
             end
             i = i + 1
         end
     else
         inventory:selectAnyTool()
+    end
+end
+
+
+function inventory:cycleSeed()
+    if self.tool and self.items[self.tool].id == "Seedbag" then
+        self.items[self.tool]:nextSeed()
     end
 end
 
@@ -128,6 +137,7 @@ function inventory:previousTool()
             if not self.items[i] then i = #self.items end
             if self.items[i].type == "tool" then
                 self.tool = i
+                inventory:cycleSeed()
                 return
             end
             i = i - 1
@@ -173,6 +183,9 @@ function inventory:draw()
         if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
         love.graphics.setColor(Color.BLACK)
         local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
+        if self.items[self.tool].id == "Seedbag" and todo then
+            line = self.items[self.seed].id
+        end
         love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
         love.graphics.setColor(Color.WHITE)
         love.graphics.print(line, 14 + img:getWidth() / 2, screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
