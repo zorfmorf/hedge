@@ -45,7 +45,7 @@ end
 
 function inventory:add(itemobj)
     self.count = self.count + itemobj.count
-    if itemobj.type == "tool" then
+    if itemobj.flags.tool then
         player:addFloatingText(itemobj:getName())
         table.insert(self.items, itemobj)
         if not self.tool then self.tool = #self.items end
@@ -68,7 +68,7 @@ function inventory:remove(id, amount)
             local am = math.min(amount, item.count)
             item.count = item.count - am
             self.count = self.count - am
-            if item.type == "tool" and i == self.tool then
+            if item.flags.tool and i == self.tool then
                 self.tool = nil
             end
             if item.count < 1 then
@@ -85,7 +85,7 @@ function inventory:removeAll(id)
         if item.id == id then
             self.count = self.count - item.count
             table.remove(self.items, i)
-            if item.type == "tool" and i == self.tool then
+            if item.flags.tool and i == self.tool then
                 self.tool = nil
             end
             return
@@ -96,7 +96,7 @@ end
 
 function inventory:selectAnyTool()
     for i=1,#self.items do
-        if self.items[i].type == "tool" then
+        if self.items[i].flags.tool then
             self.tool = i
             inventory:cycleSeed()
             return
@@ -110,7 +110,7 @@ function inventory:nextTool()
         local i = self.tool + 1
         while not (i == self.tool) do
             if not self.items[i] then i = 1 end
-            if self.items[i].type == "tool" then
+            if self.items[i].flags.tool then
                 self.tool = i
                 inventory:cycleSeed()
                 return
@@ -135,7 +135,7 @@ function inventory:previousTool()
         local i = self.tool - 1
         while not (i == self.tool) do
             if not self.items[i] then i = #self.items end
-            if self.items[i].type == "tool" then
+            if self.items[i].flags.tool then
                 self.tool = i
                 inventory:cycleSeed()
                 return
@@ -183,8 +183,11 @@ function inventory:draw()
         if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
         love.graphics.setColor(Color.BLACK)
         local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
-        if self.items[self.tool].id == "Seedbag" and todo then
-            line = self.items[self.seed].id
+        if self.items[self.tool].id == "Seedbag" then
+            line = ""
+            if self.items[self.tool].seed then
+                line = self.items[self.items[self.tool].seed].id
+            end
         end
         love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
         love.graphics.setColor(Color.WHITE)
@@ -205,7 +208,7 @@ function inventory:draw()
             -- draw icon first
             local iconsize = C_TILE_SIZE
             love.graphics.setColor(Color.WHITE)
-            if item.type == "tool" then
+            if item.flags.tool then
                 iconsize = item.icon:getWidth() * 0.5
                 love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
             else
@@ -248,13 +251,23 @@ function inventory:save()
     file:write(self.count..";")
     file:write(self.maxitems.."\n")
     for i,item in pairs(self.items) do
-        file:write(item.type..';')
-        if item.type == "tool" then
+        local isfirst = true
+        for key,value in pairs(item.flags) do
+            if isfirst then
+                isfirst = false
+            else
+                file:write(",")
+            end
+            file:write(key)
+        end
+        file:write(";")
+        if item.flags.tool then
             file:write(item.id..","..tostring(item.level)..","..tostring(item.durability)..';')
         else
             file:write(item.id..';')
         end
-        file:write(tostring(item.count)..'\n')
+        file:write(tostring(item.count)..';')
+        file:write(tostring(item.price)..'\n')
     end
     file:close()
 end
@@ -275,11 +288,20 @@ function inventory:load()
                 firstLine = false
             end
             local item = nil
-            if values[1] == "produce" then item = Produce(values[2], tonumber(values[3])) end
-            if values[1] == "tool" then
+            local flags = {}
+            for i,v in ipairs(values[1]:split(',')) do
+                flags[v] = true
+            end
+            if flags.tool then
                 local vs = values[2]:split(",")
-                item = Tool(vs[1], tonumber(vs[2]))
-                item.durability = tonumber(vs[3])
+                if vs[1] == "Seedbag" then
+                    item = Seedbag()
+                else
+                    item = Tool(vs[1], tonumber(vs[2]))
+                    item.durability = tonumber(vs[3])
+                end
+            else
+                item = Produce(values[2], tonumber(values[3]), flags, tonumber(values[4]))
             end
             if item then
                 table.insert(self.items, item)

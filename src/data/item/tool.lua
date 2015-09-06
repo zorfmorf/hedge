@@ -3,7 +3,7 @@ Tool = Class{}
 
 
 function Tool:init(id, level)
-    self.type = "tool"
+    self.flags = { tool=true, sellable = true }
     self.level = 0
     if level then self.level = level end
     self.id = id
@@ -33,4 +33,9 @@ end
 function Tool:use()
     self.durability = self.durability - 1
     return self.durability <= 0
+end
+
+
+function Tool:getSellPrice()
+    return self.price --todo: factor in level and durability
 end
