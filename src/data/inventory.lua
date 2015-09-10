@@ -296,31 +296,32 @@ function inventory:load()
         for line in file:lines( ) do
             local values = line:split(";")
             if firstLine then
-                if tonumber(values[1]) then self.tool = tonumber(values[1]) end
+                self.tool = tonumber(values[1])
                 self.count = tonumber(values[2])
                 self.maxitems = tonumber(values[3])
                 firstLine = false
-            end
-            local item = nil
-            local flags = {}
-            for i,v in ipairs(values[1]:split(',')) do
-                flags[v] = true
-            end
-            if flags.tool then
-                local vs = values[2]:split(",")
-                if vs[1] == "Seedbag" then
-                    item = Seedbag()
-                else
-                    item = Tool(vs[1], tonumber(vs[2]))
-                    item.durability = tonumber(vs[3])
+            else
+                local item = nil
+                local flags = {}
+                for i,v in ipairs(values[1]:split(',')) do
+                    flags[v] = true
                 end
-            else
-                item = Produce(values[2], tonumber(values[3]), flags, tonumber(values[4]))
-            end
-            if item then
-                table.insert(self.items, item)
-            else
-                log:msg("error", "Failed to load item line", line)
+                if flags.tool then
+                    local vs = values[2]:split(",")
+                    if vs[1] == "Seedbag" then
+                        item = Seedbag()
+                    else
+                        item = Tool(vs[1], tonumber(vs[2]))
+                        item.durability = tonumber(vs[3])
+                    end
+                else
+                    item = Item(values[2], tonumber(values[3]), flags, tonumber(values[4]))
+                end
+                if item then
+                    table.insert(self.items, item)
+                else
+                    log:msg("error", "Failed to load item line", line)
+                end
             end
         end
         file:close()

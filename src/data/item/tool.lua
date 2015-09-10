@@ -5,10 +5,12 @@ Tool = Class{}
 local baseToolD = 30
 
 
-function Tool:init(id, level)
+function Tool:init(id, level, price)
     self.flags = { tool=true, sellable = true }
     self.level = 0
     if level then self.level = level end
+    self.price = 1
+    if price then self.price = price end
     self.id = id
     self.dmax = math.max(baseToolD, self.level * baseToolD * 2)
     self.durability = self.dmax
