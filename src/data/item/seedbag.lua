@@ -35,10 +35,18 @@ end
 
 
 function Seedbag:getName()
-    return "Seedbag"
+    return self.id
 end
 
 
 function Seedbag:use()
-    return false
+    if self.seed then
+        local seed = inventory.items[self.seed]
+        local seedsLeft = inventory:remove(seed.id, 1)
+        if not seedsLeft then 
+            self.seed = nil
+        end
+        return seed.id
+    end
+    return nil
 end

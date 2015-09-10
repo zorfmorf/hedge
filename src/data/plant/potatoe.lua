@@ -39,8 +39,13 @@ function Potatoe:isHarvestable()
 end
 
 
+function Potatoe:isHarvested()
+    return self.state >= 5
+end
+
+
 function Potatoe:harvest()
     self.state = 5
     local tile = game.map:getTile(self.tx, self.ty)
-    inventory:add(Item("Potatoes", 1, { produce=true, food=true, seed=true, sellable=true}, 5))
+    inventory:add(itemCreator:getPotatoe(2))
 end

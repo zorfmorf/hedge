@@ -1,6 +1,6 @@
 -- the global player inventory
 
-local font = love.graphics.newFont("font/alagard.ttf", 25)
+local font = love.graphics.newFont("font/alagard.ttf", 20)
 local inventory_font = love.graphics.newFont("font/romulus.ttf", 22)
 
 inventory = {}
@@ -58,10 +58,15 @@ function inventory:add(itemobj)
             end
         end
         table.insert(self.items, itemobj)
+        local tool = self:getTool()
+        if tool and tool.id == "Seedbag" and not tool.seed and itemobj.flags.seed then
+            tool:nextSeed()
+        end
     end
 end
 
 
+-- returns true if there are still items of this id left
 function inventory:remove(id, amount)
     for i,item in ipairs(self.items) do
         if item.id == id then
@@ -73,8 +78,9 @@ function inventory:remove(id, amount)
             end
             if item.count < 1 then
                 table.remove(self.items, i)
-                return
+                return false
             end
+            return true
         end
     end
 end
@@ -91,6 +97,14 @@ function inventory:removeAll(id)
             return
         end
     end
+end
+
+
+function inventory:getTool()
+    if self.tool and self.items[self.tool] then
+        return self.items[self.tool]
+    end
+    return nil
 end
 
 
@@ -153,9 +167,9 @@ function inventory:usesTool(tool)
 end
 
 
-function inventory:usedCurrentTool()
+function inventory:usedCurrentTool(usage)
     if self.tool and self.items[self.tool] then
-        local destroyed = self.items[self.tool]:use()
+        local destroyed = self.items[self.tool]:use(usage)
         if destroyed then
             player:addFloatingText(self.items[self.tool]:getName().." broke")
             table.remove(self.items, self.tool)

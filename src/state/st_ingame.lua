@@ -141,13 +141,13 @@ function st_ingame:draw()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
+    inventory:draw()
+    
     if self.dialog then
         self.dialog:draw()
     else
         drawHelper:timeAndDate()
     end
-    
-    inventory:draw()
     
     if self.transition then self.transition:draw() end
     

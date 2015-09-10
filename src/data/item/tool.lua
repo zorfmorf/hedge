@@ -2,12 +2,15 @@
 Tool = Class{}
 
 
+local baseToolD = 30
+
+
 function Tool:init(id, level)
     self.flags = { tool=true, sellable = true }
     self.level = 0
     if level then self.level = level end
     self.id = id
-    self.dmax = math.max(10, self.level * 20)
+    self.dmax = math.max(baseToolD, self.level * baseToolD * 2)
     self.durability = self.dmax
     self.count = 1
     self:createIcon()
@@ -30,8 +33,10 @@ function Tool:getName()
 end
 
 
-function Tool:use()
-    self.durability = self.durability - 1
+function Tool:use(usage)
+    local u = usage
+    if not u then u = 1 end
+    self.durability = self.durability - u
     return self.durability <= 0
 end
 
