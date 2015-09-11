@@ -20,7 +20,7 @@ local function use(tx, ty)
             if tool and tool.id == "Seedbag" then
                 local seed = tool:use()
                 if seed == "Potatoes" then
-                    table.insert(game.plants, Potatoe(tx, ty))
+                    table.insert(game.plants, Plant_Potatoe(tx, ty))
                     tile.event = 5 -- ePlant
                 end
             end

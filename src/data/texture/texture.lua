@@ -28,5 +28,13 @@ texture["plant.potatoe.4"] = { 1, 9, 27 }
 texture["plant.potatoe.5"] = { 1, 9, 29 }
 texture["produce.potatoe"] = { 1, 9, 30 }
 
+-- wheat
+texture["plant.wheat.1"] = { 1, 0, 31 }
+texture["plant.wheat.2"] = { 1, 1, 31 }
+texture["plant.wheat.3"] = { 1, 2, 31 }
+texture["plant.wheat.4"] = { 1, 0, 21 }
+texture["plant.wheat.5"] = { 1, 0, 27 }
+texture["plant.wheat.6"] = { 7, 0, 1 }
+
 -- default item
 texture["item.default"] = { 3, 20, 20 } --TODO replace

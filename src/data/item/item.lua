@@ -9,7 +9,6 @@ function Item:init(id, count, flags, price)
     self.price = 1 -- price in gold
     if price then 
         self.price = price
-        self.flags.sellable = true
     end
     self.count = 1
     if count then self.count = count end

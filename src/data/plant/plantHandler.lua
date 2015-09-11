@@ -11,7 +11,8 @@ function plantHandler.load()
             local values = line:split(";")
             if #values == 6 then
                 local plant = nil
-                if values[1] == "Potatoe" then plant = Potatoe() end
+                if values[1] == "Potatoe" then plant = Plant_Potatoe() end
+                if values[1] == "Wheat" then plant = Plant_Wheat() end
                 plant.map = values[2]
                 plant.tx = tonumber(values[3])
                 plant.ty = tonumber(values[4])
