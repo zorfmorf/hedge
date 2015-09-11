@@ -19,8 +19,9 @@ local function use(tx, ty)
             local tool = inventory:getTool()
             if tool and tool.id == "Seedbag" then
                 local seed = tool:use()
-                if seed == "Potatoes" then
-                    table.insert(game.plants, Plant_Potatoe(tx, ty))
+                if seed then
+                    if seed == "Potatoes"  then table.insert(game.plants, Plant_Potatoe(tx, ty)) end
+                    if seed == "Corn"  then table.insert(game.plants, Plant_Wheat(tx, ty)) end
                     tile.event = 5 -- ePlant
                 end
             end
