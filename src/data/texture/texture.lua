@@ -29,11 +29,21 @@ texture["plant.potatoe.5"] = { 1, 9, 29 }
 texture["produce.potatoe"] = { 1, 9, 30 }
 
 -- wheat
-texture["plant.wheat.1"] = { 1, 0, 31 }
-texture["plant.wheat.2"] = { 1, 1, 31 }
-texture["plant.wheat.3"] = { 1, 2, 31 }
-texture["plant.wheat.4"] = { 1, 0, 21 }
-texture["plant.wheat.5"] = { 1, 0, 27 }
+texture["plant.wheat.1"] = { 1, 0, 31 } -- single
+texture["plant.wheat.2"] = { 1, 1, 31 } -- single
+texture["plant.wheat.3.single"] = { 1, 3, 21 }
+texture["plant.wheat.3.single.u"] = { 1, 3, 20 }
+texture["plant.wheat.3.l"] = { 1, 3, 23 }
+texture["plant.wheat.3.ll"] = { 1, 3, 24 }
+texture["plant.wheat.3.r"] = { 1, 5, 23 }
+texture["plant.wheat.3.lr"] = { 1, 5, 24 }
+texture["plant.wheat.3.m"] = { 1, 4, 23 }
+texture["plant.wheat.3.d"] = { 1, 4, 24 }
+texture["plant.wheat.3.u"] = { 1, 4, 22 }
+texture["plant.wheat.3.ul"] = { 1, 3, 22 }
+texture["plant.wheat.3.ur"] = { 1, 5, 22 }
+texture["plant.wheat.4.single"] = { 1, 0, 21 }
+texture["plant.wheat.5.single"] = { 1, 0, 27 }
 texture["plant.wheat.6"] = { 7, 0, 1 }
 
 -- default item

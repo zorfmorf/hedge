@@ -34,7 +34,16 @@ end
 
 
 function game:updatePlants(value)
-    for i,plant in pairs(self.plants) do
+    
+    -- update state & visuals for non-wheat plants
+    for i,plant in ipairs(self.plants) do
         plant:update(value)
+    end
+    
+    -- update visuals for wheat plants
+    for i,plant in ipairs(self.plants) do
+        if plant.type == "Wheat" then
+            plant:updateVisuals()
+        end
     end
 end
