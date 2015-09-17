@@ -46,6 +46,5 @@ end
 
 function Plant_Potatoe:harvest()
     self.state = 5
-    local tile = game.map:getTile(self.tx, self.ty)
     inventory:add(itemCreator:getPotatoe(2))
 end

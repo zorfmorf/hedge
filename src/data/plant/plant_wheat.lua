@@ -69,7 +69,7 @@ function Plant_Wheat:updateVisuals()
                 end
             end
             
-            if self.state < 3 or self.state == 6 then
+            if self.state < 3 then
                 tile.object = deepcopy(texture["plant.wheat."..self.state])
             end
             if self.state >= 3 and self.state <= 5 then
@@ -110,6 +110,10 @@ function Plant_Wheat:updateVisuals()
                 end
             end
             
+            if self.state == 6 then
+                tile.object = deepcopy(texture["plant.wheat."..self.state])
+                if not pu then tu.object = nil end
+            end
             
             tile.block = self.state > 2 and self.state < 6
         end
@@ -129,6 +133,5 @@ end
 
 function Plant_Wheat:harvest()
     self.state = 6
-    local tile = game.map:getTile(self.tx, self.ty)
-    inventory:add(itemCreator:getWheat(1))
+    -- not added to inventory here but in ePlant
 end
