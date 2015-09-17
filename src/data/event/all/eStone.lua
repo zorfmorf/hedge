@@ -21,7 +21,7 @@ local function use(tx, ty)
             tile.event = 4 -- field event
             
             -- game logic
-            inventory:add(Produce("Stone", 1))
+            inventory:add(itemCreator:getStone(1))
             timeHandler.addTime(60)
             inventory:usedCurrentTool()
         end

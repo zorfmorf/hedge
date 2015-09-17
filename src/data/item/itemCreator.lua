@@ -40,3 +40,8 @@ end
 function itemCreator:getCorn(amount)
     return Item("Corn", amount, { produce=true, food=false, seed=true, sellable=true}, 2)
 end
+
+
+function itemCreator:getStone(amount)
+    return Item("Stone", amount, { produce=false, food=false, seed=false, sellable=true}, 20)
+end

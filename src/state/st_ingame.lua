@@ -172,6 +172,7 @@ function st_ingame:keypressed(key, isrepeat)
     elseif inventory.open then
         if key == KEY_INVENTORY or key == KEY_EXIT then inventory:trigger() end
     else
+        if key == "t" then timeHandler.addTime(60) end -- TODO remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end
         if key == KEY_DOWN and not isrepeat then player:move("down") end

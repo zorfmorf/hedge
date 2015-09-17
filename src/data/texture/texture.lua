@@ -43,7 +43,27 @@ texture["plant.wheat.3.u"] = { 1, 4, 22 }
 texture["plant.wheat.3.ul"] = { 1, 3, 22 }
 texture["plant.wheat.3.ur"] = { 1, 5, 22 }
 texture["plant.wheat.4.single"] = { 1, 0, 21 }
+texture["plant.wheat.4.single.u"] = { 1, 0, 20 }
+texture["plant.wheat.4.l"] = { 1, 0, 23 }
+texture["plant.wheat.4.ll"] = { 1, 0, 24 }
+texture["plant.wheat.4.r"] = { 1, 2, 23 }
+texture["plant.wheat.4.lr"] = { 1, 2, 24 }
+texture["plant.wheat.4.m"] = { 1, 1, 23 }
+texture["plant.wheat.4.d"] = { 1, 1, 24 }
+texture["plant.wheat.4.u"] = { 1, 1, 22 }
+texture["plant.wheat.4.ul"] = { 1, 0, 22 }
+texture["plant.wheat.4.ur"] = { 1, 2, 22 }
 texture["plant.wheat.5.single"] = { 1, 0, 27 }
+texture["plant.wheat.5.single.u"] = { 1, 0, 26 }
+texture["plant.wheat.5.l"] = { 1, 0, 29 }
+texture["plant.wheat.5.ll"] = { 1, 0, 30 }
+texture["plant.wheat.5.r"] = { 1, 2, 29 }
+texture["plant.wheat.5.lr"] = { 1, 2, 30 }
+texture["plant.wheat.5.m"] = { 1, 1, 29 }
+texture["plant.wheat.5.d"] = { 1, 1, 30 }
+texture["plant.wheat.5.u"] = { 1, 1, 28 }
+texture["plant.wheat.5.ul"] = { 1, 0, 28 }
+texture["plant.wheat.5.ur"] = { 1, 2, 28 }
 texture["plant.wheat.6"] = { 7, 0, 1 }
 
 -- default item

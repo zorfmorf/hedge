@@ -72,52 +72,46 @@ function Plant_Wheat:updateVisuals()
             if self.state < 3 or self.state == 6 then
                 tile.object = deepcopy(texture["plant.wheat."..self.state])
             end
-            if self.state == 3 then
-                tile.object = deepcopy(texture["plant.wheat.3.single"])
-                tu.object = deepcopy(texture["plant.wheat.3.single.u"])
+            if self.state >= 3 and self.state <= 5 then
+                tile.object = deepcopy(texture["plant.wheat."..self.state..".single"])
+                if not pu then tu.object = deepcopy(texture["plant.wheat."..self.state..".single.u"]) end
 
                 -- center tile
                 if pl and pr and pll and pd and plr then
-                    tile.object = deepcopy(texture["plant.wheat.3.m"])
-                    if not pu then tu.object = deepcopy(texture["plant.wheat.3.u"]) end
+                    tile.object = deepcopy(texture["plant.wheat."..self.state..".m"])
+                    if not pu then tu.object = deepcopy(texture["plant.wheat."..self.state..".u"]) end
                 end
                 
                 -- left end
                 if not pl and pr and pd then
-                    tile.object = deepcopy(texture["plant.wheat.3.l"])
-                    if not pu then tu.object = deepcopy(texture["plant.wheat.3.ul"]) end
+                    tile.object = deepcopy(texture["plant.wheat."..self.state..".l"])
+                    if not pu then tu.object = deepcopy(texture["plant.wheat."..self.state..".ul"]) end
                 end
                 
                 -- right end
                 if not pr and pl and pd then
-                    tile.object = deepcopy(texture["plant.wheat.3.r"])
-                    if not pu then tu.object = deepcopy(texture["plant.wheat.3.ur"]) end
+                    tile.object = deepcopy(texture["plant.wheat."..self.state..".r"])
+                    if not pu then tu.object = deepcopy(texture["plant.wheat."..self.state..".ur"]) end
                 end
                 
                 -- lower left
                 if not pl and not pll and not pd and pr and pu and pur then
-                    tile.object = deepcopy(texture["plant.wheat.3.ll"])
+                    tile.object = deepcopy(texture["plant.wheat."..self.state..".ll"])
                 end
                 
                 -- lower
                 if not pd and pl and pr and pu then
-                    tile.object = deepcopy(texture["plant.wheat.3.d"])
+                    tile.object = deepcopy(texture["plant.wheat."..self.state..".d"])
                 end
                 
                 -- lower right
                 if not pr and not plr and not pd and pl and pu and pul then
-                    tile.object = deepcopy(texture["plant.wheat.3.lr"])
+                    tile.object = deepcopy(texture["plant.wheat."..self.state..".lr"])
                 end
             end
-            if self.state == 4 then
-                tile.object = deepcopy(texture["plant.wheat.4.single"])
-            end
-            if self.state == 5 then
-                tile.object = deepcopy(texture["plant.wheat.5.single"])
-            end
             
             
-            tile.block = self.state > 2
+            tile.block = self.state > 2 and self.state < 6
         end
     end
 end
