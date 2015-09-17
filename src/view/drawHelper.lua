@@ -3,6 +3,15 @@ local location_icon = love.graphics.newImage("img/icon/position-marker.png")
 local font = love.graphics.newFont("font/alagard.ttf", 15)
 local img = {}
 img.date = love.graphics.newImage("img/ui/datetime.png")
+img.box = love.graphics.newImage("img/ui/listbox_default.png")
+
+local quads = {}
+for i=0,2,1 do
+    quads[i] = {}
+    for j=0,2,1 do
+        quads[i][j] = love.graphics.newQuad(i * C_TILE_SIZE, j * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, img.box:getWidth(), img.box:getHeight())
+    end
+end
 
 drawHelper = {}
 
@@ -92,4 +101,46 @@ function drawHelper:timeAndDate()
     love.graphics.print(str, screen.w - (font:getWidth(str) + 20), 15)
     love.graphics.setColor(Color.WHITE)
     love.graphics.print(str, screen.w - (font:getWidth(str) + 19), 16)
+end
+
+
+function drawHelper:createGuiBox(width, height)
+    local canvas = love.graphics.newCanvas(width, height)
+    love.graphics.setCanvas(canvas)
+    
+    -- fill
+    for i=C_TILE_SIZE,width-C_TILE_SIZE,C_TILE_SIZE do
+        for j=C_TILE_SIZE,height-C_TILE_SIZE,C_TILE_SIZE do
+            love.graphics.draw(img.box, quads[1][1], i, j)
+        end
+    end
+    
+    -- up
+    for i=C_TILE_SIZE,width-C_TILE_SIZE,C_TILE_SIZE do
+        love.graphics.draw(img.box, quads[1][0], i, 0)
+    end
+    
+    -- left
+    for j=C_TILE_SIZE,height-C_TILE_SIZE,C_TILE_SIZE do
+        love.graphics.draw(img.box, quads[0][1], 0, j)
+    end
+    
+    -- right
+    for j=C_TILE_SIZE,height-C_TILE_SIZE,C_TILE_SIZE do
+        love.graphics.draw(img.box, quads[2][1], width-C_TILE_SIZE, j)
+    end
+    
+    -- down
+    for i=C_TILE_SIZE,width-C_TILE_SIZE,C_TILE_SIZE do
+        love.graphics.draw(img.box, quads[1][2], i, height-C_TILE_SIZE)
+    end
+    
+    -- corners
+    love.graphics.draw(img.box, quads[0][0], 0, 0)
+    love.graphics.draw(img.box, quads[2][0], width-C_TILE_SIZE, 0)
+    love.graphics.draw(img.box, quads[0][2], 0, height-C_TILE_SIZE)
+    love.graphics.draw(img.box, quads[2][2], width-C_TILE_SIZE, height-C_TILE_SIZE)
+    
+    love.graphics.setCanvas()
+    return canvas
 end

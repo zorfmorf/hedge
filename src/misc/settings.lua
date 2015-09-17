@@ -23,6 +23,7 @@ C_BLOCK_SIZE = 8
 -- tile size nxn
 C_TILE_SIZE = 32
 C_CHAR_SIZE = 64
+C_INVENTORY_SIZE = 64
 C_CHAR_MOD_X = 16
 C_CHAR_MOD_Y = 38
 
@@ -38,6 +39,9 @@ KEY_LEFT = "left"
 KEY_RIGHT = "right"
 KEY_DOWN = "down"
 KEY_UP = "up"
+KEY_NEXT_TOOL = "e"
+KEY_PREVIOUS_TOOL = "q"
+KEY_CYCLE_SEED = "w"
 KEY_USE = "return"
 KEY_EXIT = "escape"
 KEY_INVENTORY = "i"

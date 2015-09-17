@@ -11,7 +11,21 @@ end
 
 
 local function use(tx, ty)
-    st_ingame:startDialog("d_example")
+    local tile = game.map:getTile(tx, ty)
+    
+    if tile then
+        if inventory:usesTool("Pickaxe") then
+            -- update tile
+            tile.object = nil
+            tile.block = false
+            tile.event = 4 -- field event
+            
+            -- game logic
+            inventory:add(itemCreator:getStone(1))
+            timeHandler.addTime(60)
+            inventory:usedCurrentTool()
+        end
+    end
 end
 
 

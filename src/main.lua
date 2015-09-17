@@ -1,3 +1,5 @@
+-- set image filter before any images are loaded
+--love.graphics.setDefaultFilter( "nearest", "nearest" )
 
 -- require libraries
 Gamestate = require "lib.hump.gamestate"
@@ -23,6 +25,7 @@ requireDirectory( 'data' )
 requireDirectory( 'data/dialog' )
 requireDirectory( 'data/entity' )
 requireDirectory( 'data/event' )
+requireDirectory( 'data/item' )
 requireDirectory( 'data/map' )
 requireDirectory( 'data/plant' )
 requireDirectory( 'data/texture' )

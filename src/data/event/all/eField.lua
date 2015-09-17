@@ -16,13 +16,24 @@ local function use(tx, ty)
     -- plow field
     if tile.plowed then
         if tile.plantable and not tile.object then
-            table.insert(game.plants, Potatoe(tx, ty))
-            tile.event = 5 -- ePlant
+            local tool = inventory:getTool()
+            if tool and tool.id == "Seedbag" then
+                local seed = tool:use()
+                if seed then
+                    if seed == "Potatoes"  then table.insert(game.plants, Plant_Potatoe(tx, ty)) end
+                    if seed == "Corn"  then table.insert(game.plants, Plant_Wheat(tx, ty)) end
+                    tile.event = 5 -- ePlant
+                end
+            end
         end
-    else --TODO if correct tool equipped        
-        tile.floor = deepcopy(texture["field.patch"])
-        tile.plowed = true
-        mapHelper:plowedFieldTile(tx, ty)
+    else
+        if inventory:usesTool("Shovel") then
+            tile.floor = deepcopy(texture["field.patch"])
+            tile.plowed = true
+            mapHelper:plowedFieldTile(tx, ty)
+            inventory:usedCurrentTool(2)
+            timeHandler.addTime(20)
+        end
     end
 end
 

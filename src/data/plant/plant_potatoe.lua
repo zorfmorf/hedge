@@ -1,7 +1,7 @@
 
-Potatoe = Class{}
+Plant_Potatoe = Class{}
 
-function Potatoe:init(tx, ty)
+function Plant_Potatoe:init(tx, ty)
     self.type = "Potatoe"
     if tx and ty then
         self.map = game.map.name
@@ -15,7 +15,7 @@ end
 
 
 -- update only when time elapsed
-function Potatoe:update(value)
+function Plant_Potatoe:update(value)
     
     if value and value > 0 then 
         self.days = self.days + value
@@ -34,13 +34,17 @@ function Potatoe:update(value)
 end
 
 
-function Potatoe:isHarvestable()
+function Plant_Potatoe:isHarvestable()
     return self.state == 4
 end
 
 
-function Potatoe:harvest()
+function Plant_Potatoe:isHarvested()
+    return self.state >= 5
+end
+
+
+function Plant_Potatoe:harvest()
     self.state = 5
-    local tile = game.map:getTile(self.tx, self.ty)
-    inventory:add("Potatoes", 1)
+    inventory:add(itemCreator:getPotatoe(2))
 end
