@@ -13,7 +13,7 @@ end
 local function use(tx, ty)
     local tile = game.map:getTile(tx, ty)
     
-    if tile then
+    if tile and inventory:hasFreeSlots() then
         if inventory:usesTool("Pickaxe") then
             -- update tile
             tile.object = nil

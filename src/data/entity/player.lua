@@ -79,6 +79,7 @@ function Player:draw()
         love.graphics.setColor(255, 255, 255, math.max(0, math.floor(255 - (255 * float.time))))
         love.graphics.print(float.value, self.posd.x * C_TILE_SIZE + (C_TILE_SIZE / 2)+1, self.posd.y * C_TILE_SIZE - math.floor(C_TILE_SIZE * float.time)+1, 0, 1, 1, math.floor(font:getWidth(float.value) / 2), C_TILE_SIZE + 10)
     end
+    love.graphics.setColor(Color.WHITE)
 end
 
 

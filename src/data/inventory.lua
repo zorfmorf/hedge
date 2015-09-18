@@ -27,11 +27,20 @@ end
 function inventory:init()
     self.items = {}
     self.count = 0 -- current item amount
-    self.maxitems = 10 -- current maximum item amount
+    self.maxitems = 20 -- current maximum item amount
     self.open = false -- if the inventory is open (list of all items)
     self.tool = nil -- currently selected tool index
     self.box = nil -- contains inventory background draw object
     self:loadImages()
+end
+
+
+function inventory:hasFreeSlots(count)
+    local v = 1
+    if count then v = count end
+    local free = self.maxitems - self.count
+    if free < v then player:addFloatingText("Inventory full") end
+    return free >= v
 end
 
 
@@ -183,6 +192,7 @@ end
 function inventory:draw()
     
     -- draw backpack
+    love.graphics.setColor(Color.WHITE)
     love.graphics.draw(self.icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, self.icon.backpack:getWidth(), self.icon.backpack:getHeight())
     love.graphics.setFont(font)
     love.graphics.setColor(Color.BLACK)
