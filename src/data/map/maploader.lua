@@ -89,8 +89,8 @@ function maploader:read( path, name )
     
     -- load up entities and set their directions
     map:loadEntities()
-    for npc,anim in pairs(animations) do
-        if map.entities[npc] then map.entities[npc].anim = anim end
+    for npc,dir in pairs(animations) do
+        if map.entities[npc] then map.entities[npc].dir = dir end
     end
     return map
 end
@@ -188,7 +188,7 @@ function maploader:save(map, path)
                     
                     -- npc number
                     if tile.npc and map.entities[tile.npc] then
-                        file:write( tile.npc..","..map.entities[tile.npc].anim )
+                        file:write( tile.npc..","..map.entities[tile.npc].dir )
                     else
                         file:write( "nil" )
                     end

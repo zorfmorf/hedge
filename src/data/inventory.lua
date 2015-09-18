@@ -261,7 +261,7 @@ end
 function inventory:save()
     local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
     file:open("w")
-    file:write(self.tool..";")
+    file:write(tostring(self.tool)..";")
     file:write(self.count..";")
     file:write(self.maxitems.."\n")
     for i,item in pairs(self.items) do
