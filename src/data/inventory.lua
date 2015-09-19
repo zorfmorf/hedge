@@ -35,11 +35,11 @@ function inventory:init()
 end
 
 
-function inventory:hasFreeSlots(count)
+function inventory:hasFreeSlots(count, hideText)
     local v = 1
     if count then v = count end
     local free = self.maxitems - self.count
-    if free < v then player:addFloatingText("Inventory full") end
+    if free < v and not hideText then player:addFloatingText("Inventory full") end
     return free >= v
 end
 
