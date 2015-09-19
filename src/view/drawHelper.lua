@@ -104,6 +104,13 @@ function drawHelper:timeAndDate()
 end
 
 
+function drawHelper:drawFPS()
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.setFont(font)
+    love.graphics.print(love.timer.getFPS(), 5, 5)
+end
+
+
 function drawHelper:createGuiBox(width, height)
     local canvas = love.graphics.newCanvas(width, height)
     love.graphics.setCanvas(canvas)

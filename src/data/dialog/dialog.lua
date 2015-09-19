@@ -15,6 +15,14 @@ function Dialog:ready()
 end
 
 
+function Dialog:update(dt)
+    if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
+        self.box = { w=screen.w, h=screen.h}
+        self.box.img = drawHelper:createGuiBox(screen.w - 4, math.floor(screen.h / 4))
+    end 
+end
+
+
 function Dialog:current()
     return self.lines[self.pos]
 end
@@ -91,12 +99,8 @@ function Dialog:draw()
     end
     
     -- draw textbox
-    love.graphics.setColor(Color.BLACK)
-    love.graphics.rectangle("fill", 0, screen.h - math.floor(screen.h / 4), screen.w, math.floor(screen.h / 4))
     love.graphics.setColor(Color.WHITE)
-    love.graphics.setLineWidth(2)
-    love.graphics.rectangle("line", 0, screen.h - math.floor(screen.h / 4), screen.w - 1, math.floor(screen.h / 4) - 1)
-    love.graphics.setLineWidth(1)
+    love.graphics.draw(self.box.img, 2, screen.h - math.floor(screen.h / 4))
     
     -- draw actual text/options
     local tfont = love.graphics.getFont()
@@ -105,8 +109,10 @@ function Dialog:draw()
     
     -- name of person speaking
     if line and line.name then
-        love.graphics.setColor(Color.RED)
+        love.graphics.setColor(Color.BLACK)
         love.graphics.printf(line.name, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+        love.graphics.setColor(Color.RED)
+        love.graphics.printf(line.name, C_DIALOG_PAD+1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD+1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
         linebuffer = font:getHeight() + C_DIALOG_LINE_PAD
         love.graphics.setColor(Color.WHITE)
     end
@@ -114,9 +120,12 @@ function Dialog:draw()
     -- text
     if line and line.text then
         local ltext = line.text()
+        love.graphics.setColor(Color.BLACK)
         love.graphics.printf(ltext, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+        love.graphics.setColor(Color.WHITE)
+        love.graphics.printf(ltext, C_DIALOG_PAD + 1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer + 1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
         local w,l = font:getWrap(ltext, screen.w - C_DIALOG_PAD - 2)
-        linebuffer = linebuffer + (font:getHeight() + C_DIALOG_LINE_PAD) * l
+        linebuffer = linebuffer + (font:getHeight() + C_DIALOG_LINE_PAD) * l + 10
     end
     
     -- options and option selector
@@ -124,11 +133,13 @@ function Dialog:draw()
         for i,opt in ipairs(self.opts) do
             if self.cursor == i then
                 love.graphics.rectangle("fill", C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, font:getHeight())
-                love.graphics.setColor(Color.BLACK)
-            else
-                love.graphics.setColor(Color.WHITE)
             end
+            love.graphics.setColor(Color.BLACK)
             love.graphics.printf(line.options[opt].text, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+            if not (self.cursor == i) then
+                love.graphics.setColor(Color.WHITE)
+                love.graphics.printf(line.options[opt].text, C_DIALOG_PAD + 1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer + 1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+            end
         end
     end
     

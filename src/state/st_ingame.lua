@@ -73,6 +73,7 @@ function st_ingame:update(dt)
     
     -- dialog block entity updates
     if self.dialog then
+        self.dialog:update(dt)
         if self.dialog:isFinished() then self.dialog = nil end
         return
     end
@@ -156,7 +157,7 @@ function st_ingame:draw()
     -- draw hud
     Gui.core.draw()
     
-    love.graphics.print(love.timer.getFPS(), 5, 5)
+    drawHelper:drawFPS()
 end
 
 
