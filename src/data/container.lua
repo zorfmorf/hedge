@@ -38,6 +38,8 @@ function Container:init(id, flags)
     self.tool = nil -- currently selected tool index
     self.box = nil -- contains inventory background draw object
     self.icon = loadIcons()
+    self.offset = 0 -- how many items are "above" the inventory (scrolling)
+    self.cursor = 1 -- item id the cursor is centered on
 end
 
 
@@ -195,72 +197,92 @@ function Container:usedCurrentTool(usage)
 end
 
 
+function Container:updateRowNumber()
+    self.rownumber = math.floor((self.box.img:getHeight() - 10) /  (C_TILE_SIZE))
+end
+
+
 function Container:draw()
     
-    -- draw backpack
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
-    love.graphics.setFont(font)
-    love.graphics.setColor(Color.BLACK)
-    local line = tostring(self.count).."/"..tostring(self.maxitems)
-    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.print(line, screen.w - (15 + icon.backpack:getWidth() / 2), screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
-    
-    -- draw tool / seedbag
-    if self.tool then
-        local img = self.items[self.tool].icon
-        if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
-        love.graphics.setColor(Color.BLACK)
-        local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
-        if self.items[self.tool].id == "Seedbag" then
-            line = ""
-            if self.items[self.tool].seed then
-                line = self.items[self.items[self.tool].seed].id
-            end
-        end
-        love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    if self.id == "inventory" then
+        
+        -- draw backpack
         love.graphics.setColor(Color.WHITE)
-        love.graphics.print(line, 14 + img:getWidth() / 2, screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
+        love.graphics.setFont(font)
+        love.graphics.setColor(Color.BLACK)
+        local line = tostring(self.count).."/"..tostring(self.maxitems)
+        love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        love.graphics.setColor(Color.WHITE)
+        love.graphics.print(line, screen.w - (15 + icon.backpack:getWidth() / 2), screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        
+        -- draw tool / seedbag
+        if self.tool then
+            local img = self.items[self.tool].icon
+            if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
+            love.graphics.setColor(Color.BLACK)
+            local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
+            if self.items[self.tool].id == "Seedbag" then
+                line = ""
+                if self.items[self.tool].seed then
+                    line = self.items[self.items[self.tool].seed].id
+                end
+            end
+            love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+            love.graphics.setColor(Color.WHITE)
+            love.graphics.print(line, 14 + img:getWidth() / 2, screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        end
     end
     
     if self.open then
         love.graphics.setColor(Color.WHITE)
         love.graphics.draw(self.box.img, math.floor(screen.w * 0.2), math.floor(screen.h * 0.2))
         love.graphics.setFont(inventory_font)
-        local col = 0
+        local iconsize = C_TILE_SIZE
         local row = 0
-        local rowwidth = 0
-        for i,item in ipairs(self.items) do
-            
+        self:updateRowNumber()
+        for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
+            local item = self.items[i]
             local text = item:getName().." x"..item.count
             
+            if i == self.cursor then
+                love.graphics.setColor(Color.BLACK)
+                love.graphics.rectangle("fill", math.floor(screen.w * 0.2 + 5), math.floor(screen.h * 0.2 + row * iconsize+12), math.floor(self.box.img:getWidth() * 0.5), C_TILE_SIZE )
+            end
+            
             -- draw icon first
-            local iconsize = C_TILE_SIZE
             love.graphics.setColor(Color.WHITE)
             if item.flags.tool then
                 iconsize = item.icon:getWidth() * 0.5
-                love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
+                love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
             else
                 local t = game.mapping[item.icon[1]][item.icon[2]][item.icon[3]]
-                love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10 + col), math.floor(screen.h * 0.2 + row * iconsize+10))
+                love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10))
             end
-            
-            rowwidth = math.max(inventory_font:getWidth(text) + iconsize + 5, rowwidth)
             
             love.graphics.setColor(Color.BLACK)
-            love.graphics.print(text, math.floor(screen.w * 0.2 + 15 + col + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.print(text, math.floor(screen.w * 0.2 + 15 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             
             love.graphics.setColor(Color.WHITE)
-            love.graphics.print(text, math.floor(screen.w * 0.2 + 16 + col + iconsize), math.floor(screen.h * 0.2 + row * iconsize+11 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.print(text, math.floor(screen.w * 0.2 + 16 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+11 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             
             row = row + 1
-            if row * iconsize + 30 > self.box.img:getHeight() then
-                row = 0
-                col = col + rowwidth + 20
-                rowwidth = 0
-            end
         end
+        
+        -- item name on the right sode
+        local text = self.items[self.cursor]:getName()
+        love.graphics.setColor(Color.BLACK)
+        love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        
+        love.graphics.setColor(Color.WHITE)
+        love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE + 1), math.floor(screen.h * 0.2) + C_TILE_SIZE + 1, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        
+        text = "Description"
+        love.graphics.setColor(Color.BLACK)
+        love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        
+        love.graphics.setColor(Color.WHITE)
+        love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE + 1), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2 + 1, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
     end
 end
 
@@ -270,6 +292,28 @@ function Container:trigger(value)
         self.open = value
     else
         self.open = not self.open
+    end
+end
+
+
+function Container:up()
+    self:updateRowNumber()
+    self.cursor = self.cursor - 1
+    if self.offset >= self.cursor then self.offset = self.cursor - 1 end
+    if self.cursor < 1 then 
+        self.cursor = #self.items
+        self.offset = math.max(0, #self.items - self.rownumber)
+    end
+end
+
+
+function Container:down()
+    self:updateRowNumber()
+    self.cursor = self.cursor + 1
+    if self.offset < self.cursor - self.rownumber then self.offset = self.offset + 1 end
+    if self.cursor > #self.items then 
+        self.cursor = 1
+        self.offset = 0
     end
 end
 

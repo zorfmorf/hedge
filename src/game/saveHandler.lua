@@ -49,7 +49,7 @@ function saveHandler.newGame()
     entityHandler.load()
     var.new()
     timeHandler.load()
-    inventory:init()
+    inventory:init("inventory", {})
 end
 
 -- TODO handle different savespots
