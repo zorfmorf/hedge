@@ -28,6 +28,30 @@ texture["plant.potatoe.4"] = { 1, 9, 27 }
 texture["plant.potatoe.5"] = { 1, 9, 29 }
 texture["produce.potatoe"] = { 1, 9, 30 }
 
+-- carrot plant
+texture["plant.carrot.1"] = { 1, 10, 24 }
+texture["plant.carrot.2"] = { 1, 10, 25 }
+texture["plant.carrot.3"] = { 1, 10, 26 }
+texture["plant.carrot.4"] = { 1, 10, 27 }
+texture["plant.carrot.5"] = { 1, 10, 29 }
+texture["produce.carrot"] = { 1, 10, 30 }
+
+-- cabbage plant
+texture["plant.cabbage.1"] = { 1, 12, 25 }
+texture["plant.cabbage.2"] = { 1, 12, 26 }
+texture["plant.cabbage.3"] = { 1, 12, 27 }
+texture["plant.cabbage.4"] = { 1, 12, 28 }
+texture["plant.cabbage.5"] = { 1, 12, 29 }
+texture["produce.cabbage"] = { 1, 12, 30 }
+
+-- cucumber plant
+texture["plant.cucumber.1"] = { 1, 14, 24 }
+texture["plant.cucumber.2"] = { 1, 14, 25 }
+texture["plant.cucumber.3"] = { 1, 14, 26 }
+texture["plant.cucumber.4"] = { 1, 14, 27 }
+texture["plant.cucumber.5"] = { 1, 14, 28 }
+texture["produce.cucumber"] = { 1, 14, 29 }
+
 -- wheat
 texture["plant.wheat.1"] = { 1, 0, 31 } -- single
 texture["plant.wheat.2"] = { 1, 1, 31 } -- single
