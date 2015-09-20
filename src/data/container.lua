@@ -3,39 +3,45 @@
 local font = love.graphics.newFont("font/alagard.ttf", 20)
 local inventory_font = love.graphics.newFont("font/romulus.ttf", 22)
 
-inventory = {}
+Container = Class{}
 
+local icon = nil -- will contain icons
 
-function inventory:loadImages()
-    self.icon = {}
-    local img = love.image.newImageData("img/icon/callum_icons_border.png")
-    for i=0,5,1 do
-        for j=0,2 do
-            local dat = love.image.newImageData(C_INVENTORY_SIZE, C_INVENTORY_SIZE)
-            dat:paste(img, 0, 0, i * C_INVENTORY_SIZE, j * C_INVENTORY_SIZE, C_INVENTORY_SIZE, C_INVENTORY_SIZE)
-            if i == 0 and j == 0 then self.icon.backpack = love.graphics.newImage(dat) end
-            if i == 1 and j == 0 then self.icon.seedbag = love.graphics.newImage(dat) end
-            if i == 2 then self.icon["Shovel"..tostring(j)] = love.graphics.newImage(dat) end
-            if i == 3 then self.icon["Pickaxe"..tostring(j)] = love.graphics.newImage(dat) end
-            if i == 4 then self.icon["Axe"..tostring(j)] = love.graphics.newImage(dat) end
-            if i == 5 then self.icon["Scythe"..tostring(j)] = love.graphics.newImage(dat) end
+local function loadIcons()
+    if not icon then
+        icon = {}
+        local img = love.image.newImageData("img/icon/callum_icons_border.png")
+        for i=0,5,1 do
+            for j=0,2 do
+                local dat = love.image.newImageData(C_INVENTORY_SIZE, C_INVENTORY_SIZE)
+                dat:paste(img, 0, 0, i * C_INVENTORY_SIZE, j * C_INVENTORY_SIZE, C_INVENTORY_SIZE, C_INVENTORY_SIZE)
+                if i == 0 and j == 0 then icon.backpack = love.graphics.newImage(dat) end
+                if i == 1 and j == 0 then icon.seedbag = love.graphics.newImage(dat) end
+                if i == 2 then icon["Shovel"..tostring(j)] = love.graphics.newImage(dat) end
+                if i == 3 then icon["Pickaxe"..tostring(j)] = love.graphics.newImage(dat) end
+                if i == 4 then icon["Axe"..tostring(j)] = love.graphics.newImage(dat) end
+                if i == 5 then icon["Scythe"..tostring(j)] = love.graphics.newImage(dat) end
+            end
         end
     end
+    return icon
 end
 
 
-function inventory:init()
+function Container:init(id, flags)
     self.items = {}
+    self.id = id -- used for saving/retrieving container contents (if applicable)
+    self.flags = flags
     self.count = 0 -- current item amount
     self.maxitems = 20 -- current maximum item amount
     self.open = false -- if the inventory is open (list of all items)
     self.tool = nil -- currently selected tool index
     self.box = nil -- contains inventory background draw object
-    self:loadImages()
+    self.icon = loadIcons()
 end
 
 
-function inventory:hasFreeSlots(count, hideText)
+function Container:hasFreeSlots(count, hideText)
     local v = 1
     if count then v = count end
     local free = self.maxitems - self.count
@@ -44,7 +50,7 @@ function inventory:hasFreeSlots(count, hideText)
 end
 
 
-function inventory:update(dt)
+function Container:update(dt)
     if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
         self.box = { w=screen.w, h=screen.h}
         self.box.img = drawHelper:createGuiBox(math.floor(screen.w * 0.6), math.floor(screen.h * 0.6))
@@ -52,7 +58,7 @@ function inventory:update(dt)
 end
 
 
-function inventory:add(itemobj)
+function Container:add(itemobj)
     self.count = self.count + itemobj.count
     if itemobj.flags.tool then
         player:addFloatingText(itemobj:getName())
@@ -76,7 +82,7 @@ end
 
 
 -- returns true if there are still items of this id left
-function inventory:remove(id, amount)
+function Container:remove(id, amount)
     for i,item in ipairs(self.items) do
         if item.id == id then
             local am = math.min(amount, item.count)
@@ -95,7 +101,7 @@ function inventory:remove(id, amount)
 end
 
 
-function inventory:removeAll(id)
+function Container:removeAll(id)
     for i,item in ipairs(self.items) do
         if item.id == id then
             self.count = self.count - item.count
@@ -109,7 +115,7 @@ function inventory:removeAll(id)
 end
 
 
-function inventory:getTool()
+function Container:getTool()
     if self.tool and self.items[self.tool] then
         return self.items[self.tool]
     end
@@ -117,7 +123,7 @@ function inventory:getTool()
 end
 
 
-function inventory:selectAnyTool()
+function Container:selectAnyTool()
     for i=1,#self.items do
         if self.items[i].flags.tool then
             self.tool = i
@@ -128,7 +134,7 @@ function inventory:selectAnyTool()
 end
 
 
-function inventory:nextTool()
+function Container:nextTool()
     if self.tool then
         local i = self.tool + 1
         while not (i == self.tool) do
@@ -146,14 +152,14 @@ function inventory:nextTool()
 end
 
 
-function inventory:cycleSeed()
+function Container:cycleSeed()
     if self.tool and self.items[self.tool].id == "Seedbag" then
         self.items[self.tool]:nextSeed()
     end
 end
 
 
-function inventory:previousTool()
+function Container:previousTool()
     if self.tool then
         local i = self.tool - 1
         while not (i == self.tool) do
@@ -171,12 +177,12 @@ function inventory:previousTool()
 end
 
 
-function inventory:usesTool(tool)
+function Container:usesTool(tool)
     return self.tool and self.items[self.tool] and self.items[self.tool].id == tool
 end
 
 
-function inventory:usedCurrentTool(usage)
+function Container:usedCurrentTool(usage)
     if self.tool and self.items[self.tool] then
         local destroyed = self.items[self.tool]:use(usage)
         if destroyed then
@@ -189,17 +195,17 @@ function inventory:usedCurrentTool(usage)
 end
 
 
-function inventory:draw()
+function Container:draw()
     
     -- draw backpack
     love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(self.icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, self.icon.backpack:getWidth(), self.icon.backpack:getHeight())
+    love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
     love.graphics.setFont(font)
     love.graphics.setColor(Color.BLACK)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
-    love.graphics.print(line, screen.w - (16 + self.icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     love.graphics.setColor(Color.WHITE)
-    love.graphics.print(line, screen.w - (15 + self.icon.backpack:getWidth() / 2), screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (15 + icon.backpack:getWidth() / 2), screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     
     -- draw tool / seedbag
     if self.tool then
@@ -259,7 +265,7 @@ function inventory:draw()
 end
 
 
-function inventory:trigger(value)
+function Container:trigger(value)
     if value then
         self.open = value
     else
@@ -268,7 +274,7 @@ function inventory:trigger(value)
 end
 
 
-function inventory:save()
+function Container:save()
     local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
     file:open("w")
     file:write(tostring(self.tool)..";")
@@ -297,8 +303,8 @@ function inventory:save()
 end
 
 
-function inventory:load()
-    self:init()
+function Container:load()
+    self:init("inventory", {})
     if love.filesystem.isFile( C_MAP_CURRENT..C_MAP_INVENTORY )then
         local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
         file:open("r")
@@ -337,3 +343,6 @@ function inventory:load()
         file:close()
     end
 end
+
+
+inventory = Container("inventory", {}) -- dirty

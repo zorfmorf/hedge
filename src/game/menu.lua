@@ -30,6 +30,7 @@ function Menu:open()
     self:readSaveFolders()
     self.active = true
     self.current = "default"
+    love.mouse.setVisible(true)
 end
 
 
@@ -64,6 +65,7 @@ function Menu:update(dt)
                 if Gui.Button{text = slot} then
                     saveHandler.loadGame(slot)
                     self.active = false
+                    love.mouse.setVisible(false)
                     st_ingame:enter()
                     return
                 end
@@ -79,6 +81,7 @@ function Menu:update(dt)
                     if Gui.Button{text = slot} then
                         saveHandler.saveGame(slot)
                         self.active = false
+                        love.mouse.setVisible(false)
                     end
                 end
             end
@@ -90,6 +93,7 @@ function Menu:update(dt)
                 end
                 saveHandler.saveGame(tostring(slotnumber + 1))
                 self.active = false
+                love.mouse.setVisible(false)
             end
             Gui.Label{text=""}
             if Gui.Button{text = "Return"} then
@@ -111,6 +115,7 @@ function Menu:keypressed(key, isrepeat)
     if key == "escape" then 
         if self.current == "default" then
             self.active = false
+            love.mouse.setVisible(false)
         else
             self.current = "default"
         end

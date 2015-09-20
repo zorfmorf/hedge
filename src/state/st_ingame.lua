@@ -36,6 +36,8 @@ function st_ingame:enter()
     end
     
     st_ingame:updateCamera()
+    
+    love.mouse.setVisible(false)
 end
 
 
