@@ -22,6 +22,9 @@ local function use(tx, ty)
                 if seed then
                     if seed == "Potatoes"  then table.insert(game.plants, Plant_Potatoe(tx, ty)) end
                     if seed == "Corn"  then table.insert(game.plants, Plant_Wheat(tx, ty)) end
+                    if seed == "Cucumber seeds" then table.insert(game.plants, Plant_Cucumber(tx, ty)) end
+                    if seed == "Carrot seeds" then table.insert(game.plants, Plant_Carrot(tx, ty)) end
+                    if seed == "Cabbage seeds" then table.insert(game.plants, Plant_Cabbage(tx, ty)) end
                     tile.event = 5 -- ePlant
                 end
             end
