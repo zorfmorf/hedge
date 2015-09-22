@@ -207,11 +207,8 @@ function Container:drawHud()
     love.graphics.setColor(Color.WHITE)
     love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
     love.graphics.setFont(font)
-    love.graphics.setColor(Color.BLACK)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
-    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.print(line, screen.w - (15 + icon.backpack:getWidth() / 2), screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    drawHelper:print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     
     -- draw tool / seedbag
     if self.tool then
@@ -225,9 +222,7 @@ function Container:drawHud()
                 line = self.items[self.items[self.tool].seed].id
             end
         end
-        love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
-        love.graphics.setColor(Color.WHITE)
-        love.graphics.print(line, 14 + img:getWidth() / 2, screen.h - 2, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        drawHelper:print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     end
 end
 
@@ -259,30 +254,25 @@ function Container:draw()
             love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10))
         end
         
-        love.graphics.setColor(Color.BLACK)
-        love.graphics.print(text, math.floor(screen.w * 0.2 + 15 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-        
-        love.graphics.setColor(Color.WHITE)
-        love.graphics.print(text, math.floor(screen.w * 0.2 + 16 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+11 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        drawHelper:print(text, math.floor(screen.w * 0.2 + 15 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
         
         row = row + 1
     end
     
     -- item name on the right sode
-    local text = self.items[self.cursor]:getName()
-    love.graphics.setColor(Color.BLACK)
-    love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-    
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE + 1), math.floor(screen.h * 0.2) + C_TILE_SIZE + 1, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-    
-    text = "Description"
-    love.graphics.setColor(Color.BLACK)
-    love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-    
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE + 1), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2 + 1, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-    
+    if #self.items > 0 then
+        local text = self.items[self.cursor]:getName()
+        
+        drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        
+        text = "Description"
+        drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        
+        -- button
+        if self.flags.sell or self.flags.buy then
+            
+        end
+    end
 end
 
 

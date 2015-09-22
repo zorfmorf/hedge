@@ -151,3 +151,21 @@ function drawHelper:createGuiBox(width, height)
     love.graphics.setCanvas()
     return canvas
 end
+
+
+-- print text with a border
+function drawHelper:print(text, x, y, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.BLACK)
+    love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.print(text, x+1, y+1, r, sx, sy, ox, oy, kx, ky)
+end
+
+
+-- printf text with a border
+function drawHelper:printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.BLACK)
+    love.graphics.printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.print(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
+end

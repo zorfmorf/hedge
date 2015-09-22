@@ -120,10 +120,9 @@ function Dialog:draw()
     -- text
     if line and line.text then
         local ltext = line.text()
-        love.graphics.setColor(Color.BLACK)
-        love.graphics.printf(ltext, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-        love.graphics.setColor(Color.WHITE)
-        love.graphics.printf(ltext, C_DIALOG_PAD + 1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer + 1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+        
+        drawHelper:printf(ltext, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+        
         local w,l = font:getWrap(ltext, screen.w - C_DIALOG_PAD - 2)
         linebuffer = linebuffer + (font:getHeight() + C_DIALOG_LINE_PAD) * l + 10
     end
