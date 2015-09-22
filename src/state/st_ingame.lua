@@ -182,6 +182,8 @@ function st_ingame:keypressed(key, isrepeat)
         end
         if key == KEY_DOWN and not isrepeat then inventory:down() end
         if key == KEY_UP and not isrepeat then inventory:up() end
+        if key == KEY_ESCAPCE then self.container:unconfirm() end
+        if key == KEY_RETURN then self.container:confirm() end
     else
         if key == "t" then timeHandler.addTime(60) end -- TODO remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
