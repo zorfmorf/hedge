@@ -32,6 +32,36 @@ function itemCreator:getPotatoe(amount)
 end
 
 
+function itemCreator:getCucumber(amount)
+    return Item("Cucumber", amount, { produce=true, food=true, seed=false, sellable=true}, 5)
+end
+
+
+function itemCreator:getCucumberSeeds(amount)
+    return Item("Cucumber seeds", amount, { produce=false, food=false, seed=true, sellable=true}, 5)
+end
+
+
+function itemCreator:getCarrot(amount)
+    return Item("Carrot", amount, { produce=true, food=true, seed=false, sellable=true}, 5)
+end
+
+
+function itemCreator:getCarrotSeeds(amount)
+    return Item("Carrot seeds", amount, { produce=false, food=false, seed=true, sellable=true}, 5)
+end
+
+
+function itemCreator:getCabbage(amount)
+    return Item("Cabbage", amount, { produce=true, food=true, seed=false, sellable=true}, 5)
+end
+
+
+function itemCreator:getCabbageSeeds(amount)
+    return Item("Cabbage seeds", amount, { produce=false, food=false, seed=true, sellable=true}, 5)
+end
+
+
 function itemCreator:getWheat(amount)
     return Item("Wheat", amount, { produce=true, food=false, seed=false, sellable=true}, 5)
 end

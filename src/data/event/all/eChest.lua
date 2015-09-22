@@ -11,13 +11,15 @@ end
 
 
 local function use(tx, ty)
-    inventory:add(itemCreator:getAxe(0))
-    inventory:add(itemCreator:getShovel(0))
-    inventory:add(itemCreator:getPickaxe(0))
-    inventory:add(itemCreator:getScythe(0))
-    inventory:add(itemCreator:getSeedbag())
-    inventory:add(itemCreator:getPotatoe(2))
-    inventory:add(itemCreator:getCorn(2))
+    if inventory:hasFreeSlots(9) then
+        inventory:add(itemCreator:getAxe(0))
+        inventory:add(itemCreator:getShovel(0))
+        inventory:add(itemCreator:getPickaxe(0))
+        inventory:add(itemCreator:getScythe(0))
+        inventory:add(itemCreator:getSeedbag())
+        inventory:add(itemCreator:getPotatoe(2))
+        inventory:add(itemCreator:getCorn(2))
+    end
 end
 
 

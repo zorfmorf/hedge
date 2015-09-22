@@ -36,6 +36,8 @@ function st_ingame:enter()
     end
     
     st_ingame:updateCamera()
+    
+    love.mouse.setVisible(false)
 end
 
 
@@ -73,6 +75,7 @@ function st_ingame:update(dt)
     
     -- dialog block entity updates
     if self.dialog then
+        self.dialog:update(dt)
         if self.dialog:isFinished() then self.dialog = nil end
         return
     end
@@ -141,7 +144,11 @@ function st_ingame:draw()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
-    inventory:draw()
+    inventory:drawHud()
+    
+    if self.container then
+        self.container:draw()
+    end
     
     if self.dialog then
         self.dialog:draw()
@@ -156,7 +163,7 @@ function st_ingame:draw()
     -- draw hud
     Gui.core.draw()
     
-    love.graphics.print(love.timer.getFPS(), 5, 5)
+    drawHelper:drawFPS()
 end
 
 
@@ -169,8 +176,14 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_USE then self.dialog:advance() end
         if key == KEY_UP then self.dialog:up() end
         if key == KEY_DOWN then self.dialog:down() end
-    elseif inventory.open then
-        if key == KEY_INVENTORY or key == KEY_EXIT then inventory:trigger() end
+    elseif self.container then
+        if key == KEY_INVENTORY or key == KEY_EXIT then
+            self.container = nil
+        end
+        if key == KEY_DOWN and not isrepeat then inventory:down() end
+        if key == KEY_UP and not isrepeat then inventory:up() end
+        if key == KEY_ESCAPCE then self.container:unconfirm() end
+        if key == KEY_RETURN then self.container:confirm() end
     else
         if key == "t" then timeHandler.addTime(60) end -- TODO remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
@@ -181,7 +194,7 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_NEXT_TOOL then inventory:nextTool() end
         if key == KEY_PREVIOUS_TOOL then inventory:previousTool() end
         if key == KEY_CYCLE_SEED then inventory:cycleSeed() end
-        if key == KEY_INVENTORY then inventory:trigger() end
+        if key == KEY_INVENTORY then self.container = inventory end
         if key == KEY_EXIT then
             self.menu:open()
         end

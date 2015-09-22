@@ -27,24 +27,27 @@ local function use(tx, ty)
                 log:msg("verbose", "Harvesting", plant.type, "at", tx, ty)
                 if plant.type == "Wheat" then
                     if inventory:usesTool("Scythe") then
-                        local amount = 1
-                        plant:harvest()
-                        inventory:usedCurrentTool(1)
-                        for i,cand in ipairs(game.plants) do
-                            if game.map.name == cand.map and
-                               ((plant.tx == player.pos.x and plant.ty == cand.ty and math.abs(plant.tx - cand.tx) == 1) or
-                                (plant.ty == player.pos.y and plant.tx == cand.tx and math.abs(plant.ty - cand.ty) == 1)) then
-                                cand:harvest()
-                                amount = amount + 1
-                                inventory:usedCurrentTool(1)
+                        if inventory:hasFreeSlots() then
+                            local amount = 1
+                            plant:harvest()
+                            inventory:usedCurrentTool(1)
+                            for i,cand in ipairs(game.plants) do
+                                if game.map.name == cand.map and
+                                   ((plant.tx == player.pos.x and plant.ty == cand.ty and math.abs(plant.tx - cand.tx) == 1) or
+                                    (plant.ty == player.pos.y and plant.tx == cand.tx and math.abs(plant.ty - cand.ty) == 1)) then
+                                    cand:harvest()
+                                    amount = amount + 1
+                                    inventory:usedCurrentTool(1)
+                                end
                             end
+                            inventory:add(itemCreator:getWheat(amount))
                         end
-                        inventory:add(itemCreator:getWheat(amount))
                     end
                 else
-                    plant:harvest()
+                    if inventory:hasFreeSlots() then
+                        plant:harvest()
+                    end
                 end
-                game:updatePlants()
             end
         end
     end

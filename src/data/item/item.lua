@@ -19,6 +19,9 @@ end
 function Item:createIcon()
     self.icon = deepcopy(texture["item.default"])
     if self.id == "Potatoes" then self.icon = deepcopy(texture["produce.potatoe"]) end
+    if self.id == "Carrot" then self.icon = deepcopy(texture["produce.carrot"]) end
+    if self.id == "Cabbage" then self.icon = deepcopy(texture["produce.cabbage"]) end
+    if self.id == "Cucumber" then self.icon = deepcopy(texture["produce.cucumber"]) end
 end
 
 

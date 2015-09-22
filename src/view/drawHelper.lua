@@ -104,6 +104,13 @@ function drawHelper:timeAndDate()
 end
 
 
+function drawHelper:drawFPS()
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.setFont(font)
+    love.graphics.print(love.timer.getFPS(), 5, 5)
+end
+
+
 function drawHelper:createGuiBox(width, height)
     local canvas = love.graphics.newCanvas(width, height)
     love.graphics.setCanvas(canvas)
@@ -143,4 +150,40 @@ function drawHelper:createGuiBox(width, height)
     
     love.graphics.setCanvas()
     return canvas
+end
+
+
+-- print text with a border
+function drawHelper:print(text, x, y, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.BLACK)
+    love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.print(text, x+1, y+1, r, sx, sy, ox, oy, kx, ky)
+end
+
+
+-- print colored text with a border
+function drawHelper:printColor(color1, color2, text, x, y, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(color1)
+    love.graphics.print(text, x, y, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(color2)
+    love.graphics.print(text, x+1, y+1, r, sx, sy, ox, oy, kx, ky)
+end
+
+
+-- printf text with a border
+function drawHelper:printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.BLACK)
+    love.graphics.printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.print(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
+end
+
+
+-- printf colored text with a border
+function drawHelper:printfColor(color1, color2, text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(color1)
+    love.graphics.printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.setColor(color2)
+    love.graphics.print(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
 end
