@@ -109,12 +109,7 @@ function Dialog:draw()
     
     -- name of person speaking
     if line and line.name then
-        love.graphics.setColor(Color.BLACK)
-        love.graphics.printf(line.name, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-        love.graphics.setColor(Color.RED)
-        love.graphics.printf(line.name, C_DIALOG_PAD+1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD+1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-        linebuffer = font:getHeight() + C_DIALOG_LINE_PAD
-        love.graphics.setColor(Color.WHITE)
+        drawHelper:printfColor(Color.BLACK, Color.RED, line.name, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD, screen.w - C_DIALOG_PAD * 2 - 2, "left")
     end
     
     -- text
