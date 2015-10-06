@@ -176,7 +176,7 @@ function drawHelper:printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
     love.graphics.setColor(Color.BLACK)
     love.graphics.printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
     love.graphics.setColor(Color.WHITE)
-    love.graphics.print(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.printf(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
 end
 
 

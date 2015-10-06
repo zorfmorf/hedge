@@ -1,0 +1,12 @@
+This is the LPC entry for 'Guid Bos' cut up and tiled. Currently the following things have been sparated:
+
+    The white building
+    The wood building
+    The flowers
+    Rocks/chest
+
+We will probably work a bit more on it
+Attribution Instructions: 
+Please use the LPC attribution instructions for this work
+
+http://opengameart.org/content/lpc-guido-bos-entries-cut-up
