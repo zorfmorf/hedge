@@ -347,10 +347,16 @@ function Container:confirm()
             end
         end
         if self.flags.store then
-            -- TODO implement
+            if self.target then
+                self.target:add(self.items[self.cursor])
+                self:removeAtPosition(self.cursor, false)
+            else
+                log:msg("error", "Storage operation on container", self.id, "is missing target container information")
+            end
         end
         if self.flags.retrieve then
-            -- TODO implement
+            inventory:add(self.items[self.cursor])
+            self:removeAtPosition(self.cursor, false)
         end
     else
         self.confirm = true
