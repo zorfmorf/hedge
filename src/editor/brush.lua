@@ -12,7 +12,7 @@ function Brush:init(id)
     self.name = "Brush" .. id
     
     -- if a player can walk on the tile after this brush has been used on it
-    self.blocking = false
+    self.blocking = true
     
     -- the following sets can be empty (nothing drawn), have one item or multiple (random one)
     
