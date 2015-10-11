@@ -76,6 +76,8 @@ function st_edit:update(dt)
                 game.map:delObj(tx, ty)
             elseif brush == -8 then
                 editorHandler:singleTilePlacement(tx, ty)
+            elseif brush == -9 then
+                editorHandler:selection(tx, ty)
             else
                 local brush = brushHandler.getCurrentBrush()
                 if brush then 
@@ -142,17 +144,30 @@ function st_edit:draw()
     end
     
     -- draw brush preview
-    if not editorHandler:menuOpen() and brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
-        local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
-        local brush = brushHandler.getCurrentBrush()
-        if brush:isObjectBrush() then
-            love.graphics.setColor(Color.RED)
-            love.graphics.rectangle("fill", tx * C_TILE_SIZE, ty * C_TILE_SIZE, brush.xsize * C_TILE_SIZE, brush.ysize * C_TILE_SIZE)
+    if not editorHandler:menuOpen() then
+        
+        if brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
+            local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
+            local brush = brushHandler.getCurrentBrush()
+            if brush:isObjectBrush() then
+                love.graphics.setColor(Color.RED)
+                love.graphics.rectangle("fill", tx * C_TILE_SIZE, ty * C_TILE_SIZE, brush.xsize * C_TILE_SIZE, brush.ysize * C_TILE_SIZE)
+            else
+                brush:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+            end
+            love.graphics.setColor(Color.WHITE)
         else
-            brush:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+            local selection = editorHandler:getSelection()
+            if brushHandler.currentBrushId() == -9 and selection then
+                love.graphics.setColor(Color.RED)
+                local mx, my = drawHelper:tileCoords(love.mouse.getPosition())
+                love.graphics.rectangle("fill", math.min(mx, selection.x) * C_TILE_SIZE, math.min(my, selection.y) * C_TILE_SIZE, math.abs(mx - selection.x) * C_TILE_SIZE, math.abs(my - selection.y) * C_TILE_SIZE)
+            end
         end
-        love.graphics.setColor(Color.WHITE)
+        
     end
+    
+    love.graphics.setColor(Color.WHITE)
     
     -- draw walkable and event tile overlays if enabled
     drawHelper:drawToggles(editorHandler:showEvents(), editorHandler:showWalkable())

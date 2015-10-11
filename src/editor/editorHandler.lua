@@ -61,6 +61,9 @@ local eventtarget = nil
 -- target for placement of singletiletarget
 local singletiletarget = nil
 
+-- saves selection for selection based brush creation
+local selection = nil
+
 
 local function buttonWidth(text)
     return math.max(love.graphics.getFont():getWidth(text) + 10, 110)
@@ -131,6 +134,31 @@ function editorHandler:placeTransition(tx, ty)
         t[2] = transitiontarget.key
         game.map:changeEvent(tx, ty, t)
     end
+end
+
+
+function editorHandler:selection(tx, ty)
+    if selection then
+        local brush = OBrush(#brushHandler.getBrushes() + 1)
+        local x = math.min(selection.x, tx)
+        local y = math.min(selection.y, ty)
+        local xamount = math.abs(selection.x - tx)
+        local yamount = math.abs(selection.y - ty)
+        for i=1,xamount do
+            for j=1,yamount do
+                brush:set(i, j, deepcopy(game.map:getTile(x+i-1,y+j-1)))
+            end
+        end
+        table.insert(brushHandler.getBrushes(), brush)
+        selection = nil
+    else
+        selection = { x=tx, y=ty }
+    end
+end
+
+
+function editorHandler:getSelection()
+    return selection
 end
 
 
@@ -989,12 +1017,20 @@ function editorHandler:mousepressed(x, y, button)
             local mx, my = camera:mousepos()
             local tx = math.floor(mx / C_TILE_SIZE)
             local ty = math.floor(my / C_TILE_SIZE)
+            
             -- delete npc on rightclick
             if brushHandler.currentBrushId() == -5 then
                 game.map:removeEntity(tx, ty)
             end
+            
+            -- delete event on rightclick
             if brushHandler.currentBrushId() == -3 then
                 game.map:changeEvent(tx, ty, nil)
+            end
+            
+            -- cancel selection on rightlick
+            if brushHandler.currentBrushId() == -9 then
+                selection = nil
             end
         end
     end
