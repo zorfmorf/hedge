@@ -74,6 +74,8 @@ function st_edit:update(dt)
                 editorHandler:placeTransition(tx, ty)
             elseif brush == -7 then    
                 game.map:delObj(tx, ty)
+            elseif brush == -8 then
+                editorHandler:singleTilePlacement(tx, ty)
             else
                 local brush = brushHandler.getCurrentBrush()
                 if brush then 
