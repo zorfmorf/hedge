@@ -18,6 +18,7 @@ function Player:init()
     
     -- floating texts
     self.floats = {}
+    self.floatdelay = 0 -- delay until next float can be triggered
 end
 
 
@@ -61,12 +62,23 @@ function Player:update(dt)
         if love.keyboard.isDown(KEY_UP) then self:move("up") end
         if love.keyboard.isDown(KEY_DOWN) then self:move("down") end
     end
-    for i,float in ipairs(self.floats)do
-        float.time = float.time + dt * CHAR_FLOAT_TIME
-        if float.time > 1 then
-            table.remove(self.floats, i)
+    for i,float in ipairs(self.floats) do
+        if float.time == -1 then
+            if self.floatdelay <= 0 then
+                self.floatdelay = C_FLOAT_COOLDOWN
+                float.time = 0
+                float.x = self.posd.x
+                float.y = self.posd.y
+            end
+        end
+        if float.time >= 0 then
+            float.time = float.time + dt * C_FLOAT_SPEED
+            if float.time > C_FLOAT_TIME then
+                table.remove(self.floats, i)
+            end
         end
     end
+    self.floatdelay = math.max(0, self.floatdelay - dt)
 end
 
 
@@ -74,9 +86,11 @@ function Player:draw()
     animationHelper.draw(self)
     love.graphics.setFont(font)
     for i,float in ipairs(self.floats) do
-        local color1 = { 0, 0, 0, math.max(0, math.floor(255 - (255 * float.time))) }
-        local color2 = { 255, 255, 255, math.max(0, math.floor(255 - (255 * float.time))) }
-        drawHelper:printColor(color1, color2, float.value, self.posd.x * C_TILE_SIZE + (C_TILE_SIZE / 2), self.posd.y * C_TILE_SIZE - math.floor(C_TILE_SIZE * float.time), 0, 1, 1, math.floor(font:getWidth(float.value) / 2), C_TILE_SIZE + 10)
+        if float.time >= 0 then
+            local color1 = { 0, 0, 0, math.max(0, math.floor(255 - (255 * float.time))) }
+            local color2 = { 255, 255, 255, math.max(0, math.floor(255 - (255 * float.time))) }
+            drawHelper:printColor(color1, color2, float.value, float.x * C_TILE_SIZE + (C_TILE_SIZE / 2), float.y * C_TILE_SIZE - math.floor(C_TILE_SIZE * float.time), 0, 1, 1, math.floor(font:getWidth(float.value) / 2), C_TILE_SIZE + 10)
+        end
     end
     love.graphics.setColor(Color.WHITE)
 end
@@ -93,5 +107,14 @@ end
 
 
 function Player:addFloatingText(value)
-    table.insert(self.floats, 1, { time=0, value=value })
+    table.insert(self.floats, { x=self.pos.x, y=self.pos.y, time=-1, value="+ "..value })
+end
+
+
+function Player:clearTexts()
+    for i=#self.floats,1,-1 do
+        if self.floats[i].time >= 0 then
+            table.remove(self.floats, i)
+        end
+    end
 end

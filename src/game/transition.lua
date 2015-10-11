@@ -5,6 +5,7 @@ function Transition:init(style, func)
     self.time = 0
     self.style = style
     self.func = func
+    player:clearTexts()
 end
 
 
