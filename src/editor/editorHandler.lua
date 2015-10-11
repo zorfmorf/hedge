@@ -27,6 +27,12 @@ menus.transition = false -- transition placer
 menus.event = false -- event placer
 menus.settings = false -- map settings menu
 
+-- layer toggles
+local layer = {}
+layer.floor1 = true
+layer.floor2 = true
+layer.object = true
+layer.overlay = true
 
 -- currently selected tile atlas
 local currentatlas = 1
@@ -66,6 +72,11 @@ end
 
 function editorHandler:showWalkable()
     return showWalkable
+end
+
+
+function editorHandler:getLayerToggles()
+    return layer
 end
 
 
@@ -641,6 +652,32 @@ local function drawTooltip(title)
 end
 
 
+-- sidebar to select/deselect individual display of layers
+local function layerbar()
+    Gui.group.push{ grow = "down", pos = { screen.w - 85, C_TILE_SIZE * 2} }
+        
+        Gui.Label{ text = "Active Layers" }
+        
+        if Gui.Checkbox{ checked = layer.floor1, text = "Floor1" } then 
+            layer.floor1 = not layer.floor1
+        end
+        
+        if Gui.Checkbox{ checked = layer.floor2, text = "Floor2" } then 
+            layer.floor2 = not layer.floor2
+        end
+        
+        if Gui.Checkbox{ checked = layer.object, text = "Object" } then 
+            layer.object = not layer.object
+        end
+        
+        if Gui.Checkbox{ checked = layer.overlay, text = "Overlay" } then 
+            layer.overlay = not layer.overlay
+        end
+    
+    Gui.group.pop{}
+end
+
+
 -- quick access menu containing last used tools
 local function tools()
     Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE } }
@@ -768,6 +805,7 @@ function editorHandler:update(dt)
         if menus.settings then settingsmenu() end
         
         topbar()
+        layerbar()
         tools()
         
     end
@@ -875,7 +913,6 @@ function editorHandler:mousepressed(x, y, button)
             if currentatlas > #brushHandler.getAtlanti() then currentatlas = 1 end
         end
     end
-    
     
     if not editorHandler:menuOpen() then
         if button == "r" then

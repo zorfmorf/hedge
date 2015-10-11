@@ -35,8 +35,11 @@ end
 -- block : if the tile blocks movement
 -- event : id of event triggered by this tile
 function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
+    
+    local layer = editorHandler:getLayerToggles()
+    
     local tile = self.tiles[x][y]
-    if floor then 
+    if floor and layer.floor1 then 
         tile.floor = floor
         
         -- dirty hack to make comparisons easier
@@ -49,10 +52,9 @@ function Block:set(x, y, floor, floor2, object, overlay, block, event, npc)
             end
         end
     end
-    if floor2 then tile.floor2 = floor2 end
-    if floor and not floor2 then tile.floor2 = nil end
-    if object then tile.object = object end
-    if overlay then tile.overlay = overlay end
+    if floor2 and layer.floor2 then tile.floor2 = floor2 end
+    if object and layer.object then tile.object = object end
+    if overlay and layer.overlay then tile.overlay = overlay end
     tile.block = block
     if event then tile.event = event end
     if npc then tile.npc = npc end
@@ -60,7 +62,17 @@ end
 
 
 function Block:delete(x, y)
-    self.tiles[x][y] = { floor = nil, object = nil, overlay = nil, block = true, event = nil }
+    
+    local layer = editorHandler:getLayerToggles()
+    
+    local tile = self.tiles[x][y]
+    
+    if layer.floor1 then tile.floor = nil end
+    if layer.floor2 then tile.floor2 = nil end
+    if layer.object then tile.object = nil end
+    if layer.overlay then tile.overlay = nil end
+    
+    self.tiles[x][y] = { floor = tile.floor, floor2 = tile.floor2, object = tile.object, overlay = tile.overlay, block = true, event = nil }
 end
 
 
@@ -69,7 +81,7 @@ function Block:isEmpty()
     for i = 0, C_BLOCK_SIZE - 1 do
         for j = 0, C_BLOCK_SIZE - 1 do
             local t = self.tiles[i][j]
-            if t.floor or t.object or t.overlay or t.event then return false end
+            if t.floor or t.floor2 or t.object or t.overlay or t.event then return false end
         end
     end
     return true

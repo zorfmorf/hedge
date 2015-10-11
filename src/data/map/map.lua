@@ -150,10 +150,12 @@ end
 
 -- deletes object, overlay, event of tile
 function Map:delObj(x, y)
+    local layer = editorHandler:getLayerToggles()
+    
     local tile = self:getTile(x, y)
     if tile then
-        tile.object = nil
-        tile.overlay = nil
+        if layer.object then tile.object = nil end
+        if layer.overlay then tile.overlay = nil end
         tile.event = nil
         tile.npc = nil
     end
