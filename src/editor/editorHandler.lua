@@ -14,7 +14,8 @@ local icon = {
     npc = love.graphics.newImage("img/icon/npc.png"),
     transition = love.graphics.newImage("img/icon/transition.png"),
     delobj = love.graphics.newImage("img/icon/delobj.png"),
-    tile = love.graphics.newImage("img/icon/tile.png")
+    tile = love.graphics.newImage("img/icon/tile.png"),
+    selection = love.graphics.newImage("img/icon/selection.png")
 }
 
 -- list of all menu dialogs
@@ -34,6 +35,7 @@ layer.floor1 = true
 layer.floor2 = true
 layer.object = true
 layer.overlay = true
+layer.block = false
 
 -- currently selected tile atlas
 local currentatlas = 1
@@ -683,6 +685,10 @@ local function layerbar()
         if Gui.Checkbox{ checked = layer.overlay, text = "Overlay" } then 
             layer.overlay = not layer.overlay
         end
+        
+        if Gui.Checkbox{ checked = layer.block, text = "Blocks" } then 
+            layer.block = not layer.block
+        end
     
     Gui.group.pop{}
 end
@@ -718,6 +724,9 @@ local function tools()
         end
         if Gui.Button{ id = "tool_npc", text = "Add/Remove Npc", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.npc, nil, brushHandler.currentBrushId() == -5)} then
             brushHandler.selectBrush(-5)
+        end
+        if Gui.Button{ id = "tool_selection", text = "Create brush from selection", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.selection, nil, brushHandler.currentBrushId() == -9)} then
+            brushHandler.selectBrush(-9)
         end
         
         Gui.Label{ text = "Brushes:", size = {60} }
@@ -758,6 +767,7 @@ local function tools()
     if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     if Gui.mouse.isHot("tool_delete_obj") then drawTooltip("Delete object & overlay & event of tile") end
+    if Gui.mouse.isHot("tool_selection") then drawTooltip("Create a new brush by selecting an area on the map") end
     for i,brush in ipairs(brushHandler.getBrushes()) do
         if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end

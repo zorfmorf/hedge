@@ -114,6 +114,9 @@ function st_edit:draw()
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
     local layer = editorHandler:getLayerToggles()
+    if layer.block then
+        game.map:draw(true)
+    end
     if layer.floor1 then
         for i,atlas in ipairs(brushHandler.getAtlanti()) do
             love.graphics.draw(atlas.batch_floor)

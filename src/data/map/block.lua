@@ -95,48 +95,52 @@ function Block:addEvent(x, y, event)
 end
 
 
-function Block:draw()
+function Block:draw(outline)
     
-    if not game.editmode then
-        for i = 0, C_BLOCK_SIZE - 1 do
-            for j = 0, C_BLOCK_SIZE - 1 do
-                
-                local tile = self.tiles[i][j]
-                
-                if tile.floor then
-                    local t = game.mapping[tile.floor[1]][tile.floor[2]][tile.floor[3]]
-                    game.atlas:addFloorQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-                end
-                if tile.floor2 then
-                    local t = game.mapping[tile.floor2[1]][tile.floor2[2]][tile.floor2[3]]
-                    game.atlas:addFloor2Quad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-                end
-                if tile.object then
-                    local t = game.mapping[tile.object[1]][tile.object[2]][tile.object[3]]
-                    game.atlas:addObjectQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-                end
-                if tile.overlay then
-                    local t = game.mapping[tile.overlay[1]][tile.overlay[2]][tile.overlay[3]]
-                    game.atlas:addOverlayQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+    if outline then
+        love.graphics.rectangle("line", self.x * C_BLOCK_SIZE * C_TILE_SIZE, self.y * C_BLOCK_SIZE * C_TILE_SIZE, C_BLOCK_SIZE * C_TILE_SIZE, C_BLOCK_SIZE * C_TILE_SIZE)
+    else
+        if not game.editmode then
+            for i = 0, C_BLOCK_SIZE - 1 do
+                for j = 0, C_BLOCK_SIZE - 1 do
+                    
+                    local tile = self.tiles[i][j]
+                    
+                    if tile.floor then
+                        local t = game.mapping[tile.floor[1]][tile.floor[2]][tile.floor[3]]
+                        game.atlas:addFloorQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
+                    if tile.floor2 then
+                        local t = game.mapping[tile.floor2[1]][tile.floor2[2]][tile.floor2[3]]
+                        game.atlas:addFloor2Quad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
+                    if tile.object then
+                        local t = game.mapping[tile.object[1]][tile.object[2]][tile.object[3]]
+                        game.atlas:addObjectQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
+                    if tile.overlay then
+                        local t = game.mapping[tile.overlay[1]][tile.overlay[2]][tile.overlay[3]]
+                        game.atlas:addOverlayQuad(t[1], t[2], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
                 end
             end
-        end
-        
-    else
-        local at = tilesetreader:getAtlanti()
-        for i,row in pairs(self.tiles) do
-            for j,tile in pairs(row) do
-                if tile.floor then 
-                    at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-                end
-                if tile.floor2 then 
-                    at[tile.floor2[1]]:addFloor2Quad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-                end
-                if tile.object then 
-                    at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
-                end
-                if tile.overlay then 
-                    at[tile.overlay[1]]:addOverlayQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+            
+        else
+            local at = tilesetreader:getAtlanti()
+            for i,row in pairs(self.tiles) do
+                for j,tile in pairs(row) do
+                    if tile.floor then 
+                        at[tile.floor[1]]:addFloorQuad(tile.floor[2], tile.floor[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
+                    if tile.floor2 then 
+                        at[tile.floor2[1]]:addFloor2Quad(tile.floor2[2], tile.floor2[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
+                    if tile.object then 
+                        at[tile.object[1]]:addObjectQuad(tile.object[2], tile.object[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
+                    if tile.overlay then 
+                        at[tile.overlay[1]]:addOverlayQuad(tile.overlay[2], tile.overlay[3], i + self.x * C_BLOCK_SIZE, j + self.y * C_BLOCK_SIZE)
+                    end
                 end
             end
         end
