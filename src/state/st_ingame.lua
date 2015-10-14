@@ -140,6 +140,8 @@ function st_ingame:draw()
     end
     love.graphics.draw(game.atlas.batch_overlay)
     
+    player:drawFloats()
+    
     camera:detach()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end

@@ -191,7 +191,7 @@ end
 
 function Map:addEntity(x, y, id)
     local tile = self:getTile(x, y)
-    if tile and not tile.npc then
+    if tile then
         self:deleteNpc(id)
         tile.npc = id
         self.entities[id] = entityHandler.get(id)
@@ -224,7 +224,7 @@ function Map:loadEntities()
                 for j,tile in pairs(row) do
                     if tile.npc then
                         local npc = entityHandler.get(tile.npc)
-                        if npc then 
+                        if npc and not npc.id == 1 then 
                             entities[tile.npc] = npc
                             entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
                         end

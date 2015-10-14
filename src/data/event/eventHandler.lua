@@ -36,6 +36,8 @@ end
 
 -- !!! use this only for use events, not for walking events !!!
 -- there is a separate walkedOnTile function
+-- this is necessary to seperate the map change events, this method only
+-- handles actual events, not transition events
 function eventHandler.triggerEvent(id, walked, tx, ty)
     if events[id] then
         log:msg("verbose", "Triggered event", events[id].name, "at", tx, ty)

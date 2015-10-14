@@ -11,10 +11,8 @@ function Player:init()
     self.pos = { x=0, y=0 } -- actual current position
     self.posd = { x=0, y=0 } -- draw position
     self.dir = "down" -- look direction
-    self.walking = false -- if currently walking
-    self.anim = 3 -- corresponding animation set
     self.next = nil -- queued movement
-    self.cycle = 0 -- anim cycle
+    self:resetAnimation()
     
     -- floating texts
     self.floats = {}
@@ -22,11 +20,20 @@ function Player:init()
 end
 
 
+function Player:resetAnimation()
+    self.walking = false -- if currently walking
+    self.anim = 3 -- corresponding animation set
+    self.cycle = 0 -- anim cycle
+end
+
+
 function Player:place(x, y)
     self.pos = { x=x, y=y }
     self.posd = { x=x, y=y }
+    self:resetAnimation()
     if game.map then game.map:addEntity(x, y, self.id) end
     if camera then st_ingame:updateCamera() end
+    animationHelper.update(self, 0)
 end
 
 
@@ -83,7 +90,14 @@ end
 
 
 function Player:draw()
+    love.graphics.setColor(Color.WHITE)
     animationHelper.draw(self)
+end
+
+
+-- floating texts
+function Player:drawFloats()
+    love.graphics.setColor(Color.WHITE)
     love.graphics.setFont(font)
     for i,float in ipairs(self.floats) do
         if float.time >= 0 then
@@ -92,7 +106,6 @@ function Player:draw()
             drawHelper:printColor(color1, color2, float.value, float.x * C_TILE_SIZE + (C_TILE_SIZE / 2), float.y * C_TILE_SIZE - math.floor(C_TILE_SIZE * float.time), 0, 1, 1, math.floor(font:getWidth(float.value) / 2), C_TILE_SIZE + 10)
         end
     end
-    love.graphics.setColor(Color.WHITE)
 end
 
 
