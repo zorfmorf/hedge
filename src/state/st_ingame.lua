@@ -95,7 +95,7 @@ function st_ingame:update(dt)
     drawHelper:update(dt)
     
     -- update inventory so it maybe can redraw the inventory box
-    inventory:update(dt)
+    if self.container then self.container:update(dt) end
 end
 
 

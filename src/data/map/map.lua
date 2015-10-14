@@ -224,7 +224,7 @@ function Map:loadEntities()
                 for j,tile in pairs(row) do
                     if tile.npc then
                         local npc = entityHandler.get(tile.npc)
-                        if npc and not npc.id == 1 then 
+                        if npc then
                             entities[tile.npc] = npc
                             entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
                         end

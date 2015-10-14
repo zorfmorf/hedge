@@ -21,6 +21,7 @@ function entityHandler.load()
                 npc.name = data.name
                 entities[npc.id] = npc
                 if data.use then npc.use = data.use end
+                if data.charset then npc.charset = data.charset end
                 log:msg("verbose", "Read npc: ", entities[npc.id].id, entities[npc.id].name)
             else
                 log:msg("error", "Loaded npc exists for id", data.id, ":", data.name, " was read, but conflicts with existing npc", entities[npc.id].name)

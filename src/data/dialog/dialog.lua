@@ -110,6 +110,7 @@ function Dialog:draw()
     -- name of person speaking
     if line and line.name then
         drawHelper:printfColor(Color.BLACK, Color.RED, line.name, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+        linebuffer = linebuffer + font:getHeight()
     end
     
     -- text

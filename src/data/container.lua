@@ -82,7 +82,9 @@ function Container:add(itemobj)
         table.insert(self.items, itemobj)
         if not self.tool then self.tool = #self.items end
     else
-        player:addFloatingText(itemobj:getName().." x"..tostring(itemobj.count))
+        if self.id == inventory.id then
+            player:addFloatingText(itemobj:getName().." x"..tostring(itemobj.count))
+        end
         for i,item in ipairs(self.items) do
             if item.id == itemobj.id then
                 item.count = item.count + itemobj.count
@@ -259,51 +261,54 @@ end
 
 function Container:draw()
     
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(self.box.img, math.floor(screen.w * 0.2), math.floor(screen.h * 0.2))
-    love.graphics.setFont(inventory_font)
-    local iconsize = C_TILE_SIZE
-    local row = 0
-    self:updateRowNumber()
-    for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
-        local item = self.items[i]
-        local text = item:getName().." x"..item.count
+    if self.box then
         
-        if i == self.cursor then
-            love.graphics.setColor(Color.BLACK)
-            love.graphics.rectangle("fill", math.floor(screen.w * 0.2 + 5), math.floor(screen.h * 0.2 + row * iconsize+12), math.floor(self.box.img:getWidth() * 0.5), C_TILE_SIZE )
-        end
-        
-        -- draw icon first
         love.graphics.setColor(Color.WHITE)
-        if item.flags.tool then
-            iconsize = item.icon:getWidth() * 0.5
-            love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
-        else
-            local t = game.mapping[item.icon[1]][item.icon[2]][item.icon[3]]
-            love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10))
+        love.graphics.draw(self.box.img, math.floor(screen.w * 0.2), math.floor(screen.h * 0.2))
+        love.graphics.setFont(inventory_font)
+        local iconsize = C_TILE_SIZE
+        local row = 0
+        self:updateRowNumber()
+        for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
+            local item = self.items[i]
+            local text = item:getName().." x"..item.count
+            
+            if i == self.cursor then
+                love.graphics.setColor(Color.BLACK)
+                love.graphics.rectangle("fill", math.floor(screen.w * 0.2 + 5), math.floor(screen.h * 0.2 + row * iconsize+12), math.floor(self.box.img:getWidth() * 0.5), C_TILE_SIZE )
+            end
+            
+            -- draw icon first
+            love.graphics.setColor(Color.WHITE)
+            if item.flags.tool then
+                iconsize = item.icon:getWidth() * 0.5
+                love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
+            else
+                local t = game.mapping[item.icon[1]][item.icon[2]][item.icon[3]]
+                love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10))
+            end
+            
+            drawHelper:print(text, math.floor(screen.w * 0.2 + 15 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            
+            row = row + 1
         end
         
-        drawHelper:print(text, math.floor(screen.w * 0.2 + 15 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-        
-        row = row + 1
-    end
-    
-    -- item name on the right sode
-    if #self.items > 0 then
-        
-        drawHelper:print(self.items[self.cursor]:getName(), math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-        
-        drawHelper:print("Description", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-        
-        -- button
-        if self.flags.sell or self.flags.buy or self.flags.store or self.flags.retrieve then
-            local text = "Sell"
-            if self.flags.buy then text = "Buy" end
-            if self.flags.store then text = "Store" end
-            if self.flags.retrieve then text = "Retrieve" end
-            if self.confirm then text = "Confirm "..text end
-            drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+        -- item name on the right sode
+        if #self.items > 0 then
+            
+            drawHelper:print(self.items[self.cursor]:getName(), math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            
+            drawHelper:print("Description", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            
+            -- button
+            if self.flags.sell or self.flags.buy or self.flags.store or self.flags.retrieve then
+                local text = "Sell"
+                if self.flags.buy then text = "Buy" end
+                if self.flags.store then text = "Store" end
+                if self.flags.retrieve then text = "Retrieve" end
+                if self.confirm then text = "Confirm "..text end
+                drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            end
         end
     end
 end

@@ -185,5 +185,5 @@ function drawHelper:printfColor(color1, color2, text, x, y, limit, align, r, sx,
     love.graphics.setColor(color1)
     love.graphics.printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
     love.graphics.setColor(color2)
-    love.graphics.print(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
+    love.graphics.printf(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
 end
