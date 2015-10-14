@@ -148,18 +148,33 @@ function mapHelper:createObject(tx, ty, brush)
     for x=1,brush.xsize do
         for y=1,brush.ysize do
             if brush.tile[x] and brush.tile[x][y] then
-                local tile = game.map:getTile(tx + (x-1), ty + (y-1))
-                if tile then
-                    if brush.tile[x][y].overlay then
-                        tile.overlay = brush.tile[x][y]
-                    else
-                        tile.object = brush.tile[x][y]
+                if brush.copy then
+                    local tile = brush:get(x, y)
+                    if tile then
+                        local newTile = {}
+                        local layer = editorHandler:getLayerToggles()
+                        if tile.floor and layer.floor1 then newTile.floor = deepcopy(tile.floor) end
+                        if tile.floor2 and layer.floor2 then newTile.floor2 = deepcopy(tile.floor2) end
+                        if tile.object and layer.object then newTile.object = deepcopy(tile.object) end
+                        if tile.overlay and layer.overlay then newTile.overlay = deepcopy(tile.overlay) end
+                        if newTile.floor or newTile.floor2 or newTile.object or newTile.overlay then
+                            game.map:setTile(tx + x - 1, ty + y - 1, newTile.floor, newTile.floor2, newTile.object, newTile.overlay, newTile.block)
+                        end
                     end
                 else
-                    if brush.tile[x][y].overlay then
-                        game.map:setTile(tx + (x-1), ty + (y-1), nil, nil, nil, brush.tile[x][y])
+                    local tile = game.map:getTile(tx + (x-1), ty + (y-1))
+                    if tile then
+                        if brush.tile[x][y].overlay then
+                            tile.overlay = brush.tile[x][y]
+                        else
+                            tile.object = brush.tile[x][y]
+                        end
                     else
-                        game.map:setTile(tx + (x-1), ty + (y-1), nil, nil, brush.tile[x][y])
+                        if brush.tile[x][y].overlay then
+                            game.map:setTile(tx + (x-1), ty + (y-1), nil, nil, nil, brush.tile[x][y])
+                        else
+                            game.map:setTile(tx + (x-1), ty + (y-1), nil, nil, brush.tile[x][y])
+                        end
                     end
                 end
             end

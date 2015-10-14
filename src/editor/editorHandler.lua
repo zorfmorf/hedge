@@ -139,17 +139,51 @@ end
 
 function editorHandler:selection(tx, ty)
     if selection then
-        local brush = OBrush(#brushHandler.getBrushes() + 1)
         local x = math.min(selection.x, tx)
         local y = math.min(selection.y, ty)
-        local xamount = math.abs(selection.x - tx)
-        local yamount = math.abs(selection.y - ty)
-        for i=1,xamount do
-            for j=1,yamount do
-                brush:set(i, j, deepcopy(game.map:getTile(x+i-1,y+j-1)))
+        local xamount = math.abs(selection.x - tx) + 1
+        local yamount = math.abs(selection.y - ty) + 1
+        
+        local brush = nil
+        local id = #brushHandler.getBrushes() + 1
+        if xamount == 1 and yamount == 1 then
+            print( "Creating new brush with id", id)
+            local tile = game.map:getTile(tx, ty)
+            if tile then
+               brush = Brush(id)
+               brush.tiles = { deepcopy(tile.floor) }
+               brush.tiles2 = { deepcopy(tile.floor2) }
+               brush.objects = { deepcopy(tile.object) }
+               brush.overlays = { deepcopy(tile.overlay) }
+               brush.blocking = tile.block
+            end
+        else
+            print( "Creating new object brush with id", id)
+            for i=1,xamount do
+                for j=1,yamount do
+                    local tile = game.map:getTile(x+i-1, y+j-1)
+                    if tile then
+                        local newTile = {}
+                        if tile.floor and layer.floor1 then newTile.floor = deepcopy(tile.floor) end
+                        if tile.floor2 and layer.floor2 then newTile.floor2 = deepcopy(tile.floor2) end
+                        if tile.object and layer.object then newTile.object = deepcopy(tile.object) end
+                        if tile.overlay and layer.overlay then newTile.overlay = deepcopy(tile.overlay) end
+                        newTile.block = tile.block
+                        if not brush then brush = OBrush(id) end
+                        brush:set(i, j, newTile)
+                    end
+                end
+            end
+            if brush then
+                brush.copy = true
+                brush.xsize = xamount
+                brush.ysize = yamount
             end
         end
-        table.insert(brushHandler.getBrushes(), brush)
+        if brush then 
+            table.insert(brushHandler.getBrushes(), id, brush)
+            menus.brushedit = id
+        end
         selection = nil
     else
         selection = { x=tx, y=ty }
@@ -218,42 +252,46 @@ local function brusheditor()
         Gui.Label{ text = "Brush editor menu", size = { "tight" } }
         
         if brush:isObjectBrush() then
-            Gui.Label{ text = "First click: Set tile", size = { "tight" } }
-            Gui.Label{ text = "Second click: Set to overlay", size = { "tight" } }
-            Gui.Label{ text = "Third click: Delete tile", size = { "tight" } }
-            local input = {text = brush.name}
-            Gui.Input{ info = input, size = {100} }
-            brush.name = input.text
-            Gui.group.push{ grow = "right" }
-                for i=1,brush.ysize do
-                    for j=1,brush.xsize do
-                        local tile = brush:get(j, i)
-                        if tile then
-                            if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                                if tile.overlay then
-                                    brush.tile[j][i] = nil
-                                else
-                                    tile.overlay = true
+            if brush.copy then
+                Gui.Label{ text = "This is a copied object brush and can't be edited or viewed for now" }
+            else
+                Gui.Label{ text = "First click: Set tile", size = { "tight" } }
+                Gui.Label{ text = "Second click: Set to overlay", size = { "tight" } }
+                Gui.Label{ text = "Third click: Delete tile", size = { "tight" } }
+                local input = {text = brush.name}
+                Gui.Input{ info = input, size = {100} }
+                brush.name = input.text
+                Gui.group.push{ grow = "right" }
+                    for i=1,brush.ysize do
+                        for j=1,brush.xsize do
+                            local tile = brush:get(j, i)
+                            if tile then
+                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                    if tile.overlay then
+                                        brush.tile[j][i] = nil
+                                    else
+                                        tile.overlay = true
+                                    end
+                                end
+                            else
+                                if Gui.Button{ text =" ", size = {C_TILE_SIZE} } then
+                                     menus.tiles = { "obrush", menus.brushedit, j, i } 
                                 end
                             end
-                        else
-                            if Gui.Button{ text =" ", size = {C_TILE_SIZE} } then
-                                 menus.tiles = { "obrush", menus.brushedit, j, i } 
+                        end
+                        if i == 1 then
+                            if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
+                                brush.xsize = brush.xsize + 1
                             end
                         end
+                        Gui.group.pop{}
+                        Gui.group.push{ grow = "right" }
                     end
-                    if i == 1 then
-                        if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
-                            brush.xsize = brush.xsize + 1
-                        end
+                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
+                        brush.ysize = brush.ysize + 1
                     end
-                    Gui.group.pop{}
-                    Gui.group.push{ grow = "right" }
-                end
-                if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
-                    brush.ysize = brush.ysize + 1
-                end
-            Gui.group.pop{}
+                Gui.group.pop{}
+            end
         else
             Gui.group.push{ grow = "right" }
                 Gui.group.push{ grow = "down" }

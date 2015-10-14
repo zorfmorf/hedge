@@ -161,7 +161,7 @@ function st_edit:draw()
             if brushHandler.currentBrushId() == -9 and selection then
                 love.graphics.setColor(Color.RED)
                 local mx, my = drawHelper:tileCoords(love.mouse.getPosition())
-                love.graphics.rectangle("fill", math.min(mx, selection.x) * C_TILE_SIZE, math.min(my, selection.y) * C_TILE_SIZE, math.abs(mx - selection.x) * C_TILE_SIZE, math.abs(my - selection.y) * C_TILE_SIZE)
+                love.graphics.rectangle("fill", math.min(mx, selection.x) * C_TILE_SIZE, math.min(my, selection.y) * C_TILE_SIZE, (math.abs(mx - selection.x) + 1) * C_TILE_SIZE, (math.abs(my - selection.y) + 1) * C_TILE_SIZE)
             end
         end
         
@@ -265,7 +265,11 @@ function st_edit:saveSettings()
     local file = love.filesystem.newFile("editor.settings")
     if file then
         file:open("w")
-        file:write(brushHandler.currentBrushId().."\n")
+        if not brushHandler.getCurrentBrush() or (brushHandler.getCurrentBrush():isObjectBrush() and brushHandler.getCurrentBrush().copy) then
+            file:write(tostring(1).."\n")
+        else
+            file:write(brushHandler.currentBrushId().."\n")
+        end
         file:write(tostring(editorHandler:showWalkable()).."\n")
         file:write(tostring(editorHandler:showEvents()).."\n")
         local isFirst = true
@@ -279,7 +283,7 @@ function st_edit:saveSettings()
         end
         file:write("\n")
         for i,brush in ipairs(brushHandler.getBrushes()) do
-            file:write(brush:toLine().."\n")
+            if not (brush:isObjectBrush() and brush.copy) then file:write(brush:toLine().."\n") end
         end
     else
         log:msg("error", "Failed creating file editor.settings")

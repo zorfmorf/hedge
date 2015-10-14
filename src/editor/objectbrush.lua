@@ -5,9 +5,12 @@ OBrush = Class{__includes = Brush}
 function OBrush:init(id)
     
     self.name = "Brush" .. id
+    self.id = id
     
     self.xsize = 1
     self.ysize = 1
+    
+    self.copy = false
     
     -- object layer
     self.tile = {}
