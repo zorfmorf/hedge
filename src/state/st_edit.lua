@@ -54,7 +54,7 @@ function st_edit:update(dt)
     editorHandler:update(dt)
     
     -- if left mouse is pressed, set current tile to position
-    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not editorHandler:mouseIsOnMenu() then
+    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not editorHandler:mouseIsOnMenu() and love.mouse.getX() < screen.w - 85 then
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
@@ -74,6 +74,10 @@ function st_edit:update(dt)
                 editorHandler:placeTransition(tx, ty)
             elseif brush == -7 then    
                 game.map:delObj(tx, ty)
+            elseif brush == -8 then
+                editorHandler:singleTilePlacement(tx, ty)
+            elseif brush == -9 then
+                editorHandler:selection(tx, ty)
             else
                 local brush = brushHandler.getCurrentBrush()
                 if brush then 
@@ -111,34 +115,59 @@ function st_edit:draw()
     
     -- draw stored spritebatch operations by camera offset by layers
     camera:attach()
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_floor)
+    local layer = editorHandler:getLayerToggles()
+    if layer.block then
+        game.map:draw(true)
     end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_floor2)
+    if layer.floor1 then
+        for i,atlas in ipairs(brushHandler.getAtlanti()) do
+            love.graphics.draw(atlas.batch_floor)
+        end
     end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_object)
+    if layer.floor2 then
+        for i,atlas in ipairs(brushHandler.getAtlanti()) do
+            love.graphics.draw(atlas.batch_floor2)
+        end
+    end
+    if layer.object then
+        for i,atlas in ipairs(brushHandler.getAtlanti()) do
+            love.graphics.draw(atlas.batch_object)
+        end
     end
     for id,entity in pairs(game.map.entities) do
         entity:draw()
     end
-    for i,atlas in ipairs(brushHandler.getAtlanti()) do
-        love.graphics.draw(atlas.batch_overlay)
+    if layer.overlay then
+        for i,atlas in ipairs(brushHandler.getAtlanti()) do
+            love.graphics.draw(atlas.batch_overlay)
+        end
     end
     
     -- draw brush preview
-    if not editorHandler:menuOpen() and brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
-        local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
-        local brush = brushHandler.getCurrentBrush()
-        if brush:isObjectBrush() then
-            love.graphics.setColor(Color.RED)
-            love.graphics.rectangle("fill", tx * C_TILE_SIZE, ty * C_TILE_SIZE, brush.xsize * C_TILE_SIZE, brush.ysize * C_TILE_SIZE)
+    if not editorHandler:menuOpen() then
+        
+        if brushHandler.currentBrushId() > 0 and brushHandler.getCurrentBrush() then
+            local tx, ty = drawHelper:tileCoords(love.mouse.getPosition())
+            local brush = brushHandler.getCurrentBrush()
+            if brush:isObjectBrush() then
+                love.graphics.setColor(Color.RED)
+                love.graphics.rectangle("fill", tx * C_TILE_SIZE, ty * C_TILE_SIZE, brush.xsize * C_TILE_SIZE, brush.ysize * C_TILE_SIZE)
+            else
+                brush:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+            end
+            love.graphics.setColor(Color.WHITE)
         else
-            brush:drawPreview(tx * C_TILE_SIZE, ty * C_TILE_SIZE)
+            local selection = editorHandler:getSelection()
+            if brushHandler.currentBrushId() == -9 and selection then
+                love.graphics.setColor(Color.RED)
+                local mx, my = drawHelper:tileCoords(love.mouse.getPosition())
+                love.graphics.rectangle("fill", math.min(mx, selection.x) * C_TILE_SIZE, math.min(my, selection.y) * C_TILE_SIZE, (math.abs(mx - selection.x) + 1) * C_TILE_SIZE, (math.abs(my - selection.y) + 1) * C_TILE_SIZE)
+            end
         end
-        love.graphics.setColor(Color.WHITE)
+        
     end
+    
+    love.graphics.setColor(Color.WHITE)
     
     -- draw walkable and event tile overlays if enabled
     drawHelper:drawToggles(editorHandler:showEvents(), editorHandler:showWalkable())
@@ -236,7 +265,11 @@ function st_edit:saveSettings()
     local file = love.filesystem.newFile("editor.settings")
     if file then
         file:open("w")
-        file:write(brushHandler.currentBrushId().."\n")
+        if not brushHandler.getCurrentBrush() or (brushHandler.getCurrentBrush():isObjectBrush() and brushHandler.getCurrentBrush().copy) then
+            file:write(tostring(1).."\n")
+        else
+            file:write(brushHandler.currentBrushId().."\n")
+        end
         file:write(tostring(editorHandler:showWalkable()).."\n")
         file:write(tostring(editorHandler:showEvents()).."\n")
         local isFirst = true
@@ -250,7 +283,7 @@ function st_edit:saveSettings()
         end
         file:write("\n")
         for i,brush in ipairs(brushHandler.getBrushes()) do
-            file:write(brush:toLine().."\n")
+            if not (brush:isObjectBrush() and brush.copy) then file:write(brush:toLine().."\n") end
         end
     else
         log:msg("error", "Failed creating file editor.settings")

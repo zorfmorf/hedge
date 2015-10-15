@@ -95,7 +95,7 @@ function st_ingame:update(dt)
     drawHelper:update(dt)
     
     -- update inventory so it maybe can redraw the inventory box
-    inventory:update(dt)
+    if self.container then self.container:update(dt) end
 end
 
 
@@ -140,6 +140,8 @@ function st_ingame:draw()
     end
     love.graphics.draw(game.atlas.batch_overlay)
     
+    player:drawFloats()
+    
     camera:detach()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
@@ -180,11 +182,12 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_INVENTORY or key == KEY_EXIT then
             self.container = nil
         end
-        if key == KEY_DOWN and not isrepeat then inventory:down() end
-        if key == KEY_UP and not isrepeat then inventory:up() end
+        if key == KEY_DOWN and not isrepeat then self.container:down() end
+        if key == KEY_UP and not isrepeat then self.container:up() end
         if key == KEY_ESCAPCE then self.container:unconfirm() end
         if key == KEY_RETURN then self.container:confirm() end
     else
+        if key == "g" then inventory:addMoney(100) end
         if key == "t" then timeHandler.addTime(60) end -- TODO remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end

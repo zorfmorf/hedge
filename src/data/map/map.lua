@@ -42,7 +42,7 @@ end
 
 
 -- Draw all blocks that are at least partially on the screen
-function Map:draw()
+function Map:draw(outline)
     love.graphics.setColor(Color.WHITE)
     local wx, wy = camera:pos()
     local bx = math.floor(((wx - screen.w * 0.5) / C_TILE_SIZE) / C_BLOCK_SIZE)
@@ -52,7 +52,7 @@ function Map:draw()
     for x = bx, bxe do
         for y = by, bye do
             if self.blocks[x] and self.blocks[x][y] then
-                self.blocks[x][y]:draw()
+                self.blocks[x][y]:draw(outline)
             end
         end
     end
@@ -150,10 +150,12 @@ end
 
 -- deletes object, overlay, event of tile
 function Map:delObj(x, y)
+    local layer = editorHandler:getLayerToggles()
+    
     local tile = self:getTile(x, y)
     if tile then
-        tile.object = nil
-        tile.overlay = nil
+        if layer.object then tile.object = nil end
+        if layer.overlay then tile.overlay = nil end
         tile.event = nil
         tile.npc = nil
     end
@@ -189,7 +191,7 @@ end
 
 function Map:addEntity(x, y, id)
     local tile = self:getTile(x, y)
-    if tile and not tile.npc then
+    if tile then
         self:deleteNpc(id)
         tile.npc = id
         self.entities[id] = entityHandler.get(id)
@@ -222,7 +224,7 @@ function Map:loadEntities()
                 for j,tile in pairs(row) do
                     if tile.npc then
                         local npc = entityHandler.get(tile.npc)
-                        if npc then 
+                        if npc then
                             entities[tile.npc] = npc
                             entities[tile.npc]:place(x * C_BLOCK_SIZE + i, y * C_BLOCK_SIZE + j, true)
                         end

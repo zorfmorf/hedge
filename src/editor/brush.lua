@@ -11,8 +11,10 @@ function Brush:init(id)
     
     self.name = "Brush" .. id
     
+    self.id = id
+    
     -- if a player can walk on the tile after this brush has been used on it
-    self.blocking = false
+    self.blocking = true
     
     -- the following sets can be empty (nothing drawn), have one item or multiple (random one)
     
@@ -281,7 +283,7 @@ end
 function Brush:toLine()
     local line = tostring(self.id)..";"
     line = line .. self.name:gsub('%W','')..";" --strip special chars from name
-    if self.tile then
+    if self.tile and not self.copy then
         line = line .. "obrush;"..self.xsize..";"..self.ysize..";"
         local isFirst = true
         for x,row in pairs(self.tile) do

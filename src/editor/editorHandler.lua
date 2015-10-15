@@ -13,7 +13,9 @@ local icon = {
     spawn = love.graphics.newImage("img/icon/position-marker.png"),
     npc = love.graphics.newImage("img/icon/npc.png"),
     transition = love.graphics.newImage("img/icon/transition.png"),
-    delobj = love.graphics.newImage("img/icon/delobj.png")
+    delobj = love.graphics.newImage("img/icon/delobj.png"),
+    tile = love.graphics.newImage("img/icon/tile.png"),
+    selection = love.graphics.newImage("img/icon/selection.png")
 }
 
 -- list of all menu dialogs
@@ -27,6 +29,13 @@ menus.transition = false -- transition placer
 menus.event = false -- event placer
 menus.settings = false -- map settings menu
 
+-- layer toggles
+local layer = {}
+layer.floor1 = true
+layer.floor2 = true
+layer.object = true
+layer.overlay = true
+layer.block = false
 
 -- currently selected tile atlas
 local currentatlas = 1
@@ -49,6 +58,12 @@ local transitiontarget = nil
 -- current map target for event placement tool
 local eventtarget = nil
 
+-- target for placement of singletiletarget
+local singletiletarget = nil
+
+-- saves selection for selection based brush creation
+local selection = nil
+
 
 local function buttonWidth(text)
     return math.max(love.graphics.getFont():getWidth(text) + 10, 110)
@@ -66,6 +81,17 @@ end
 
 function editorHandler:showWalkable()
     return showWalkable
+end
+
+
+function editorHandler:singleTilePlacement(tx, ty)
+    menus.tiles = true
+    singletiletarget = { x=tx, y=ty, new=true }
+end
+
+
+function editorHandler:getLayerToggles()
+    return layer
 end
 
 
@@ -108,6 +134,65 @@ function editorHandler:placeTransition(tx, ty)
         t[2] = transitiontarget.key
         game.map:changeEvent(tx, ty, t)
     end
+end
+
+
+function editorHandler:selection(tx, ty)
+    if selection then
+        local x = math.min(selection.x, tx)
+        local y = math.min(selection.y, ty)
+        local xamount = math.abs(selection.x - tx) + 1
+        local yamount = math.abs(selection.y - ty) + 1
+        
+        local brush = nil
+        local id = #brushHandler.getBrushes() + 1
+        if xamount == 1 and yamount == 1 then
+            print( "Creating new brush with id", id)
+            local tile = game.map:getTile(tx, ty)
+            if tile then
+               brush = Brush(id)
+               brush.tiles = { deepcopy(tile.floor) }
+               brush.tiles2 = { deepcopy(tile.floor2) }
+               brush.objects = { deepcopy(tile.object) }
+               brush.overlays = { deepcopy(tile.overlay) }
+               brush.blocking = tile.block
+            end
+        else
+            print( "Creating new object brush with id", id)
+            for i=1,xamount do
+                for j=1,yamount do
+                    local tile = game.map:getTile(x+i-1, y+j-1)
+                    if tile then
+                        local newTile = {}
+                        if tile.floor and layer.floor1 then newTile.floor = deepcopy(tile.floor) end
+                        if tile.floor2 and layer.floor2 then newTile.floor2 = deepcopy(tile.floor2) end
+                        if tile.object and layer.object then newTile.object = deepcopy(tile.object) end
+                        if tile.overlay and layer.overlay then newTile.overlay = deepcopy(tile.overlay) end
+                        newTile.block = tile.block
+                        if not brush then brush = OBrush(id) end
+                        brush:set(i, j, newTile)
+                    end
+                end
+            end
+            if brush then
+                brush.copy = true
+                brush.xsize = xamount
+                brush.ysize = yamount
+            end
+        end
+        if brush then 
+            table.insert(brushHandler.getBrushes(), id, brush)
+            menus.brushedit = id
+        end
+        selection = nil
+    else
+        selection = { x=tx, y=ty }
+    end
+end
+
+
+function editorHandler:getSelection()
+    return selection
 end
 
 
@@ -167,42 +252,46 @@ local function brusheditor()
         Gui.Label{ text = "Brush editor menu", size = { "tight" } }
         
         if brush:isObjectBrush() then
-            Gui.Label{ text = "First click: Set tile", size = { "tight" } }
-            Gui.Label{ text = "Second click: Set to overlay", size = { "tight" } }
-            Gui.Label{ text = "Third click: Delete tile", size = { "tight" } }
-            local input = {text = brush.name}
-            Gui.Input{ info = input, size = {100} }
-            brush.name = input.text
-            Gui.group.push{ grow = "right" }
-                for i=1,brush.ysize do
-                    for j=1,brush.xsize do
-                        local tile = brush:get(j, i)
-                        if tile then
-                            if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
-                                if tile.overlay then
-                                    brush.tile[j][i] = nil
-                                else
-                                    tile.overlay = true
+            if brush.copy then
+                Gui.Label{ text = "This is a copied object brush and can't be edited or viewed for now" }
+            else
+                Gui.Label{ text = "First click: Set tile", size = { "tight" } }
+                Gui.Label{ text = "Second click: Set to overlay", size = { "tight" } }
+                Gui.Label{ text = "Third click: Delete tile", size = { "tight" } }
+                local input = {text = brush.name}
+                Gui.Input{ info = input, size = {100} }
+                brush.name = input.text
+                Gui.group.push{ grow = "right" }
+                    for i=1,brush.ysize do
+                        for j=1,brush.xsize do
+                            local tile = brush:get(j, i)
+                            if tile then
+                                if Gui.Button{ text = "", size = {C_TILE_SIZE}, draw = brushTile_drawFunction(tile) } then
+                                    if tile.overlay then
+                                        brush.tile[j][i] = nil
+                                    else
+                                        tile.overlay = true
+                                    end
+                                end
+                            else
+                                if Gui.Button{ text =" ", size = {C_TILE_SIZE} } then
+                                     menus.tiles = { "obrush", menus.brushedit, j, i } 
                                 end
                             end
-                        else
-                            if Gui.Button{ text =" ", size = {C_TILE_SIZE} } then
-                                 menus.tiles = { "obrush", menus.brushedit, j, i } 
+                        end
+                        if i == 1 then
+                            if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
+                                brush.xsize = brush.xsize + 1
                             end
                         end
+                        Gui.group.pop{}
+                        Gui.group.push{ grow = "right" }
                     end
-                    if i == 1 then
-                        if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
-                            brush.xsize = brush.xsize + 1
-                        end
+                    if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
+                        brush.ysize = brush.ysize + 1
                     end
-                    Gui.group.pop{}
-                    Gui.group.push{ grow = "right" }
-                end
-                if Gui.Button{ text = "+", size = {C_TILE_SIZE} } then 
-                    brush.ysize = brush.ysize + 1
-                end
-            Gui.group.pop{}
+                Gui.group.pop{}
+            end
         else
             Gui.group.push{ grow = "right" }
                 Gui.group.push{ grow = "down" }
@@ -641,11 +730,44 @@ local function drawTooltip(title)
 end
 
 
+-- sidebar to select/deselect individual display of layers
+local function layerbar()
+    Gui.group.push{ grow = "down", pos = { screen.w - 85, C_TILE_SIZE * 2} }
+        
+        Gui.Label{ text = "Active Layers" }
+        
+        if Gui.Checkbox{ checked = layer.floor1, text = "Floor1" } then 
+            layer.floor1 = not layer.floor1
+        end
+        
+        if Gui.Checkbox{ checked = layer.floor2, text = "Floor2" } then 
+            layer.floor2 = not layer.floor2
+        end
+        
+        if Gui.Checkbox{ checked = layer.object, text = "Object" } then 
+            layer.object = not layer.object
+        end
+        
+        if Gui.Checkbox{ checked = layer.overlay, text = "Overlay" } then 
+            layer.overlay = not layer.overlay
+        end
+        
+        if Gui.Checkbox{ checked = layer.block, text = "Blocks" } then 
+            layer.block = not layer.block
+        end
+    
+    Gui.group.pop{}
+end
+
+
 -- quick access menu containing last used tools
 local function tools()
     Gui.group.push{ grow = "right", pos = { 0, screen.h - C_TILE_SIZE}, size = { screen.w, C_TILE_SIZE } }
         
         Gui.Label{ text = "Tools:", size = {60} }
+        if Gui.Button{ id = "tool_place", text = "Place tiles without a brush", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.tile, nil, brushHandler.currentBrushId() == -8) } then
+            brushHandler.selectBrush(-8)
+        end
         if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, brushHandler.currentBrushId() == -1) } then
             brushHandler.selectBrush(-1)
         end
@@ -668,6 +790,9 @@ local function tools()
         end
         if Gui.Button{ id = "tool_npc", text = "Add/Remove Npc", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.npc, nil, brushHandler.currentBrushId() == -5)} then
             brushHandler.selectBrush(-5)
+        end
+        if Gui.Button{ id = "tool_selection", text = "Create brush from selection", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.selection, nil, brushHandler.currentBrushId() == -9)} then
+            brushHandler.selectBrush(-9)
         end
         
         Gui.Label{ text = "Brushes:", size = {60} }
@@ -697,6 +822,7 @@ local function tools()
     
     -- tool tooltips
     -- tooltip (see above)
+    if Gui.mouse.isHot("tool_place") then drawTooltip("Add a tile without a brush on lowermost, empty, active layer") end
     if Gui.mouse.isHot("tool_brush_add") then drawTooltip("Add a brush") end
     if Gui.mouse.isHot("tool_delete") then drawTooltip("Deletion tool") end
     if Gui.mouse.isHot("tool_walkable") then drawTooltip("Walkable tool") end
@@ -707,6 +833,7 @@ local function tools()
     if Gui.mouse.isHot("toggle_walkable") then drawTooltip("Toggle display of walkable tiles") end
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     if Gui.mouse.isHot("tool_delete_obj") then drawTooltip("Delete object & overlay & event of tile") end
+    if Gui.mouse.isHot("tool_selection") then drawTooltip("Create a new brush by selecting an area on the map") end
     for i,brush in ipairs(brushHandler.getBrushes()) do
         if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end
@@ -768,6 +895,7 @@ function editorHandler:update(dt)
         if menus.settings then settingsmenu() end
         
         topbar()
+        layerbar()
         tools()
         
     end
@@ -800,66 +928,112 @@ function editorHandler:mousepressed(x, y, button)
     -- if in tileselection mode
     if menus.tiles then
         
+        
         -- select tile based on current atlas
         if button == "l" then
             
             local tx = math.floor((x - atlaspos[1]) / C_TILE_SIZE)
             local ty = math.floor((y - atlaspos[2]) / C_TILE_SIZE)
             
-            local brush = brushHandler.getBrush(menus.tiles[2])
-            if menus.tiles[1] == "tiles" then
-                brush:addTile(currentatlas, tx, ty)
-            end
-            if menus.tiles[1] == "tiles2" then
-                brush:addTile2(currentatlas, tx, ty)
-            end
-            if menus.tiles[1] == "objects" then
-                brush:addObject(currentatlas, tx, ty)
-            end
-            if menus.tiles[1] == "overlays" then
-                brush:addOverlay(currentatlas, tx, ty)
-            end
-            if menus.tiles[1] == "border.inner.ul" then
-                brush.border.inner.ul = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.inner.ur" then
-                brush.border.inner.ur = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.inner.ll" then
-                brush.border.inner.ll = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.inner.lr" then
-                brush.border.inner.lr = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.outer.ul" then
-                brush.border.outer.ul = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.outer.ur" then
-                brush.border.outer.ur = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.outer.ll" then
-                brush.border.outer.ll = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.outer.lr" then
-                brush.border.outer.lr = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.side.u" then
-                brush.border.side.u = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.side.l" then
-                brush.border.side.l = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.side.r" then
-                brush.border.side.r = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "border.side.d" then
-                brush.border.side.d = {currentatlas, tx, ty}
-            end
-            if menus.tiles[1] == "obrush" then
-                brush:set(menus.tiles[3], menus.tiles[4], {currentatlas, tx, ty})
+            if singletiletarget then
+                
+                -- don't do anything on first click, otherwise
+                -- we immediately select a tile and close the menu again
+                -- before the user was able to do anything
+                if singletiletarget.new then
+                    singletiletarget.new = false
+                else
+                        
+                    local value = {currentatlas, tx, ty}
+                    
+                    local x = singletiletarget.x
+                    local y = singletiletarget.y
+                    
+                    local tile = game.map:getTile(x, y)
+                    
+                    -- now place tile on lowest possible unset tile, ignoring
+                    -- inactive layers
+                    if tile then
+                        if layer.floor1 and not tile.floor then
+                            tile.floor = value
+                        elseif layer.floor2 and not tile.floor2 then
+                            tile.floor2 = value
+                        elseif layer.object and not tile.object then
+                            tile.object = value
+                        elseif layer.overlay and not tile.overlay then
+                            tile.overlay = value
+                        end
+                    else
+                        if layer.floor1 then
+                            game.map:setTile(x, y, value, nil, nil, nil, true)
+                        elseif layer.floor2 then
+                            game.map:setTile(x, y, nil, value, nil, nil, true)
+                        elseif layer.object then
+                            game.map:setTile(x, y, nil, nil, value, nil, true)
+                        elseif layer.overlay then
+                            game.map:setTile(x, y, nil, nil, nil, value, true)
+                        end
+                    end
+                    singletiletarget = nil
+                    menus.tiles = false
+                end
+            else
+                local brush = brushHandler.getBrush(menus.tiles[2])
+                if menus.tiles[1] == "tiles" then
+                    brush:addTile(currentatlas, tx, ty)
+                end
+                if menus.tiles[1] == "tiles2" then
+                    brush:addTile2(currentatlas, tx, ty)
+                end
+                if menus.tiles[1] == "objects" then
+                    brush:addObject(currentatlas, tx, ty)
+                end
+                if menus.tiles[1] == "overlays" then
+                    brush:addOverlay(currentatlas, tx, ty)
+                end
+                if menus.tiles[1] == "border.inner.ul" then
+                    brush.border.inner.ul = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.inner.ur" then
+                    brush.border.inner.ur = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.inner.ll" then
+                    brush.border.inner.ll = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.inner.lr" then
+                    brush.border.inner.lr = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.outer.ul" then
+                    brush.border.outer.ul = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.outer.ur" then
+                    brush.border.outer.ur = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.outer.ll" then
+                    brush.border.outer.ll = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.outer.lr" then
+                    brush.border.outer.lr = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.side.u" then
+                    brush.border.side.u = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.side.l" then
+                    brush.border.side.l = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.side.r" then
+                    brush.border.side.r = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "border.side.d" then
+                    brush.border.side.d = {currentatlas, tx, ty}
+                end
+                if menus.tiles[1] == "obrush" then
+                    brush:set(menus.tiles[3], menus.tiles[4], {currentatlas, tx, ty})
+                end
+                
+                menus.tiles = false
             end
             
-            menus.tiles = false
         end
                 
         -- switch current atlas on mousewheel
@@ -876,18 +1050,25 @@ function editorHandler:mousepressed(x, y, button)
         end
     end
     
-    
     if not editorHandler:menuOpen() then
         if button == "r" then
             local mx, my = camera:mousepos()
             local tx = math.floor(mx / C_TILE_SIZE)
             local ty = math.floor(my / C_TILE_SIZE)
+            
             -- delete npc on rightclick
             if brushHandler.currentBrushId() == -5 then
                 game.map:removeEntity(tx, ty)
             end
+            
+            -- delete event on rightclick
             if brushHandler.currentBrushId() == -3 then
                 game.map:changeEvent(tx, ty, nil)
+            end
+            
+            -- cancel selection on rightlick
+            if brushHandler.currentBrushId() == -9 then
+                selection = nil
             end
         end
     end

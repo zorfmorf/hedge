@@ -4,6 +4,7 @@ Npc = Class{}
 function Npc:init(id)
     self.id = id
     self.name = "Unnamed"
+    self.charset = "default"
     
     -- pos/draw information
     self.pos = { x=0, y=0 } -- actual current position
