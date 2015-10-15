@@ -9,8 +9,9 @@ function Dialog:init(lines)
 end
 
 
-function Dialog:ready()
+function Dialog:ready(id)
     self.pos = 1
+    if id then self.pos = id end
     self:prepareCurrentLine()
 end
 
@@ -37,7 +38,11 @@ function Dialog:advance()
         self.pos = opt.target
         if opt.func then opt.func() end
     else
-        self.pos = self.pos + 1
+        if line.target then
+            self.pos = line.target
+        else
+            self.pos = self.pos + 1
+        end
     end
     
     self.opts = nil
@@ -64,7 +69,7 @@ end
 
 
 function Dialog:isFinished()
-    return self.pos > #self.lines
+    return self.pos == -1 or self.pos > #self.lines
 end
 
 

@@ -41,10 +41,11 @@ function st_ingame:enter()
 end
 
 
-function st_ingame:startDialog(dialog)
+function st_ingame:startDialog(dialog, id)
     local d = dialogHandler.get(dialog)
     if d then
-        d:ready()
+        d:ready(id)
+        d:update(0)
         self.dialog = d
     else
         log:msg("error", "Dialog not found:", dialog)
