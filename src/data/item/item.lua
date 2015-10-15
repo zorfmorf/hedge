@@ -33,3 +33,8 @@ end
 function Item:getSellPrice()
     return self.price
 end
+
+
+function Item:getCopy()
+    return Item(deepcopy(self.id), 1, deepcopy(self.flags), deepcopy(self.price))
+end

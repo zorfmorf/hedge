@@ -40,12 +40,13 @@ function Container:init(id, flags)
     self.icon = loadIcons()
     self.offset = 0 -- how many items are "above" the inventory (scrolling)
     self.cursor = 1 -- item id the cursor is centered on
-    self.confirm = false -- if they buy/sell action is in confirm state
+    self.confirmed = false -- if they buy/sell action is in confirm state
 end
 
 
 function Container:addMoney(amount)
     self.money = self.money + amount
+    log:msg("verbose", "Added", amount, "money to container",self.id)
 end
 
 
@@ -53,6 +54,7 @@ function Container:withdrawMoney(amount)
     local success = false
     if self.money >= amount then
         self.money = self.money - amount
+        success = true
     end
     return success
 end
@@ -306,7 +308,12 @@ function Container:draw()
                 if self.flags.buy then text = "Buy" end
                 if self.flags.store then text = "Store" end
                 if self.flags.retrieve then text = "Retrieve" end
-                if self.confirm then text = "Confirm "..text end
+                if self.confirmed then 
+                    text = "Confirm "..text 
+                    love.graphics.setColor(Color.BLACK)
+                    love.graphics.rectangle("fill", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, font:getWidth(text), font:getHeight())
+                    love.graphics.setColor(Color.WHITE)
+                end
                 drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             end
         end
@@ -316,7 +323,7 @@ end
 
 function Container:up()
     self:updateRowNumber()
-    self.confirm = false
+    self.confirmed = false
     self.cursor = self.cursor - 1
     if self.offset >= self.cursor then self.offset = self.cursor - 1 end
     if self.cursor < 1 then 
@@ -328,7 +335,7 @@ end
 
 function Container:down()
     self:updateRowNumber()
-    self.confirm = false
+    self.confirmed = false
     self.cursor = self.cursor + 1
     if self.offset < self.cursor - self.rownumber then self.offset = self.offset + 1 end
     if self.cursor > #self.items then 
@@ -339,16 +346,16 @@ end
 
 
 function Container:confirm()
-    if self.confirm then
+    if self.confirmed then
         if self.flags.sell then
             inventory:addMoney(math.floor(self.items[self.cursor].price))
             self:removeAtPosition(self.cursor, false)
         end
         if self.flags.buy then
-            if inventory:withdrawMoney(math.floor(self.items[self.cursor].price)) then
-                local item = deepcopy(self.items[self.cursor])
-                item.count = 1
-                inventory:add(item)
+            if inventory:hasFreeSlots(1, true) and inventory:withdrawMoney(math.floor(self.items[self.cursor].price)) then
+                inventory:add(self.items[self.cursor]:getCopy())
+            else
+                log:msg("verbose", "Inventory full or not enough money to buy", self.items[self.cursor].id)
             end
         end
         if self.flags.store then
@@ -364,13 +371,13 @@ function Container:confirm()
             self:removeAtPosition(self.cursor, false)
         end
     else
-        self.confirm = true
+        self.confirmed = true
     end
 end
 
 
 function Container:unconfirm()
-    self.confirm = false
+    self.confirmed = false
 end
 
 

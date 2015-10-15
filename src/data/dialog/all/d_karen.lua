@@ -7,6 +7,7 @@ local function createStore()
     container:add(itemCreator:getCorn(99))
     container:add(itemCreator:getPotatoe(99))
     st_ingame.container = container
+    container:update(0)
 end
 
 local lines = {}
@@ -14,7 +15,7 @@ local lines = {}
 lines[1] = { name = "Karen", text = function() return "Welcome to Seedy's. How can I help you?" end }
 lines[2] = { text = function() return "" end, 
                     options={ 
-                        { target=3, text="I'd like to buy some seeds", func=function() createStore() end }, 
+                        { target=4, text="I'd like to buy some seeds", func=function() createStore() end }, 
                         { target=3, text="Nothing at the moment, I'm just browsing"}
                     }
                 }
