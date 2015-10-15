@@ -822,7 +822,7 @@ local function tools()
     
     -- tool tooltips
     -- tooltip (see above)
-    if Gui.mouse.isHot("tool_place") then drawTooltip("Add a tile without a brush on uppermost active layer") end
+    if Gui.mouse.isHot("tool_place") then drawTooltip("Add a tile without a brush on lowermost, empty, active layer") end
     if Gui.mouse.isHot("tool_brush_add") then drawTooltip("Add a brush") end
     if Gui.mouse.isHot("tool_delete") then drawTooltip("Deletion tool") end
     if Gui.mouse.isHot("tool_walkable") then drawTooltip("Walkable tool") end
