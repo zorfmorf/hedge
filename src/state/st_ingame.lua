@@ -171,6 +171,7 @@ end
 
 
 function st_ingame:keypressed(key, isrepeat)
+    print(key, isrepeat)
     if self.menu:isOpen() then
         self.menu:keypressed(key, isrepeat)
     elseif self.transition then
