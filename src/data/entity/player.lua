@@ -55,7 +55,10 @@ function Player:use()
         ty = target.y
     end
     if tile then
-        if tile.npc and not(tile.npc == self.id) then game.map.entities[tile.npc]:use() end
+        if tile.npc and not(tile.npc == self.id) then
+            game.map.entities[tile.npc]:lookAtPlayer()
+            game.map.entities[tile.npc]:use()
+        end
         if not tile.npc and tile.event then eventHandler.triggerEvent(tile.event, false, tx, ty) end
     end
 end

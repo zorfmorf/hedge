@@ -315,6 +315,9 @@ function Container:draw()
                     love.graphics.setColor(Color.WHITE)
                 end
                 drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+                if self.flags.buy or self.flags.sell then
+                    drawHelper:print("Money: "..inventory.money, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8 + font:getHeight() * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+                end
             end
         end
     end

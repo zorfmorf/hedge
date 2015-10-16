@@ -35,6 +35,15 @@ function Npc:draw()
 end
 
 
+function Npc:lookAtPlayer()
+    if player.pos.x < self.pos.x then self.dir = "left" end
+    if player.pos.x > self.pos.x then self.dir = "right" end
+    if player.pos.y < self.pos.y then self.dir = "up" end
+    if player.pos.y > self.pos.y then self.dir = "down" end
+    animationHelper.update(self, 0)
+end
+
+
 -- if the player uses a use action on this npc
 function Npc:use()
     -- define via npc settings

@@ -147,7 +147,7 @@ function editorHandler:selection(tx, ty)
         local brush = nil
         local id = #brushHandler.getBrushes() + 1
         if xamount == 1 and yamount == 1 then
-            print( "Creating new brush with id", id)
+            log:msg( "verbose", "Creating new brush with id", id)
             local tile = game.map:getTile(tx, ty)
             if tile then
                brush = Brush(id)
@@ -158,7 +158,7 @@ function editorHandler:selection(tx, ty)
                brush.blocking = tile.block
             end
         else
-            print( "Creating new object brush with id", id)
+            log:msg( "verbose", "Creating new object brush with id", id)
             for i=1,xamount do
                 for j=1,yamount do
                     local tile = game.map:getTile(x+i-1, y+j-1)
