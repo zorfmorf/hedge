@@ -7,6 +7,7 @@ end
 
 local function walk()
     st_ingame:startDialog("d_karen", 2)
+    entityHandler.get(3).dir = "left"
 end
 
 
