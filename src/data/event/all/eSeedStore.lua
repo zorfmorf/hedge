@@ -10,8 +10,8 @@ local function walk()
 end
 
 
-local function use()
-    st_ingame:startDialog("d_karen", 3)
+local function use(tx, ty)
+    st_ingame:startDialog("d_karen", 3, tx, ty)
 end
 
 

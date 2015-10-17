@@ -22,6 +22,11 @@ function drawHelper:tileCoords(x, y)
 end
 
 
+function drawHelper:screenCoords(x, y)
+    return camera:cameraCoords(x * C_TILE_SIZE, y * C_TILE_SIZE)
+end
+
+
 -- 
 function drawHelper:drawToggles(events, walkable)
     local sx, sy = drawHelper:tileCoords(0, 0)

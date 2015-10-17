@@ -54,7 +54,7 @@ end
 
 
 -- if the player uses a use action on this npc
-function Npc:use()
+function Npc:use(x, y)
     -- define via npc settings
 end
 

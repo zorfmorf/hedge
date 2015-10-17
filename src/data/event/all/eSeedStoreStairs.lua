@@ -5,13 +5,13 @@ local function init()
 end
 
 
-local function walk()
-    st_ingame:startDialog("d_karen", 2)
+local function walk(x, y)
+    st_ingame:startDialog("d_karen", 2, x, y)
     entityHandler.get(3).dir = "left"
 end
 
 
-local function use()
+local function use(x, y)
     
 end
 

@@ -41,10 +41,12 @@ function st_ingame:enter()
 end
 
 
-function st_ingame:startDialog(dialog, id)
+function st_ingame:startDialog(dialog, id, x, y)
     local d = dialogHandler.get(dialog)
     if d then
         d:ready(id)
+        if x then d.x = x end
+        if y then d.y = y end
         d:update(0)
         self.dialog = d
     else

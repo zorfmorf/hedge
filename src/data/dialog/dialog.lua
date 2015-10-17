@@ -1,11 +1,25 @@
-local font = love.graphics.newFont(20)
+local font = love.graphics.newFont("font/alagard.ttf", 20)
 
-local placeholder = love.graphics.newImage("img/avatar/placeholder.png")
+local speech = love.graphics.newImage("img/speech.png")
+
+local quads = nil
+
+local function createQuads()
+    quads = {}
+    for i=1,4 do
+        quads[i] = {}
+        for j=1,3 do
+            quads[i][j] = love.graphics.newQuad( (i-1) * C_TILE_SIZE, (j-1) * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, speech:getWidth(), speech:getHeight() )
+        end
+    end
+    log:msg("verbose", "Created dialog speech quads")
+end
 
 Dialog = Class{}
 
 function Dialog:init(lines)
     self.lines = lines
+    if not quads then createQuads() end
 end
 
 
@@ -17,10 +31,7 @@ end
 
 
 function Dialog:update(dt)
-    if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
-        self.box = { w=screen.w, h=screen.h}
-        self.box.img = drawHelper:createGuiBox(screen.w - 4, math.floor(screen.h / 4))
-    end 
+    
 end
 
 
@@ -93,56 +104,45 @@ function Dialog:draw()
     
     local line = self:current()
     
-    -- fade out game
-    love.graphics.setColor(Color.GREY)
-    love.graphics.rectangle("fill", 0, 0, screen.w, screen.h)
-    
-    -- draw avatar
-    if line and line.avatar then
+    if self.x and self.y and line.text then
+        
+        love.graphics.setFont(font)
+        
+        local text = line.text()
+        
+        local width = 320
+        local lwidth, lines = font:getWrap(text, width)
+        local height = lines * font:getHeight()
+        local rest = height % C_TILE_SIZE
+        height = height + (C_TILE_SIZE - rest)
+        local sx, sy = drawHelper:screenCoords(self.x, self.y)
+        
+        local dox = sx - width * 0.5
+        local doy = sy - height - C_TILE_SIZE * 3
+        
         love.graphics.setColor(Color.WHITE)
-        love.graphics.draw(placeholder, screen.w - placeholder:getWidth() - C_DIALOG_LINE_PAD * 2, screen.h, 0, 1, 1, 0, placeholder:getHeight())
-    end
-    
-    -- draw textbox
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(self.box.img, 2, screen.h - math.floor(screen.h / 4))
-    
-    -- draw actual text/options
-    local tfont = love.graphics.getFont()
-    love.graphics.setFont(font)
-    local linebuffer = 0
-    
-    -- name of person speaking
-    if line and line.name then
-        drawHelper:printfColor(Color.BLACK, Color.RED, line.name, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-        linebuffer = linebuffer + font:getHeight()
-    end
-    
-    -- text
-    if line and line.text then
-        local ltext = line.text()
+        love.graphics.rectangle("fill", dox, doy, width, height )
         
-        drawHelper:printf(ltext, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-        
-        local w,l = font:getWrap(ltext, screen.w - C_DIALOG_PAD - 2)
-        linebuffer = linebuffer + (font:getHeight() + C_DIALOG_LINE_PAD) * l + 10
-    end
-    
-    -- options and option selector
-    if line and self.opts then
-        for i,opt in ipairs(self.opts) do
-            if self.cursor == i then
-                love.graphics.rectangle("fill", C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, font:getHeight())
-            end
-            love.graphics.setColor(Color.BLACK)
-            love.graphics.printf(line.options[opt].text, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-            if not (self.cursor == i) then
-                love.graphics.setColor(Color.WHITE)
-                love.graphics.printf(line.options[opt].text, C_DIALOG_PAD + 1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer + 1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-            end
+        love.graphics.draw(speech, quads[1][1], dox - C_TILE_SIZE, doy - C_TILE_SIZE)
+        love.graphics.draw(speech, quads[4][1], dox + width, doy - C_TILE_SIZE)
+        love.graphics.draw(speech, quads[1][3], dox - C_TILE_SIZE, doy + height)
+        love.graphics.draw(speech, quads[4][3], dox + width, doy + height)
+        local buffer = 0
+        while buffer < width do
+            love.graphics.draw(speech, quads[2][1], dox + buffer, doy - C_TILE_SIZE)
+            love.graphics.draw(speech, quads[3][3], dox + buffer, doy + height)
+            buffer = buffer + C_TILE_SIZE
         end
+        buffer = 0
+        while buffer < lines do
+            love.graphics.draw(speech, quads[1][2], dox - C_TILE_SIZE, doy + buffer * C_TILE_SIZE)
+            love.graphics.draw(speech, quads[4][2], dox + width, doy + buffer * C_TILE_SIZE)
+            buffer = buffer + 1
+        end
+        love.graphics.draw(speech, quads[2][3], sx, sy - C_TILE_SIZE * 3)
+        
+        love.graphics.setColor(Color.BLACK)
+        love.graphics.printf(text, dox, doy, width)
+        
     end
-    
-    -- restore font
-    love.graphics.setFont(tfont)
 end
