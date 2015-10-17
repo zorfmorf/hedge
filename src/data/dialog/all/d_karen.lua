@@ -15,7 +15,7 @@ local lines = {}
 lines[1] = { name = "Karen", text = function() return "Please don't come behind the counter" end, target=-1 }
 lines[2] = { name = "Karen", text = function() return "Could you not? That's my bedroom up there!" end, target=-1 }
 lines[3] = { name = "Karen", text = function() return "Welcome to my store. I sell seeds ... yeah that's about it." end }
-lines[4] = { text = function() return "How can I help you?" end, 
+lines[4] = { name = "Karen", text = function() return "How can I help you?" end, 
                     options={ 
                         { target=-1, text="I'd like to buy some seeds", func=function() createStore() end }, 
                         { target=5, text="Nothing at the moment, I'm just browsing"}

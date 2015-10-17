@@ -86,19 +86,43 @@ end
 
 function Dialog:up()
     if self.opts then
-        self.cursor = self.cursor - 1
-        if self.cursor < 1 then self.cursor = #self.opts end
+        self.cursor = math.max(0, self.cursor - 1)
     end
 end
 
 
 function Dialog:down()
     if self.opts then
-        self.cursor = self.cursor + 1
-        if self.cursor > #self.opts then self.cursor = 1 end
+        self.cursor = math.min(self.cursor + 1, #self.opts)
     end
 end
 
+local function drawSpeechBubble(dox, doy, width, height, sx, sy)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.rectangle("fill", dox, doy, width, height )
+    
+    love.graphics.draw(speech, quads[1][1], dox - C_TILE_SIZE, doy - C_TILE_SIZE)
+    love.graphics.draw(speech, quads[4][1], dox + width, doy - C_TILE_SIZE)
+    love.graphics.draw(speech, quads[1][3], dox - C_TILE_SIZE, doy + height)
+    love.graphics.draw(speech, quads[4][3], dox + width, doy + height)
+    local buffer = 0
+    while buffer < width do
+        love.graphics.draw(speech, quads[3][1], dox + buffer, doy - C_TILE_SIZE)
+        love.graphics.draw(speech, quads[3][3], dox + buffer, doy + height)
+        buffer = buffer + C_TILE_SIZE
+    end
+    buffer = 0
+    while buffer < height do
+        love.graphics.draw(speech, quads[1][2], dox - C_TILE_SIZE, doy + buffer)
+        love.graphics.draw(speech, quads[4][2], dox + width, doy + buffer)
+        buffer = buffer + C_TILE_SIZE
+    end
+    if doy < sy then 
+        love.graphics.draw(speech, quads[2][3], sx, sy - C_TILE_SIZE * 2)
+    else
+        love.graphics.draw(speech, quads[2][1], sx, sy + C_TILE_SIZE)
+    end
+end
 
 function Dialog:draw()
     
@@ -112,37 +136,55 @@ function Dialog:draw()
         
         local width = 320
         local lwidth, lines = font:getWrap(text, width)
+        lines = math.max(2, lines - 1)
+        if line.name then lines = lines + 1 end
         local height = lines * font:getHeight()
         local rest = height % C_TILE_SIZE
-        height = height + (C_TILE_SIZE - rest)
+        if rest > 0 then height = height + (C_TILE_SIZE - rest) end
         local sx, sy = drawHelper:screenCoords(self.x, self.y)
         
         local dox = sx - width * 0.5
-        local doy = sy - height - C_TILE_SIZE * 3
+        local doy = sy - height - C_TILE_SIZE * 2
         
-        love.graphics.setColor(Color.WHITE)
-        love.graphics.rectangle("fill", dox, doy, width, height )
+        drawSpeechBubble(dox, doy, width, height, sx, sy)
         
-        love.graphics.draw(speech, quads[1][1], dox - C_TILE_SIZE, doy - C_TILE_SIZE)
-        love.graphics.draw(speech, quads[4][1], dox + width, doy - C_TILE_SIZE)
-        love.graphics.draw(speech, quads[1][3], dox - C_TILE_SIZE, doy + height)
-        love.graphics.draw(speech, quads[4][3], dox + width, doy + height)
-        local buffer = 0
-        while buffer < width do
-            love.graphics.draw(speech, quads[2][1], dox + buffer, doy - C_TILE_SIZE)
-            love.graphics.draw(speech, quads[3][3], dox + buffer, doy + height)
-            buffer = buffer + C_TILE_SIZE
+        local namebuffer = 0
+        
+        if line.name then
+            love.graphics.setColor(Color.RED_HARD)
+            love.graphics.print(line.name, dox, doy)
+            namebuffer = namebuffer + font:getHeight()
         end
-        buffer = 0
-        while buffer < lines do
-            love.graphics.draw(speech, quads[1][2], dox - C_TILE_SIZE, doy + buffer * C_TILE_SIZE)
-            love.graphics.draw(speech, quads[4][2], dox + width, doy + buffer * C_TILE_SIZE)
-            buffer = buffer + 1
-        end
-        love.graphics.draw(speech, quads[2][3], sx, sy - C_TILE_SIZE * 3)
         
         love.graphics.setColor(Color.BLACK)
-        love.graphics.printf(text, dox, doy, width)
+        love.graphics.printf(text, dox, doy + namebuffer, width)
         
+        if self.opts then
+            
+            width = 0
+            for i,opt in ipairs(self.opts) do
+                width = math.max(width, font:getWidth(line.options[opt].text))
+            end
+            rest = width % C_TILE_SIZE
+            if rest > 0 then width = width + (C_TILE_SIZE - rest) end
+            height = font:getHeight() * (#self.opts - 1)
+            rest = height % C_TILE_SIZE
+            if rest > 0 then height = height + (C_TILE_SIZE - rest) end
+            sx, sy = drawHelper:screenCoords(player.pos.x, player.pos.y)
+            dox = sx - width * 0.5
+            doy = sy + C_TILE_SIZE * 2
+            
+            drawSpeechBubble(dox, doy, width, height, sx, sy)
+            
+            for i,opt in ipairs(self.opts) do
+                love.graphics.setColor(Color.GREY)
+                local text = "  " .. line.options[opt].text
+                if self.cursor == i then
+                    love.graphics.setColor(Color.BLACK)
+                    love.graphics.rectangle("fill", dox, doy + (i - 1) * font:getHeight() + math.floor(font:getHeight() * 0.4), 8, 8)
+                end
+                love.graphics.print(text, dox, doy + (i - 1) * font:getHeight())
+            end
+        end
     end
 end
