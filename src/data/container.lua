@@ -310,6 +310,7 @@ function Container:draw()
                 if self.flags.retrieve then text = "Retrieve" end
                 if self.confirmed then 
                     text = text.." "..self.items[self.cursor]:getName().." for "..self.items[self.cursor]:getSellPrice().."?"
+                    love.graphics.print("Press enter to confirm", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8 + font:getHeight(), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
                 end
                 love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
                 if self.flags.buy or self.flags.sell then

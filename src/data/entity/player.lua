@@ -28,11 +28,11 @@ function Player:resetAnimation()
 end
 
 
-function Player:place(x, y)
+function Player:place(x, y, blockMapPlacement)
     self.pos = { x=x, y=y }
     self.posd = { x=x, y=y }
     self:resetAnimation()
-    if game.map then game.map:addEntity(x, y, self.id) end
+    if not blockMapPlacement and game.map then game.map:addEntity(x, y, self.id) end
     if camera then st_ingame:updateCamera() end
     animationHelper.update(self, 0)
 end
