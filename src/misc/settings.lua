@@ -54,8 +54,8 @@ CHAR_ANIM = 17 -- animation speed
 CHAR_MOVE_DIRCHANGE_THRESHOLD = 0.13 -- time buffer when changing direction in case it's just a direction change
 
 -- dialog settings
-C_DIALOG_PAD = 10
-C_DIALOG_LINE_PAD = 2
+C_DIALOG_LINE_TIME = 1 -- time it takes until a dialog line is displayed
+C_DIALOG_LINE_BLINK = 2 -- blink speed of triangle at line end
 
 -- transition settings
 C_TRANS_TIME = 0.6 -- in seconds

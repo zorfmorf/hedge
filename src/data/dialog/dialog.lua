@@ -26,12 +26,13 @@ end
 function Dialog:ready(id)
     self.pos = 1
     if id then self.pos = id end
+    self.timer = 0
     self:prepareCurrentLine()
 end
 
 
 function Dialog:update(dt)
-    
+    self.timer = self.timer + dt
 end
 
 
@@ -42,27 +43,34 @@ end
 
 function Dialog:advance()
     
-    -- advance to next line (if exists)
-    local line = self:current()
-    if self.opts then
-        local opt = line.options[self.opts[self.cursor]]
-        self.pos = opt.target
-        if opt.func then opt.func() end
+    if self.timer < C_DIALOG_LINE_TIME then
+        self.timer = C_DIALOG_LINE_TIME
     else
-        if line.target then
-            self.pos = line.target
-        else
-            self.pos = self.pos + 1
-        end
-    end
     
-    self.opts = nil
-    self:prepareCurrentLine()
+        -- advance to next line (if exists)
+        local line = self:current()
+        if self.opts then
+            local opt = line.options[self.opts[self.cursor]]
+            self.pos = opt.target
+            if opt.func then opt.func() end
+        else
+            if line.target then
+                self.pos = line.target
+            else
+                self.pos = self.pos + 1
+            end
+        end
+        
+        self.opts = nil
+        self:prepareCurrentLine()
+        
+    end
 end
 
 
 function Dialog:prepareCurrentLine()
     if not self:isFinished() then
+        self.timer = 0
         self.cursor = 1
         local line = self:current()
         if line.options then
@@ -86,7 +94,7 @@ end
 
 function Dialog:up()
     if self.opts then
-        self.cursor = math.max(0, self.cursor - 1)
+        self.cursor = math.max(1, self.cursor - 1)
     end
 end
 
@@ -133,6 +141,11 @@ function Dialog:draw()
         love.graphics.setFont(font)
         
         local text = line.text()
+        if self.timer > C_DIALOG_LINE_TIME and math.floor(self.timer * C_DIALOG_LINE_BLINK) % 2 == 0 then 
+            text = text .. " <"
+        else
+            text = text .. "  "
+        end
         
         local width = 320
         local lwidth, lines = font:getWrap(text, width)
@@ -157,9 +170,11 @@ function Dialog:draw()
         end
         
         love.graphics.setColor(Color.BLACK)
-        love.graphics.printf(text, dox, doy + namebuffer, width)
+        local percentage = math.min(self.timer, C_DIALOG_LINE_TIME) / C_DIALOG_LINE_TIME
+        local charAmount = math.floor(text:len() * percentage)
+        love.graphics.printf(text:sub(1, charAmount), dox, doy + namebuffer, width)
         
-        if self.opts then
+        if self.opts and self.timer > C_DIALOG_LINE_TIME then
             
             width = 0
             for i,opt in ipairs(self.opts) do
