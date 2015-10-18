@@ -72,7 +72,13 @@ end
 function Container:update(dt)
     if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
         self.box = { w=screen.w, h=screen.h}
-        self.box.img = drawHelper:createGuiBox(math.floor(screen.w * 0.6), math.floor(screen.h * 0.6))
+        local w = math.floor(screen.w * 0.6)
+        local rest = w % C_TILE_SIZE
+        if rest > 0 then w = w + (C_TILE_SIZE - rest) end
+        local h = math.floor(screen.h * 0.6)
+        rest = h % C_TILE_SIZE
+        if rest > 0 then h = h + (C_TILE_SIZE - rest) end
+        self.box.img = drawHelper:createGuiBox(w, h)
     end
 end
 
@@ -242,7 +248,7 @@ function Container:drawHud()
     love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
     love.graphics.setFont(font)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
-    drawHelper:print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     
     -- draw tool / seedbag
     if self.tool then
@@ -256,7 +262,7 @@ function Container:drawHud()
                 line = self.items[self.items[self.tool].seed].id
             end
         end
-        drawHelper:print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     end
 end
 
@@ -271,26 +277,20 @@ function Container:draw()
         local iconsize = C_TILE_SIZE
         local row = 0
         self:updateRowNumber()
+        love.graphics.setColor(Color.BLACK)
         for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
             local item = self.items[i]
             local text = item:getName().." x"..item.count
             
+            local dx = math.floor(screen.w * 0.2 + C_TILE_SIZE)
+            local dy = math.floor(screen.h * 0.2 + row * font:getHeight() + C_TILE_SIZE)
+            
             if i == self.cursor then
-                love.graphics.setColor(Color.BLACK)
-                love.graphics.rectangle("fill", math.floor(screen.w * 0.2 + 5), math.floor(screen.h * 0.2 + row * iconsize+12), math.floor(self.box.img:getWidth() * 0.5), C_TILE_SIZE )
+                -- Todo: draw black square in front of text
+                love.graphics.rectangle("fill", dx, math.floor(dy + font:getHeight() * 0.5), 5, 5)
             end
             
-            -- draw icon first
-            love.graphics.setColor(Color.WHITE)
-            if item.flags.tool then
-                iconsize = item.icon:getWidth() * 0.5
-                love.graphics.draw(item.icon, math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10), 0, 0.5, 0.5)
-            else
-                local t = game.mapping[item.icon[1]][item.icon[2]][item.icon[3]]
-                love.graphics.draw(game.atlas.img, game.atlas.quads[t[1]][t[2]], math.floor(screen.w * 0.2 + 10), math.floor(screen.h * 0.2 + row * iconsize+10))
-            end
-            
-            drawHelper:print(text, math.floor(screen.w * 0.2 + 15 + iconsize), math.floor(screen.h * 0.2 + row * iconsize+10 + 0.5 * iconsize), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.print(text, dx + 10, dy)
             
             row = row + 1
         end
@@ -298,9 +298,9 @@ function Container:draw()
         -- item name on the right sode
         if #self.items > 0 then
             
-            drawHelper:print(self.items[self.cursor]:getName(), math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.print(self.items[self.cursor]:getName(), math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             
-            drawHelper:print("Description", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.printf(self.items[self.cursor].description, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, math.floor(self.box.img:getWidth() * 0.4), "left", 0, 1, 1, 0, math.floor(font:getHeight() / 2))
             
             -- button
             if self.flags.sell or self.flags.buy or self.flags.store or self.flags.retrieve then
@@ -309,14 +309,11 @@ function Container:draw()
                 if self.flags.store then text = "Store" end
                 if self.flags.retrieve then text = "Retrieve" end
                 if self.confirmed then 
-                    text = "Confirm "..text 
-                    love.graphics.setColor(Color.BLACK)
-                    love.graphics.rectangle("fill", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, font:getWidth(text), font:getHeight())
-                    love.graphics.setColor(Color.WHITE)
+                    text = text.." "..self.items[self.cursor]:getName().." for "..self.items[self.cursor]:getSellPrice().."?"
                 end
-                drawHelper:print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+                love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
                 if self.flags.buy or self.flags.sell then
-                    drawHelper:print("Money: "..inventory.money, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8 + font:getHeight() * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+                    love.graphics.print("Money: "..inventory.money, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8 + font:getHeight() * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
                 end
             end
         end

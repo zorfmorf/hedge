@@ -48,7 +48,7 @@ end
 
 
 function itemCreator:getCarrotSeeds(amount)
-    return Item("Carrot seeds", amount, { produce=false, food=false, seed=true, sellable=true}, 5)
+    return Item("Carrot seeds", amount, { produce=false, food=false, seed=true, sellable=true}, 5, "A small ruebe sorte. It is said that eating carrotts grants good eye sight.")
 end
 
 
