@@ -185,6 +185,8 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_INVENTORY or key == KEY_EXIT then
             self.container = nil
         end
+        if key == KEY_LEFT and not isrepeat then self.container:reduceAmount() end
+        if key == KEY_RIGHT and not isrepeat then self.container:increaseAmount() end
         if key == KEY_DOWN and not isrepeat then self.container:down() end
         if key == KEY_UP and not isrepeat then self.container:up() end
         if key == KEY_ESCAPCE then self.container:unconfirm() end

@@ -37,6 +37,8 @@ function Item:getSellPrice()
 end
 
 
-function Item:getCopy()
-    return Item(deepcopy(self.id), 1, deepcopy(self.flags), deepcopy(self.price))
+function Item:getCopy(amount)
+    local count = 1
+    if amount then count = amount end
+    return Item(deepcopy(self.id), count, deepcopy(self.flags), deepcopy(self.price), deepcopy(self.description))
 end

@@ -1,7 +1,8 @@
 -- the global player inventory
 
 local font = love.graphics.newFont("font/alagard.ttf", 20)
-local inventory_font = love.graphics.newFont("font/romulus.ttf", 22)
+
+local container_title = love.graphics.newImage("img/ui/datetime.png")
 
 Container = Class{}
 
@@ -271,36 +272,61 @@ function Container:draw()
     
     if self.box then
         
+        local dx = math.floor(screen.w * 0.2) + C_TILE_SIZE
+        local dy = math.floor(screen.h * 0.2) + C_TILE_SIZE
+        local mid = math.floor((self.box.img:getWidth() - C_TILE_SIZE * 2) * 0.5)
+        local dh = self.box.img:getHeight() - C_TILE_SIZE * 2
+        local fonthalf = math.floor(font:getHeight() / 2)
+        
         love.graphics.setColor(Color.WHITE)
-        love.graphics.draw(self.box.img, math.floor(screen.w * 0.2), math.floor(screen.h * 0.2))
-        love.graphics.setFont(inventory_font)
-        local iconsize = C_TILE_SIZE
+        love.graphics.draw(self.box.img, dx - C_TILE_SIZE, dy - C_TILE_SIZE)
+        love.graphics.setFont(font)
+        
+        -- draw title box
+        love.graphics.draw(container_title, dx - C_TILE_SIZE, dy - C_TILE_SIZE, 0, 1, 1, 0, container_title:getHeight())
+        local title = "Inventory"
+        if self.flags.buy then title = "Buying" end
+        if self.flags.sell then title = "Selling" end
+        if self.flags.store then title = "Storing" end
+        if self.flags.retrieve then title = "Retrieving" end
+        love.graphics.print(title, dx - C_TILE_SIZE + math.floor(container_title:getWidth() * 0.5), dy - C_TILE_SIZE - math.floor(container_title:getHeight() * 0.5), 0, 1, 1, math.floor(font:getWidth(title) * 0.5), fonthalf + 2)
+        
+        -- list of items on the left
         local row = 0
         self:updateRowNumber()
-        love.graphics.setColor(Color.BLACK)
         for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
             local item = self.items[i]
-            local text = item:getName().." x"..item.count
             
-            local dx = math.floor(screen.w * 0.2 + C_TILE_SIZE)
-            local dy = math.floor(screen.h * 0.2 + row * font:getHeight() + C_TILE_SIZE)
+            local rowbuffer = math.floor(row * font:getHeight())
             
             if i == self.cursor then
-                -- Todo: draw black square in front of text
-                love.graphics.rectangle("fill", dx, math.floor(dy + font:getHeight() * 0.5), 5, 5)
+                love.graphics.rectangle("fill", dx - 10, dy + rowbuffer + fonthalf, 5, 5)
             end
             
-            love.graphics.print(text, dx + 10, dy)
+            local buffer = 0
+            
+            -- traders sell infinite items
+            if not self.flags.buy then
+                local amount = item.count
+                love.graphics.print(amount, dx + mid, dy + rowbuffer, 0, 1, 1, font:getWidth(amount) + math.floor(C_TILE_SIZE * 0.5))
+            end
+            love.graphics.print(item:getName(), dx, dy + rowbuffer)
             
             row = row + 1
         end
         
-        -- item name on the right sode
+        -- money display
+        love.graphics.print("Money: "..inventory.money, dx, dy + dh, 0, 1, 1, 0, 0)
+        
+        -- separator bar
+        love.graphics.line(dx + mid, dy, dx + mid, dy + self.box.img:getHeight() - 2 * C_TILE_SIZE )
+        
+        -- item name on the right side
         if #self.items > 0 then
             
-            love.graphics.print(self.items[self.cursor]:getName(), math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.print(self.items[self.cursor]:getName(), dx + mid + C_TILE_SIZE, dy, 0, 1, 1, 0, fonthalf)
             
-            love.graphics.printf(self.items[self.cursor].description, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + C_TILE_SIZE * 2, math.floor(self.box.img:getWidth() * 0.4), "left", 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+            love.graphics.printf(self.items[self.cursor].description, dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 2, mid - C_TILE_SIZE, "left", 0, 1, 1, 0, fonthalf)
             
             -- button
             if self.flags.sell or self.flags.buy or self.flags.store or self.flags.retrieve then
@@ -308,14 +334,25 @@ function Container:draw()
                 if self.flags.buy then text = "Buy" end
                 if self.flags.store then text = "Store" end
                 if self.flags.retrieve then text = "Retrieve" end
-                if self.confirmed then 
-                    text = text.." "..self.items[self.cursor]:getName().." for "..self.items[self.cursor]:getSellPrice().."?"
-                    love.graphics.print("Press enter to confirm", math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8 + font:getHeight(), 0, 1, 1, 0, math.floor(font:getHeight() / 2))
+                if self.confirmed then
+                    local price = self.items[self.cursor]:getSellPrice() * self.confirmcount
+                    text = text.." "..self.confirmcount
+                    if self.flags.buy or self.flags.sell then text = text.." for "..price end
+                    text = text.."?"
+                    local confirmtext = "Press return to confirm"
+                    love.graphics.setColor(Color.GREEN)
+                    if self.flags.buy and price > inventory.money then
+                        confirmtext = "Not enough money"
+                        love.graphics.setColor(Color.RED)
+                    end
+                    if self.flags.buy and not inventory:hasFreeSlots(self.confirmcount, true) then
+                        confirmtext = "Not enough space in inventory"
+                        love.graphics.setColor(Color.RED)
+                    end
+                    love.graphics.printf(confirmtext, dx + mid + C_TILE_SIZE, dy + dh, mid, "left", 0, 1, 1, 0, C_TILE_SIZE)
                 end
-                love.graphics.print(text, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-                if self.flags.buy or self.flags.sell then
-                    love.graphics.print("Money: "..inventory.money, math.floor(screen.w * 0.2 + self.box.img:getWidth() * 0.5 + C_TILE_SIZE), math.floor(screen.h * 0.2) + self.box.img:getHeight() * 0.8 + font:getHeight() * 2, 0, 1, 1, 0, math.floor(font:getHeight() / 2))
-                end
+                love.graphics.setColor(Color.WHITE)
+                love.graphics.print(text, dx + mid + C_TILE_SIZE, dy + dh, 0, 1, 1, 0, C_TILE_SIZE * 2)
             end
         end
     end
@@ -353,8 +390,8 @@ function Container:confirm()
             self:removeAtPosition(self.cursor, false)
         end
         if self.flags.buy then
-            if inventory:hasFreeSlots(1, true) and inventory:withdrawMoney(math.floor(self.items[self.cursor].price)) then
-                inventory:add(self.items[self.cursor]:getCopy())
+            if inventory:hasFreeSlots(self.confirmcount, true) and inventory:withdrawMoney(math.floor(self.items[self.cursor].price * self.confirmcount)) then
+                inventory:add(self.items[self.cursor]:getCopy(self.confirmcount))
             else
                 log:msg("verbose", "Inventory full or not enough money to buy", self.items[self.cursor].id)
             end
@@ -373,6 +410,25 @@ function Container:confirm()
         end
     else
         self.confirmed = true
+        self.confirmcount = 1
+    end
+end
+
+
+function Container:reduceAmount()
+    if self.confirmcount <= 1 then
+        self.confirmed = false
+    else
+        self.confirmcount = self.confirmcount - 1
+    end
+end
+
+
+function Container:increaseAmount()
+    if self.confirmed then
+        self.confirmcount = self.confirmcount + 1
+    else
+        self:confirm()
     end
 end
 

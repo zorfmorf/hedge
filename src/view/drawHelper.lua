@@ -102,8 +102,6 @@ function drawHelper:timeAndDate()
     love.graphics.draw(img.date, screen.w - img.date:getWidth() - 5, 5)
     love.graphics.setFont(font)
     local str = timeHandler.tostr()
-    love.graphics.setColor(Color.BLACK)
-    love.graphics.print(str, screen.w - (font:getWidth(str) + 20), 15)
     love.graphics.setColor(Color.WHITE)
     love.graphics.print(str, screen.w - (font:getWidth(str) + 19), 16)
 end
