@@ -2,7 +2,7 @@
 Item = Class{}
 
 
-function Item:init(id, count, flags, price)
+function Item:init(id, count, flags, price, description)
     self.flags = {}
     if flags then self.flags = flags end
     self.id = id
@@ -10,6 +10,8 @@ function Item:init(id, count, flags, price)
     if price then 
         self.price = price
     end
+    self.description = "Description"
+    if description then self.description = description end
     self.count = 1
     if count then self.count = count end
     self:createIcon()
@@ -35,6 +37,8 @@ function Item:getSellPrice()
 end
 
 
-function Item:getCopy()
-    return Item(deepcopy(self.id), 1, deepcopy(self.flags), deepcopy(self.price))
+function Item:getCopy(amount)
+    local count = 1
+    if amount then count = amount end
+    return Item(deepcopy(self.id), count, deepcopy(self.flags), deepcopy(self.price), deepcopy(self.description))
 end

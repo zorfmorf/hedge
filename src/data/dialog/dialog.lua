@@ -1,25 +1,38 @@
-local font = love.graphics.newFont(20)
+local font = love.graphics.newFont("font/alagard.ttf", 20)
 
-local placeholder = love.graphics.newImage("img/avatar/placeholder.png")
+local speech = love.graphics.newImage("img/speech.png")
+
+local quads = nil
+
+local function createQuads()
+    quads = {}
+    for i=1,4 do
+        quads[i] = {}
+        for j=1,3 do
+            quads[i][j] = love.graphics.newQuad( (i-1) * C_TILE_SIZE, (j-1) * C_TILE_SIZE, C_TILE_SIZE, C_TILE_SIZE, speech:getWidth(), speech:getHeight() )
+        end
+    end
+    log:msg("verbose", "Created dialog speech quads")
+end
 
 Dialog = Class{}
 
 function Dialog:init(lines)
     self.lines = lines
+    if not quads then createQuads() end
 end
 
 
-function Dialog:ready()
+function Dialog:ready(id)
     self.pos = 1
+    if id then self.pos = id end
+    self.timer = 0
     self:prepareCurrentLine()
 end
 
 
 function Dialog:update(dt)
-    if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
-        self.box = { w=screen.w, h=screen.h}
-        self.box.img = drawHelper:createGuiBox(screen.w - 4, math.floor(screen.h / 4))
-    end 
+    self.timer = self.timer + dt
 end
 
 
@@ -30,23 +43,34 @@ end
 
 function Dialog:advance()
     
-    -- advance to next line (if exists)
-    local line = self:current()
-    if self.opts then
-        local opt = line.options[self.opts[self.cursor]]
-        self.pos = opt.target
-        if opt.func then opt.func() end
+    if self.timer < C_DIALOG_LINE_TIME then
+        self.timer = C_DIALOG_LINE_TIME
     else
-        self.pos = self.pos + 1
-    end
     
-    self.opts = nil
-    self:prepareCurrentLine()
+        -- advance to next line (if exists)
+        local line = self:current()
+        if self.opts then
+            local opt = line.options[self.opts[self.cursor]]
+            self.pos = opt.target
+            if opt.func then opt.func() end
+        else
+            if line.target then
+                self.pos = line.target
+            else
+                self.pos = self.pos + 1
+            end
+        end
+        
+        self.opts = nil
+        self:prepareCurrentLine()
+        
+    end
 end
 
 
 function Dialog:prepareCurrentLine()
     if not self:isFinished() then
+        self.timer = 0
         self.cursor = 1
         local line = self:current()
         if line.options then
@@ -64,80 +88,124 @@ end
 
 
 function Dialog:isFinished()
-    return self.pos > #self.lines
+    return self.pos == -1 or self.pos > #self.lines
 end
 
 
 function Dialog:up()
     if self.opts then
-        self.cursor = self.cursor - 1
-        if self.cursor < 1 then self.cursor = #self.opts end
+        self.cursor = math.max(1, self.cursor - 1)
     end
 end
 
 
 function Dialog:down()
     if self.opts then
-        self.cursor = self.cursor + 1
-        if self.cursor > #self.opts then self.cursor = 1 end
+        self.cursor = math.min(self.cursor + 1, #self.opts)
     end
 end
 
+local function drawSpeechBubble(dox, doy, width, height, sx, sy)
+    love.graphics.setColor(Color.WHITE)
+    love.graphics.rectangle("fill", dox, doy, width, height )
+    
+    love.graphics.draw(speech, quads[1][1], dox - C_TILE_SIZE, doy - C_TILE_SIZE)
+    love.graphics.draw(speech, quads[4][1], dox + width, doy - C_TILE_SIZE)
+    love.graphics.draw(speech, quads[1][3], dox - C_TILE_SIZE, doy + height)
+    love.graphics.draw(speech, quads[4][3], dox + width, doy + height)
+    local buffer = 0
+    while buffer < width do
+        love.graphics.draw(speech, quads[3][1], dox + buffer, doy - C_TILE_SIZE)
+        love.graphics.draw(speech, quads[3][3], dox + buffer, doy + height)
+        buffer = buffer + C_TILE_SIZE
+    end
+    buffer = 0
+    while buffer < height do
+        love.graphics.draw(speech, quads[1][2], dox - C_TILE_SIZE, doy + buffer)
+        love.graphics.draw(speech, quads[4][2], dox + width, doy + buffer)
+        buffer = buffer + C_TILE_SIZE
+    end
+    if doy < sy then 
+        love.graphics.draw(speech, quads[2][3], sx, sy - C_TILE_SIZE * 2)
+    else
+        love.graphics.draw(speech, quads[2][1], sx, sy + C_TILE_SIZE)
+    end
+end
 
 function Dialog:draw()
     
     local line = self:current()
     
-    -- fade out game
-    love.graphics.setColor(Color.GREY)
-    love.graphics.rectangle("fill", 0, 0, screen.w, screen.h)
-    
-    -- draw avatar
-    if line and line.avatar then
-        love.graphics.setColor(Color.WHITE)
-        love.graphics.draw(placeholder, screen.w - placeholder:getWidth() - C_DIALOG_LINE_PAD * 2, screen.h, 0, 1, 1, 0, placeholder:getHeight())
-    end
-    
-    -- draw textbox
-    love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(self.box.img, 2, screen.h - math.floor(screen.h / 4))
-    
-    -- draw actual text/options
-    local tfont = love.graphics.getFont()
-    love.graphics.setFont(font)
-    local linebuffer = 0
-    
-    -- name of person speaking
-    if line and line.name then
-        drawHelper:printfColor(Color.BLACK, Color.RED, line.name, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-        linebuffer = linebuffer + font:getHeight()
-    end
-    
-    -- text
-    if line and line.text then
-        local ltext = line.text()
+    if self.x and self.y then
         
-        drawHelper:printf(ltext, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+        love.graphics.setFont(font)
         
-        local w,l = font:getWrap(ltext, screen.w - C_DIALOG_PAD - 2)
-        linebuffer = linebuffer + (font:getHeight() + C_DIALOG_LINE_PAD) * l + 10
-    end
-    
-    -- options and option selector
-    if line and self.opts then
-        for i,opt in ipairs(self.opts) do
-            if self.cursor == i then
-                love.graphics.rectangle("fill", C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, font:getHeight())
+        local text = line.text()
+        
+        if text then
+            
+            if self.timer > C_DIALOG_LINE_TIME and math.floor(self.timer * C_DIALOG_LINE_BLINK) % 2 == 0 then 
+                text = text .. " <"
+            else
+                text = text .. "  "
             end
+            
+            local width = 320
+            local lwidth, lines = font:getWrap(text, width)
+            lines = math.max(2, lines - 1)
+            if line.name then lines = lines + 1 end
+            local height = lines * font:getHeight()
+            local rest = height % C_TILE_SIZE
+            if rest > 0 then height = height + (C_TILE_SIZE - rest) end
+            local sx, sy = drawHelper:screenCoords(self.x, self.y)
+            
+            local dox = sx - width * 0.5
+            local doy = sy - height - C_TILE_SIZE * 2
+            
+            drawSpeechBubble(dox, doy, width, height, sx, sy)
+            
+            local namebuffer = 0
+            
+            if line.name then
+                love.graphics.setColor(Color.RED_HARD)
+                love.graphics.print(line.name, dox, doy)
+                namebuffer = namebuffer + font:getHeight()
+            end
+            
             love.graphics.setColor(Color.BLACK)
-            love.graphics.printf(line.options[opt].text, C_DIALOG_PAD, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer, screen.w - C_DIALOG_PAD * 2 - 2, "left")
-            if not (self.cursor == i) then
-                love.graphics.setColor(Color.WHITE)
-                love.graphics.printf(line.options[opt].text, C_DIALOG_PAD + 1, screen.h - math.floor(screen.h / 4) + C_DIALOG_PAD + (font:getHeight() + C_DIALOG_LINE_PAD) * (i - 1) + linebuffer + 1, screen.w - C_DIALOG_PAD * 2 - 2, "left")
+            local percentage = math.min(self.timer, C_DIALOG_LINE_TIME) / C_DIALOG_LINE_TIME
+            local charAmount = math.floor(text:len() * percentage)
+            love.graphics.printf(text:sub(1, charAmount), dox, doy + namebuffer, width)
+        else
+            self.timer = C_DIALOG_LINE_TIME + 0.01
+        end
+        
+        if self.opts and self.timer > C_DIALOG_LINE_TIME then
+            
+            local width = 0
+            for i,opt in ipairs(self.opts) do
+                width = math.max(width, font:getWidth(line.options[opt].text))
+            end
+            local rest = width % C_TILE_SIZE
+            if rest > 0 then width = width + (C_TILE_SIZE - rest) end
+            local height = font:getHeight() * (#self.opts - 1)
+            rest = height % C_TILE_SIZE
+            if rest > 0 then height = height + (C_TILE_SIZE - rest) end
+            local sx, sy = drawHelper:screenCoords(player.pos.x, player.pos.y)
+            local dox = sx - width * 0.5
+            local doy = sy + C_TILE_SIZE * 2
+            
+            drawSpeechBubble(dox, doy, width, height, sx, sy)
+            
+            for i,opt in ipairs(self.opts) do
+                love.graphics.setColor(Color.GREY)
+                local text = "  " .. line.options[opt].text
+                if self.cursor == i then
+                    love.graphics.setColor(Color.BLACK)
+                    love.graphics.rectangle("fill", dox, doy + (i - 1) * font:getHeight() + math.floor(font:getHeight() * 0.4), 8, 8)
+                end
+                love.graphics.print(text, dox, doy + (i - 1) * font:getHeight())
             end
         end
     end
-    
-    -- restore font
-    love.graphics.setFont(tfont)
 end

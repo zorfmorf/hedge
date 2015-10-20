@@ -8,6 +8,7 @@ function Seedbag:init()
     self.id = "Seedbag"
     self.count = 1
     self.seed = nil --item id of current seed
+    self.description = "Used when sowing a field. Has many pouches to easily distinguish between seeds."
     self:createIcon()
     self:nextSeed() -- select a seed of bag if any
 end

@@ -10,6 +10,7 @@ function Npc:init(id)
     self.pos = { x=0, y=0 } -- actual current position
     self.posd = { x=0, y=0 } -- draw position
     self.dir = "down" -- look direction
+    self.defaultDir = "down"
     self.walking = false -- if currently walking
     self.anim = 3 -- corresponding animation set
     self.next = nil -- queued movement
@@ -24,7 +25,15 @@ function Npc:place(x, y, blockMapPlacement)
 end
 
 
+function Npc:doAi()
+    if not st_ingame.dialog then
+        self.dir = self.defaultDir
+    end
+end
+
+
 function Npc:update(dt)
+    self:doAi()
     moveHandler.update(self, dt)
     animationHelper.update(self, dt)
 end
@@ -35,8 +44,17 @@ function Npc:draw()
 end
 
 
+function Npc:lookAtPlayer()
+    if player.pos.x < self.pos.x then self.dir = "left" end
+    if player.pos.x > self.pos.x then self.dir = "right" end
+    if player.pos.y < self.pos.y then self.dir = "up" end
+    if player.pos.y > self.pos.y then self.dir = "down" end
+    animationHelper.update(self, 0)
+end
+
+
 -- if the player uses a use action on this npc
-function Npc:use()
+function Npc:use(x, y)
     -- define via npc settings
 end
 

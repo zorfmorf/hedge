@@ -22,8 +22,12 @@ end
 
 
 local function move(entity, dt, xd, yd)
-    entity.posd.x = entity.posd.x + xd * dt * CHAR_MOVE
-    entity.posd.y = entity.posd.y + yd * dt * CHAR_MOVE
+    local mod = 1
+    if entity.id == 1 and love.keyboard.isDown(KEY_SPRINT) then
+        mod = 2
+    end
+    entity.posd.x = entity.posd.x + xd * dt * CHAR_MOVE * mod
+    entity.posd.y = entity.posd.y + yd * dt * CHAR_MOVE * mod
     if (xd < 0 and entity.posd.x <= entity.pos.x) or
        (xd > 0 and entity.posd.x >= entity.pos.x) or
        (yd < 0 and entity.posd.y <= entity.pos.y) or

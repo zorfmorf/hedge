@@ -3,7 +3,7 @@ local location_icon = love.graphics.newImage("img/icon/position-marker.png")
 local font = love.graphics.newFont("font/alagard.ttf", 15)
 local img = {}
 img.date = love.graphics.newImage("img/ui/datetime.png")
-img.box = love.graphics.newImage("img/ui/listbox_default.png")
+img.box = love.graphics.newImage("img/ui/box.png")
 
 local quads = {}
 for i=0,2,1 do
@@ -19,6 +19,11 @@ drawHelper = {}
 function drawHelper:tileCoords(x, y)
     local nx, ny = camera:worldCoords(x, y)
     return math.floor(nx / C_TILE_SIZE), math.floor(ny / C_TILE_SIZE)
+end
+
+
+function drawHelper:screenCoords(x, y)
+    return camera:cameraCoords(x * C_TILE_SIZE, y * C_TILE_SIZE)
 end
 
 
@@ -97,8 +102,6 @@ function drawHelper:timeAndDate()
     love.graphics.draw(img.date, screen.w - img.date:getWidth() - 5, 5)
     love.graphics.setFont(font)
     local str = timeHandler.tostr()
-    love.graphics.setColor(Color.BLACK)
-    love.graphics.print(str, screen.w - (font:getWidth(str) + 20), 15)
     love.graphics.setColor(Color.WHITE)
     love.graphics.print(str, screen.w - (font:getWidth(str) + 19), 16)
 end
@@ -116,29 +119,29 @@ function drawHelper:createGuiBox(width, height)
     love.graphics.setCanvas(canvas)
     
     -- fill
-    for i=C_TILE_SIZE,width-C_TILE_SIZE,C_TILE_SIZE do
-        for j=C_TILE_SIZE,height-C_TILE_SIZE,C_TILE_SIZE do
+    for i=C_TILE_SIZE,width-C_TILE_SIZE*2,C_TILE_SIZE do
+        for j=C_TILE_SIZE,height-C_TILE_SIZE*2,C_TILE_SIZE do
             love.graphics.draw(img.box, quads[1][1], i, j)
         end
     end
     
     -- up
-    for i=C_TILE_SIZE,width-C_TILE_SIZE,C_TILE_SIZE do
+    for i=C_TILE_SIZE,width-C_TILE_SIZE*2,C_TILE_SIZE do
         love.graphics.draw(img.box, quads[1][0], i, 0)
     end
     
     -- left
-    for j=C_TILE_SIZE,height-C_TILE_SIZE,C_TILE_SIZE do
+    for j=C_TILE_SIZE,height-C_TILE_SIZE*2,C_TILE_SIZE do
         love.graphics.draw(img.box, quads[0][1], 0, j)
     end
     
     -- right
-    for j=C_TILE_SIZE,height-C_TILE_SIZE,C_TILE_SIZE do
+    for j=C_TILE_SIZE,height-C_TILE_SIZE*2,C_TILE_SIZE do
         love.graphics.draw(img.box, quads[2][1], width-C_TILE_SIZE, j)
     end
     
     -- down
-    for i=C_TILE_SIZE,width-C_TILE_SIZE,C_TILE_SIZE do
+    for i=C_TILE_SIZE,width-C_TILE_SIZE*2,C_TILE_SIZE do
         love.graphics.draw(img.box, quads[1][2], i, height-C_TILE_SIZE)
     end
     

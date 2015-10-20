@@ -16,6 +16,7 @@ C_MAP_GAME_ATLAS_MAPPING = 'atlas.file' -- maping for atlas
 C_MAP_PLANTS = 'plants.file' -- contains all plants
 C_MAP_SETTINGS = 'settings.file' --contains video settings
 C_MAP_INVENTORY = 'inventory.file' --contains video settings
+C_FILE_SUFFIX = '.file'
 
 -- amount of individual tiles in a block
 C_BLOCK_SIZE = 8
@@ -39,6 +40,7 @@ KEY_LEFT = "left"
 KEY_RIGHT = "right"
 KEY_DOWN = "down"
 KEY_UP = "up"
+KEY_SPRINT = "lshift"
 KEY_RETURN = "return"
 KEY_NEXT_TOOL = "e"
 KEY_PREVIOUS_TOOL = "q"
@@ -53,8 +55,8 @@ CHAR_ANIM = 17 -- animation speed
 CHAR_MOVE_DIRCHANGE_THRESHOLD = 0.13 -- time buffer when changing direction in case it's just a direction change
 
 -- dialog settings
-C_DIALOG_PAD = 10
-C_DIALOG_LINE_PAD = 2
+C_DIALOG_LINE_TIME = 1 -- time it takes until a dialog line is displayed
+C_DIALOG_LINE_BLINK = 2 -- blink speed of triangle at line end
 
 -- transition settings
 C_TRANS_TIME = 0.6 -- in seconds

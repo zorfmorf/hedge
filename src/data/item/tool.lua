@@ -5,7 +5,7 @@ Tool = Class{}
 local baseToolD = 30
 
 
-function Tool:init(id, level, price)
+function Tool:init(id, level, price, description)
     self.flags = { tool=true, sellable = true }
     self.level = 0
     if level then self.level = level end
@@ -14,6 +14,8 @@ function Tool:init(id, level, price)
     self.id = id
     self.dmax = math.max(baseToolD, self.level * baseToolD * 2)
     self.durability = self.dmax
+    self.description = "Description"
+    if description then self.description = description end
     self.count = 1
     self:createIcon()
 end

@@ -24,12 +24,16 @@ end
 
 
 function animationHelper.update(entity, dt)
+    local mod = 1
+    if entity.id == 1 and love.keyboard.isDown(KEY_SPRINT) then
+        mod = 2
+    end
     if entity.dir == "up" then entity.anim = 9 end
     if entity.dir == "left" then entity.anim = 10 end
     if entity.dir == "down" then entity.anim = 11 end
     if entity.dir == "right" then entity.anim = 12 end
     if entity.walking then
-        entity.cycle = entity.cycle + dt * CHAR_ANIM
+        entity.cycle = entity.cycle + dt * CHAR_ANIM * mod
         while entity.cycle >= 9 do entity.cycle = entity.cycle - 9 end
     else
         entity.cycle = 1
