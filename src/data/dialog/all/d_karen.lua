@@ -1,6 +1,6 @@
 
 local function createStore()
-    local container = Container(id, { buy=true })
+    local container = Container("karen_store", { buy=true })
     container:add(itemCreator:getCucumberSeeds(99))
     container:add(itemCreator:getCarrotSeeds(99))
     container:add(itemCreator:getCabbageSeeds(99))

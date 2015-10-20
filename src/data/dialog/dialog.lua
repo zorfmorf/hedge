@@ -136,58 +136,64 @@ function Dialog:draw()
     
     local line = self:current()
     
-    if self.x and self.y and line.text then
+    if self.x and self.y then
         
         love.graphics.setFont(font)
         
         local text = line.text()
-        if self.timer > C_DIALOG_LINE_TIME and math.floor(self.timer * C_DIALOG_LINE_BLINK) % 2 == 0 then 
-            text = text .. " <"
+        
+        if text then
+            
+            if self.timer > C_DIALOG_LINE_TIME and math.floor(self.timer * C_DIALOG_LINE_BLINK) % 2 == 0 then 
+                text = text .. " <"
+            else
+                text = text .. "  "
+            end
+            
+            local width = 320
+            local lwidth, lines = font:getWrap(text, width)
+            lines = math.max(2, lines - 1)
+            if line.name then lines = lines + 1 end
+            local height = lines * font:getHeight()
+            local rest = height % C_TILE_SIZE
+            if rest > 0 then height = height + (C_TILE_SIZE - rest) end
+            local sx, sy = drawHelper:screenCoords(self.x, self.y)
+            
+            local dox = sx - width * 0.5
+            local doy = sy - height - C_TILE_SIZE * 2
+            
+            drawSpeechBubble(dox, doy, width, height, sx, sy)
+            
+            local namebuffer = 0
+            
+            if line.name then
+                love.graphics.setColor(Color.RED_HARD)
+                love.graphics.print(line.name, dox, doy)
+                namebuffer = namebuffer + font:getHeight()
+            end
+            
+            love.graphics.setColor(Color.BLACK)
+            local percentage = math.min(self.timer, C_DIALOG_LINE_TIME) / C_DIALOG_LINE_TIME
+            local charAmount = math.floor(text:len() * percentage)
+            love.graphics.printf(text:sub(1, charAmount), dox, doy + namebuffer, width)
         else
-            text = text .. "  "
+            self.timer = C_DIALOG_LINE_TIME + 0.01
         end
-        
-        local width = 320
-        local lwidth, lines = font:getWrap(text, width)
-        lines = math.max(2, lines - 1)
-        if line.name then lines = lines + 1 end
-        local height = lines * font:getHeight()
-        local rest = height % C_TILE_SIZE
-        if rest > 0 then height = height + (C_TILE_SIZE - rest) end
-        local sx, sy = drawHelper:screenCoords(self.x, self.y)
-        
-        local dox = sx - width * 0.5
-        local doy = sy - height - C_TILE_SIZE * 2
-        
-        drawSpeechBubble(dox, doy, width, height, sx, sy)
-        
-        local namebuffer = 0
-        
-        if line.name then
-            love.graphics.setColor(Color.RED_HARD)
-            love.graphics.print(line.name, dox, doy)
-            namebuffer = namebuffer + font:getHeight()
-        end
-        
-        love.graphics.setColor(Color.BLACK)
-        local percentage = math.min(self.timer, C_DIALOG_LINE_TIME) / C_DIALOG_LINE_TIME
-        local charAmount = math.floor(text:len() * percentage)
-        love.graphics.printf(text:sub(1, charAmount), dox, doy + namebuffer, width)
         
         if self.opts and self.timer > C_DIALOG_LINE_TIME then
             
-            width = 0
+            local width = 0
             for i,opt in ipairs(self.opts) do
                 width = math.max(width, font:getWidth(line.options[opt].text))
             end
-            rest = width % C_TILE_SIZE
+            local rest = width % C_TILE_SIZE
             if rest > 0 then width = width + (C_TILE_SIZE - rest) end
-            height = font:getHeight() * (#self.opts - 1)
+            local height = font:getHeight() * (#self.opts - 1)
             rest = height % C_TILE_SIZE
             if rest > 0 then height = height + (C_TILE_SIZE - rest) end
-            sx, sy = drawHelper:screenCoords(player.pos.x, player.pos.y)
-            dox = sx - width * 0.5
-            doy = sy + C_TILE_SIZE * 2
+            local sx, sy = drawHelper:screenCoords(player.pos.x, player.pos.y)
+            local dox = sx - width * 0.5
+            local doy = sy + C_TILE_SIZE * 2
             
             drawSpeechBubble(dox, doy, width, height, sx, sy)
             

@@ -29,12 +29,13 @@ local function loadIcons()
 end
 
 
-function Container:init(id, flags)
+function Container:init(id, flags, maxitems)
     self.items = {}
     self.id = id -- used for saving/retrieving container contents (if applicable)
     self.flags = flags
     self.count = 0 -- current item amount
     self.maxitems = 20 -- current maximum item amount
+    if maxitems then self.maxitems = maxitems end
     self.money = 0
     self.tool = nil -- currently selected tool index
     self.box = nil -- contains inventory background draw object
@@ -345,7 +346,7 @@ function Container:draw()
                         confirmtext = "Not enough money"
                         love.graphics.setColor(Color.RED)
                     end
-                    if self.flags.buy and not inventory:hasFreeSlots(self.confirmcount, true) then
+                    if (self.flags.buy or self.flags.retrieve) and not inventory:hasFreeSlots(self.confirmcount, true) then
                         confirmtext = "Not enough space in inventory"
                         love.graphics.setColor(Color.RED)
                     end
@@ -396,21 +397,21 @@ function Container:confirm()
                 log:msg("verbose", "Inventory full or not enough money to buy", self.items[self.cursor].id)
             end
         end
-        if self.flags.store then
-            if self.target then
-                self.target:add(self.items[self.cursor])
-                self:removeAtPosition(self.cursor, false)
+        if self.flags.store or self.flags.retrieve then
+            if self.target and self.target:hasFreeSlots(self.confirmcount, true) then
+                self.target:add(self.items[self.cursor]:getCopy(self.confirmcount))
+                for i=1,self.confirmcount do
+                    self:removeAtPosition(self.cursor, false)
+                end
             else
                 log:msg("error", "Storage operation on container", self.id, "is missing target container information")
             end
         end
-        if self.flags.retrieve then
-            inventory:add(self.items[self.cursor])
-            self:removeAtPosition(self.cursor, false)
-        end
     else
-        self.confirmed = true
-        self.confirmcount = 1
+        if #self.items > 0 then
+            self.confirmed = true
+            self.confirmcount = 1
+        end
     end
 end
 
@@ -426,7 +427,7 @@ end
 
 function Container:increaseAmount()
     if self.confirmed then
-        self.confirmcount = self.confirmcount + 1
+        self.confirmcount = math.min(self.confirmcount + 1, self.items[self.cursor].count)
     else
         self:confirm()
     end
@@ -439,7 +440,8 @@ end
 
 
 function Container:save()
-    local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
+    local filename = self.id .. C_FILE_SUFFIX
+    local file = love.filesystem.newFile( C_MAP_CURRENT..filename )
     file:open("w")
     file:write(tostring(self.tool)..";")
     file:write(self.count..";")
@@ -469,9 +471,10 @@ end
 
 
 function Container:load()
-    self:init("inventory", {})
-    if love.filesystem.isFile( C_MAP_CURRENT..C_MAP_INVENTORY )then
-        local file = love.filesystem.newFile( C_MAP_CURRENT..C_MAP_INVENTORY )
+    self:init(self.id, self.flags)
+    local filename = self.id .. C_FILE_SUFFIX
+    if love.filesystem.isFile( C_MAP_CURRENT..filename )then
+        local file = love.filesystem.newFile( C_MAP_CURRENT..filename )
         file:open("r")
         local firstLine = true
         for line in file:lines( ) do

@@ -16,6 +16,7 @@ C_MAP_GAME_ATLAS_MAPPING = 'atlas.file' -- maping for atlas
 C_MAP_PLANTS = 'plants.file' -- contains all plants
 C_MAP_SETTINGS = 'settings.file' --contains video settings
 C_MAP_INVENTORY = 'inventory.file' --contains video settings
+C_FILE_SUFFIX = '.file'
 
 -- amount of individual tiles in a block
 C_BLOCK_SIZE = 8

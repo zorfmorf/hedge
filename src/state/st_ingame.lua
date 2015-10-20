@@ -202,7 +202,10 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_NEXT_TOOL then inventory:nextTool() end
         if key == KEY_PREVIOUS_TOOL then inventory:previousTool() end
         if key == KEY_CYCLE_SEED then inventory:cycleSeed() end
-        if key == KEY_INVENTORY then self.container = inventory end
+        if key == KEY_INVENTORY then
+            inventory.flags = {}
+            self.container = inventory
+        end
         if key == KEY_EXIT then
             self.menu:open()
         end

@@ -62,6 +62,7 @@ function saveHandler.saveGame(slot)
     var.set("current_map", game.map.name)
     var.save()
     inventory:save()
+    if chest then chest:save() end
     if not slot then slot = C_MAP_SAVEGAME_DEFAULT end
     copyFiles(C_MAP_CURRENT, C_MAP_SAVEGAMES..slot..'/')
 end
