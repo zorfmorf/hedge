@@ -145,7 +145,7 @@ function Dialog:draw()
         if text then
             
             if self.timer > C_DIALOG_LINE_TIME and math.floor(self.timer * C_DIALOG_LINE_BLINK) % 2 == 0 then 
-                text = text .. " <"
+                text = text .. " ▼"
             else
                 text = text .. "  "
             end
