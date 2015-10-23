@@ -928,7 +928,6 @@ function editorHandler:mousepressed(x, y, button)
     -- if in tileselection mode
     if menus.tiles then
         
-        
         -- select tile based on current atlas
         if button == "l" then
             
@@ -943,35 +942,40 @@ function editorHandler:mousepressed(x, y, button)
                 if singletiletarget.new then
                     singletiletarget.new = false
                 else
+                    
+                    -- check if atlas tile is valid
+                    local atlas = brushHandler.getAtlanti()[currentatlas].img
+                    if tx >= 0 and ty >= 0 and tx * C_TILE_SIZE < atlas:getWidth() and ty * C_TILE_SIZE < atlas:getHeight() then
+                            
+                        local value = {currentatlas, tx, ty}
                         
-                    local value = {currentatlas, tx, ty}
-                    
-                    local x = singletiletarget.x
-                    local y = singletiletarget.y
-                    
-                    local tile = game.map:getTile(x, y)
-                    
-                    -- now place tile on lowest possible unset tile, ignoring
-                    -- inactive layers
-                    if tile then
-                        if layer.floor1 and not tile.floor then
-                            tile.floor = value
-                        elseif layer.floor2 and not tile.floor2 then
-                            tile.floor2 = value
-                        elseif layer.object and not tile.object then
-                            tile.object = value
-                        elseif layer.overlay and not tile.overlay then
-                            tile.overlay = value
-                        end
-                    else
-                        if layer.floor1 then
-                            game.map:setTile(x, y, value, nil, nil, nil, true)
-                        elseif layer.floor2 then
-                            game.map:setTile(x, y, nil, value, nil, nil, true)
-                        elseif layer.object then
-                            game.map:setTile(x, y, nil, nil, value, nil, true)
-                        elseif layer.overlay then
-                            game.map:setTile(x, y, nil, nil, nil, value, true)
+                        local x = singletiletarget.x
+                        local y = singletiletarget.y
+                        
+                        local tile = game.map:getTile(x, y)
+                        
+                        -- now place tile on lowest possible unset tile, ignoring
+                        -- inactive layers
+                        if tile then
+                            if layer.floor1 and not tile.floor then
+                                tile.floor = value
+                            elseif layer.floor2 and not tile.floor2 then
+                                tile.floor2 = value
+                            elseif layer.object and not tile.object then
+                                tile.object = value
+                            elseif layer.overlay and not tile.overlay then
+                                tile.overlay = value
+                            end
+                        else
+                            if layer.floor1 then
+                                game.map:setTile(x, y, value, nil, nil, nil, true)
+                            elseif layer.floor2 then
+                                game.map:setTile(x, y, nil, value, nil, nil, true)
+                            elseif layer.object then
+                                game.map:setTile(x, y, nil, nil, value, nil, true)
+                            elseif layer.overlay then
+                                game.map:setTile(x, y, nil, nil, nil, value, true)
+                            end
                         end
                     end
                     singletiletarget = nil
