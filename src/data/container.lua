@@ -43,6 +43,7 @@ function Container:init(id, flags, maxitems)
     self.offset = 0 -- how many items are "above" the inventory (scrolling)
     self.cursor = 1 -- item id the cursor is centered on
     self.confirmed = false -- if they buy/sell action is in confirm state
+    self.confirmcount = 0
 end
 
 

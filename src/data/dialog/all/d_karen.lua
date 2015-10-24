@@ -22,4 +22,5 @@ lines[4] = { name = "Karen", text = function() return "How can I help you?" end,
                     }
                 }
 lines[5] = { name = "Karen", text = function() return "Sure, take your time!" end }
+lines[6] = { name = "Karen", text = function() return "Ugh, another window shopper ..." end, think=true }
 return lines
