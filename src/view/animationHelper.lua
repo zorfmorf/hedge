@@ -2,6 +2,8 @@
 local charset = {}
 charset.default = love.graphics.newImage("img/chars/charset.png")
 charset.karen = love.graphics.newImage("img/chars/karen.png")
+charset.tim = love.graphics.newImage("img/chars/tim.png")
+
 
 animationHelper = {}
 
