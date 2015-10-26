@@ -31,8 +31,8 @@ end
 
 function Tool:getName()
     local lv = " (Bronze)"
-    if self.level == 1 then lv = " (Iron)" end
-    if self.level == 2 then lv = " (Steel)" end
+    if self.level == 2 then lv = " (Iron)" end
+    if self.level == 3 then lv = " (Steel)" end
     return self.id..lv
 end
 
