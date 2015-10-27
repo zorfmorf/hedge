@@ -354,8 +354,12 @@ function Container:draw()
                     text = text.." "..self.confirmcount
                     if self.flags.buy or self.flags.sell then 
                         text = text.." for "..price
-                        if item.flags.tool and item.level > 1 then 
-                            text = "Upgrade "..item.id.." for "..price
+                        if item.flags.tool then
+                            if item.level > 1 then 
+                                text = "Upgrade "..item.id.." for "..price
+                            else
+                                text = "Buy "..item.id.." for "..price
+                            end
                         end
                     end
                     text = text.."?"

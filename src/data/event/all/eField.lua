@@ -10,7 +10,7 @@ local function walk(tx, ty)
 end
 
 
-local function use(tx, ty)
+local function fieldEvent(tx, ty)
     local tile = game.map:getTile(tx, ty)
     
     -- plow field
@@ -34,10 +34,14 @@ local function use(tx, ty)
             tile.floor = deepcopy(texture["field.patch"])
             tile.plowed = true
             mapHelper:plowedFieldTile(tx, ty)
-            inventory:usedCurrentTool(2)
+            --inventory:usedCurrentTool(2)
             timeHandler.addTime(20)
         end
     end
+end
+
+local function use(tx, ty)
+    player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent }
 end
 
 
