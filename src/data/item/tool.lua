@@ -31,8 +31,8 @@ end
 
 function Tool:getName()
     local lv = " (Bronze)"
-    if self.level == 1 then lv = " (Iron)" end
-    if self.level == 2 then lv = " (Steel)" end
+    if self.level == 2 then lv = " (Iron)" end
+    if self.level == 3 then lv = " (Steel)" end
     return self.id..lv
 end
 
@@ -42,6 +42,12 @@ function Tool:use(usage)
     if not u then u = 1 end
     self.durability = self.durability - u
     return self.durability <= 0
+end
+
+
+function Tool:getCycles()
+    -- TODO: adjust for individual tools
+    return 4 - self.level
 end
 
 

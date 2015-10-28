@@ -2,6 +2,8 @@
 local charset = {}
 charset.default = love.graphics.newImage("img/chars/charset.png")
 charset.karen = love.graphics.newImage("img/chars/karen.png")
+charset.tim = love.graphics.newImage("img/chars/tim.png")
+
 
 animationHelper = {}
 
@@ -19,7 +21,10 @@ end
 
 
 function animationHelper.draw(entity)
-    love.graphics.draw(charset[entity.charset], quads[math.floor(entity.cycle + 1)][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
+    local cycle = entity.cycle + 1
+    if entity.animation then cycle = entity.animation.timer + 1 end
+    cycle = math.floor(cycle)
+    love.graphics.draw(charset[entity.charset], quads[cycle][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
 end
 
 
@@ -38,5 +43,19 @@ function animationHelper.update(entity, dt)
     else
         entity.cycle = 1
         if entity.anim > 4 then entity.anim = entity.anim - 8 end
+    end
+    if entity.animation then
+        entity.animation.timer = entity.animation.timer + dt * CHAR_ANIM_WORK
+        if entity.dir == "up" then entity.anim = 13 end
+        if entity.dir == "left" then entity.anim = 14 end
+        if entity.dir == "down" then entity.anim = 15 end
+        if entity.dir == "right" then entity.anim = 16 end
+        if entity.animation.timer >= 6 then
+            entity.animation.timer = entity.animation.timer - 6
+            entity.animation.cycles = entity.animation.cycles - 1
+            if entity.animation.cycles <= 0 then
+                entity:animationFinished()
+            end
+        end
     end
 end

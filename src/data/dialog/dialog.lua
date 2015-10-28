@@ -1,6 +1,7 @@
 local font = love.graphics.newFont("font/alagard.ttf", 20)
 
 local speech = love.graphics.newImage("img/speech.png")
+local thought = love.graphics.newImage("img/thought.png")
 
 local quads = nil
 
@@ -105,30 +106,32 @@ function Dialog:down()
     end
 end
 
-local function drawSpeechBubble(dox, doy, width, height, sx, sy)
+local function drawBubble(dox, doy, width, height, sx, sy, think)
+    local img = speech
+    if think then img = thought end
     love.graphics.setColor(Color.WHITE)
     love.graphics.rectangle("fill", dox, doy, width, height )
     
-    love.graphics.draw(speech, quads[1][1], dox - C_TILE_SIZE, doy - C_TILE_SIZE)
-    love.graphics.draw(speech, quads[4][1], dox + width, doy - C_TILE_SIZE)
-    love.graphics.draw(speech, quads[1][3], dox - C_TILE_SIZE, doy + height)
-    love.graphics.draw(speech, quads[4][3], dox + width, doy + height)
+    love.graphics.draw(img, quads[1][1], dox - C_TILE_SIZE, doy - C_TILE_SIZE)
+    love.graphics.draw(img, quads[4][1], dox + width, doy - C_TILE_SIZE)
+    love.graphics.draw(img, quads[1][3], dox - C_TILE_SIZE, doy + height)
+    love.graphics.draw(img, quads[4][3], dox + width, doy + height)
     local buffer = 0
     while buffer < width do
-        love.graphics.draw(speech, quads[3][1], dox + buffer, doy - C_TILE_SIZE)
-        love.graphics.draw(speech, quads[3][3], dox + buffer, doy + height)
+        love.graphics.draw(img, quads[3][1], dox + buffer, doy - C_TILE_SIZE)
+        love.graphics.draw(img, quads[3][3], dox + buffer, doy + height)
         buffer = buffer + C_TILE_SIZE
     end
     buffer = 0
     while buffer < height do
-        love.graphics.draw(speech, quads[1][2], dox - C_TILE_SIZE, doy + buffer)
-        love.graphics.draw(speech, quads[4][2], dox + width, doy + buffer)
+        love.graphics.draw(img, quads[1][2], dox - C_TILE_SIZE, doy + buffer)
+        love.graphics.draw(img, quads[4][2], dox + width, doy + buffer)
         buffer = buffer + C_TILE_SIZE
     end
     if doy < sy then 
-        love.graphics.draw(speech, quads[2][3], sx, sy - C_TILE_SIZE * 2)
+        love.graphics.draw(img, quads[2][3], sx, sy - C_TILE_SIZE * 2)
     else
-        love.graphics.draw(speech, quads[2][1], sx, sy + C_TILE_SIZE)
+        love.graphics.draw(img, quads[2][1], sx, sy + C_TILE_SIZE)
     end
 end
 
@@ -136,7 +139,7 @@ function Dialog:draw()
     
     local line = self:current()
     
-    if self.x and self.y then
+    if self.x and self.y and line then
         
         love.graphics.setFont(font)
         
@@ -145,7 +148,7 @@ function Dialog:draw()
         if text then
             
             if self.timer > C_DIALOG_LINE_TIME and math.floor(self.timer * C_DIALOG_LINE_BLINK) % 2 == 0 then 
-                text = text .. " <"
+                text = text .. " ▼"
             else
                 text = text .. "  "
             end
@@ -162,7 +165,7 @@ function Dialog:draw()
             local dox = sx - width * 0.5
             local doy = sy - height - C_TILE_SIZE * 2
             
-            drawSpeechBubble(dox, doy, width, height, sx, sy)
+            drawBubble(dox, doy, width, height, sx, sy, line.think)
             
             local namebuffer = 0
             
@@ -195,7 +198,7 @@ function Dialog:draw()
             local dox = sx - width * 0.5
             local doy = sy + C_TILE_SIZE * 2
             
-            drawSpeechBubble(dox, doy, width, height, sx, sy)
+            drawBubble(dox, doy, width, height, sx, sy)
             
             for i,opt in ipairs(self.opts) do
                 love.graphics.setColor(Color.GREY)

@@ -43,6 +43,7 @@ function Container:init(id, flags, maxitems)
     self.offset = 0 -- how many items are "above" the inventory (scrolling)
     self.cursor = 1 -- item id the cursor is centered on
     self.confirmed = false -- if they buy/sell action is in confirm state
+    self.confirmcount = 0
 end
 
 
@@ -71,6 +72,14 @@ function Container:hasFreeSlots(count, hideText)
 end
 
 
+function Container:hasItem(id)
+    for i,item in pairs(self.items) do
+        if item.id == id then return item end
+    end
+    return false
+end
+
+
 function Container:update(dt)
     if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
         self.box = { w=screen.w, h=screen.h}
@@ -88,7 +97,7 @@ end
 function Container:add(itemobj)
     self.count = self.count + itemobj.count
     if itemobj.flags.tool then
-        player:addFloatingText(itemobj:getName())
+        if self.id == inventory.id then player:addFloatingText(itemobj:getName()) end
         table.insert(self.items, itemobj)
         if not self.tool then self.tool = #self.items end
     else
@@ -225,19 +234,6 @@ function Container:usesTool(tool)
 end
 
 
-function Container:usedCurrentTool(usage)
-    if self.tool and self.items[self.tool] then
-        local destroyed = self.items[self.tool]:use(usage)
-        if destroyed then
-            player:addFloatingText(self.items[self.tool]:getName().." broke")
-            table.remove(self.items, self.tool)
-            self.count = self.count - 1
-            inventory:selectAnyTool()
-        end
-    end
-end
-
-
 function Container:updateRowNumber()
     self.rownumber = math.floor((self.box.img:getHeight() - 10) /  (C_TILE_SIZE))
 end
@@ -256,15 +252,14 @@ function Container:drawHud()
     if self.tool then
         local img = self.items[self.tool].icon
         if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
-        love.graphics.setColor(Color.BLACK)
-        local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
+        local line = self.items[self.tool]:getName()
         if self.items[self.tool].id == "Seedbag" then
             line = ""
             if self.items[self.tool].seed then
                 line = self.items[self.items[self.tool].seed].id
             end
         end
-        love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        love.graphics.print(line, 5, screen.h - 1, 0, 1, 1, 0, font:getHeight())
     end
 end
 
@@ -325,20 +320,34 @@ function Container:draw()
         -- item name on the right side
         if #self.items > 0 then
             
-            love.graphics.print(self.items[self.cursor]:getName(), dx + mid + C_TILE_SIZE, dy, 0, 1, 1, 0, fonthalf)
+            local item = self.items[self.cursor]
             
-            love.graphics.printf(self.items[self.cursor].description, dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 2, mid - C_TILE_SIZE, "left", 0, 1, 1, 0, fonthalf)
+            love.graphics.print(item:getName(), dx + mid + C_TILE_SIZE, dy, 0, 1, 1, 0, fonthalf)
+            
+            love.graphics.printf(item.description, dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 2, mid - C_TILE_SIZE, "left", 0, 1, 1, 0, fonthalf)
             
             -- button
             if self.flags.sell or self.flags.buy or self.flags.store or self.flags.retrieve then
                 local text = "Sell"
-                if self.flags.buy then text = "Buy" end
+                if self.flags.buy then 
+                    text = "Buy"
+                    if item.flags.tool and item.level > 1 then text = "Upgrade" end
+                end
                 if self.flags.store then text = "Store" end
                 if self.flags.retrieve then text = "Retrieve" end
                 if self.confirmed then
-                    local price = self.items[self.cursor]:getSellPrice() * self.confirmcount
+                    local price = item:getSellPrice() * self.confirmcount
                     text = text.." "..self.confirmcount
-                    if self.flags.buy or self.flags.sell then text = text.." for "..price end
+                    if self.flags.buy or self.flags.sell then 
+                        text = text.." for "..price
+                        if item.flags.tool then
+                            if item.level > 1 then 
+                                text = "Upgrade "..item.id.." for "..price
+                            else
+                                text = "Buy "..item.id.." for "..price
+                            end
+                        end
+                    end
                     text = text.."?"
                     local confirmtext = "Press return to confirm"
                     love.graphics.setColor(Color.GREEN)
@@ -385,16 +394,31 @@ end
 
 
 function Container:confirm()
-    if self.confirmed then
+    if self.confirmed and #self.items > 0 then
         if self.flags.sell then
             inventory:addMoney(math.floor(self.items[self.cursor].price))
             self:removeAtPosition(self.cursor, false)
         end
         if self.flags.buy then
-            if inventory:hasFreeSlots(self.confirmcount, true) and inventory:withdrawMoney(math.floor(self.items[self.cursor].price * self.confirmcount)) then
-                inventory:add(self.items[self.cursor]:getCopy(self.confirmcount))
+            
+            local item = self.items[self.cursor]
+            
+            if item.flags.tool then
+                if (inventory:hasFreeSlots(1, true) or item.level > 1) and inventory:withdrawMoney(math.floor(item.price * self.confirmcount)) then
+                    inventory:removeAll(item.id)
+                    inventory:add(self.items[self.cursor])
+                    self:removeAtPosition(self.cursor, true)
+                    self:unconfirm()
+                else
+                    log:msg("verbose", "Not able to buy/upgrade tool", item.id, "Not enough money/inventory space")
+                end
             else
-                log:msg("verbose", "Inventory full or not enough money to buy", self.items[self.cursor].id)
+                if inventory:hasFreeSlots(self.confirmcount, true) and inventory:withdrawMoney(math.floor(item.price * self.confirmcount)) then
+                    inventory:add(item:getCopy(self.confirmcount))
+                    self:unconfirm()
+                else
+                    log:msg("verbose", "Inventory full or not enough money to buy", item.id)
+                end
             end
         end
         if self.flags.store or self.flags.retrieve then
@@ -411,6 +435,8 @@ function Container:confirm()
         if #self.items > 0 then
             self.confirmed = true
             self.confirmcount = 1
+        else
+            self.confirmed = false
         end
     end
 end

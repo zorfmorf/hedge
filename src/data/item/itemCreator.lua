@@ -15,22 +15,22 @@ text.stone = "Used as a building material. Really heavy."
 
 
 function itemCreator:getAxe(level)
-    return Tool("Axe", level, 10 + 100 * level)
+    return Tool("Axe", level, 10^level)
 end
 
 
 function itemCreator:getShovel(level)
-    return Tool("Shovel", level, 10 + 100 * level)
+    return Tool("Shovel", level, 10^level)
 end
 
 
 function itemCreator:getPickaxe(level)
-    return Tool("Pickaxe", level, 10 + 100 * level)
+    return Tool("Pickaxe", level, 10^level)
 end
 
 
 function itemCreator:getScythe(level)
-    return Tool("Scythe", level, 10 + 100 * level)
+    return Tool("Scythe", level, 10^level)
 end
 
 

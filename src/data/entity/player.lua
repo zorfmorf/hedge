@@ -18,6 +18,8 @@ function Player:init()
     -- floating texts
     self.floats = {}
     self.floatdelay = 0 -- delay until next float can be triggered
+    
+    self.animation = nil -- while animation objects are defined, player cant do anything
 end
 
 
@@ -38,41 +40,60 @@ function Player:place(x, y, blockMapPlacement)
 end
 
 
-function Player:use()
-    local tile = nil
-    local tx = nil
-    local ty = nil
-    if math.floor(self.pos.x) == self.pos.x and math.floor(self.pos.y) == self.pos.y then
-        local target = {}
-        target.x = self.pos.x
-        target.y = self.pos.y
-        if self.anim == 1 then target.y = target.y - 1 end
-        if self.anim == 2 then target.x = target.x - 1 end
-        if self.anim == 3 then target.y = target.y + 1 end
-        if self.anim == 4 then target.x = target.x + 1 end
-        tile = game.map:getTile(target.x, target.y)
-        tx = target.x
-        ty = target.y
+function Player:animationFinished()
+    if self.animation then
+        self.animation.use(self.animation.tx, self.animation.ty)
+        self.animation = nil
+        self:resetAnimation()
     end
-    if tile then
-        if tile.npc and not(tile.npc == self.id) then
-            game.map.entities[tile.npc]:lookAtPlayer()
-            game.map.entities[tile.npc]:use(tx, ty)
+end
+
+
+function Player:use()
+    if not self.animation then
+        local tile = nil
+        local tx = nil
+        local ty = nil
+        if math.floor(self.pos.x) == self.pos.x and math.floor(self.pos.y) == self.pos.y then
+            local target = {}
+            target.x = self.pos.x
+            target.y = self.pos.y
+            if self.anim == 1 then target.y = target.y - 1 end
+            if self.anim == 2 then target.x = target.x - 1 end
+            if self.anim == 3 then target.y = target.y + 1 end
+            if self.anim == 4 then target.x = target.x + 1 end
+            tile = game.map:getTile(target.x, target.y)
+            tx = target.x
+            ty = target.y
         end
-        if not tile.npc and tile.event then eventHandler.triggerEvent(tile.event, false, tx, ty) end
+        if tile then
+            if tile.npc and not(tile.npc == self.id) then
+                game.map.entities[tile.npc]:lookAtPlayer()
+                game.map.entities[tile.npc]:use(tx, ty)
+            end
+            if not tile.npc and tile.event then 
+                eventHandler.triggerEvent(tile.event, false, tx, ty)
+            end
+        end
     end
 end
 
 
 function Player:update(dt)
+    
+    -- update player movement and animation
     animationHelper.update(self, dt)
-    moveHandler.update(self, dt)
-    if not self.walking and not self.dircd and not st_ingame.container then
-        if love.keyboard.isDown(KEY_LEFT) then self:move("left") end
-        if love.keyboard.isDown(KEY_RIGHT) then self:move("right") end
-        if love.keyboard.isDown(KEY_UP) then self:move("up") end
-        if love.keyboard.isDown(KEY_DOWN) then self:move("down") end
+    if not self.animation then 
+        moveHandler.update(self, dt)
+        if not self.walking and not self.dircd and not st_ingame.container and not self.animation then
+            if love.keyboard.isDown(KEY_LEFT) then self:move("left") end
+            if love.keyboard.isDown(KEY_RIGHT) then self:move("right") end
+            if love.keyboard.isDown(KEY_UP) then self:move("up") end
+            if love.keyboard.isDown(KEY_DOWN) then self:move("down") end
+        end
     end
+    
+    -- update floating texts
     for i,float in ipairs(self.floats) do
         if float.time == -1 then
             if self.floatdelay <= 0 then
