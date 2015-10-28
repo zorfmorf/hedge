@@ -234,19 +234,6 @@ function Container:usesTool(tool)
 end
 
 
-function Container:usedCurrentTool(usage)
-    if self.tool and self.items[self.tool] then
-        local destroyed = self.items[self.tool]:use(usage)
-        if destroyed then
-            player:addFloatingText(self.items[self.tool]:getName().." broke")
-            table.remove(self.items, self.tool)
-            self.count = self.count - 1
-            inventory:selectAnyTool()
-        end
-    end
-end
-
-
 function Container:updateRowNumber()
     self.rownumber = math.floor((self.box.img:getHeight() - 10) /  (C_TILE_SIZE))
 end
@@ -265,15 +252,14 @@ function Container:drawHud()
     if self.tool then
         local img = self.items[self.tool].icon
         if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
-        love.graphics.setColor(Color.BLACK)
-        local line = tostring(self.items[self.tool].durability).."/"..tostring(self.items[self.tool].dmax)
+        local line = self.items[self.tool]:getName()
         if self.items[self.tool].id == "Seedbag" then
             line = ""
             if self.items[self.tool].seed then
                 line = self.items[self.items[self.tool].seed].id
             end
         end
-        love.graphics.print(line, 15 + img:getWidth() / 2, screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+        love.graphics.print(line, 5, screen.h - 1, 0, 1, 1, 0, font:getHeight())
     end
 end
 

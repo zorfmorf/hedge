@@ -26,22 +26,39 @@ local function fieldEvent(tx, ty)
                     if seed == "Carrot seeds" then table.insert(game.plants, Plant_Carrot(tx, ty)) end
                     if seed == "Cabbage seeds" then table.insert(game.plants, Plant_Cabbage(tx, ty)) end
                     tile.event = 5 -- ePlant
+                    timeHandler.addTime(tool:getCycles() * C_WORK_UNIT)
                 end
             end
         end
     else
         if inventory:usesTool("Shovel") then
+            local tool = inventory:getTool()
             tile.floor = deepcopy(texture["field.patch"])
             tile.plowed = true
             mapHelper:plowedFieldTile(tx, ty)
-            --inventory:usedCurrentTool(2)
-            timeHandler.addTime(20)
+            timeHandler.addTime(tool:getCycles() * C_WORK_UNIT)
         end
     end
 end
 
 local function use(tx, ty)
-    player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent }
+    local tile = game.map:getTile(tx, ty)
+    if tile.plowed then
+        if tile.plantable and not tile.object then
+            local tool = inventory:getTool()
+            if tool and tool.id == "Seedbag" then
+                local seed = tool:use()
+                if seed then
+                    player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles() }
+                end
+            end
+        end
+    else
+        if inventory:usesTool("Shovel") then
+            local tool = inventory:getTool()
+            player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles() }
+        end
+    end
 end
 
 

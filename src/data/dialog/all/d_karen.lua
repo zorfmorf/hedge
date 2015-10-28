@@ -6,6 +6,7 @@ local function createStore()
     container:add(itemCreator:getCabbageSeeds(99))
     container:add(itemCreator:getCorn(99))
     container:add(itemCreator:getPotatoe(99))
+    container:add(itemCreator:getSeedbag())
     st_ingame.container = container
     container:update(0)
 end

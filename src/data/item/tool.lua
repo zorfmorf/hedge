@@ -45,6 +45,12 @@ function Tool:use(usage)
 end
 
 
+function Tool:getCycles()
+    -- TODO: adjust for individual tools
+    return 4 - self.level
+end
+
+
 function Tool:getSellPrice()
     return self.price --todo: factor in level and durability
 end
