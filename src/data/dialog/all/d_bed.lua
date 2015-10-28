@@ -13,6 +13,6 @@ lines[1] = { text = function() return "Do you want to go to sleep?" end,
                     { target=-1, text="Cancel" }
                 }
             }
-lines[2] = { text = function() return "Looks like you had some free inventory space!" end, name="Daphne", avatar=true }
+lines[2] = { text = function() return "Looks like you had some free inventory space!" end, name="Daphne" }
 
 return lines

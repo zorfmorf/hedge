@@ -139,7 +139,7 @@ function Dialog:draw()
     
     local line = self:current()
     
-    if self.x and self.y then
+    if self.x and self.y and line then
         
         love.graphics.setFont(font)
         
