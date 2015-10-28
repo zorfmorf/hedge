@@ -1,6 +1,6 @@
 -- Global settings
 
-C_DEBUG = true
+C_DEBUG = false
 
 -- pathing
 C_FOLDER_TILES = 'img/tiles/'
