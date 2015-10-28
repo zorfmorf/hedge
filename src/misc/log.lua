@@ -10,7 +10,7 @@ local level = "verbose"
 
 
 function log:init()
-    
+    if not C_DEBUG then level = "error" end
 end
 
 
