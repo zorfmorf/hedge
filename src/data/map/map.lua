@@ -122,7 +122,7 @@ function Map:deleteTile(x, y)
     local tile = self:getTile(x, y)
     if tile then
         
-        self:setTile(x, y, nil, nil, nil, nil, nil, nil, nil, true)
+        self:setTile(x, y, nil, nil, nil, nil, true, nil, nil, true)
         
         local bx = math.floor(x / C_BLOCK_SIZE)
         local by = math.floor(y / C_BLOCK_SIZE)

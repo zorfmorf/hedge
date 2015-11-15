@@ -966,15 +966,16 @@ function editorHandler:mousepressed(x, y, button)
                             elseif layer.overlay and not tile.overlay then
                                 tile.overlay = value
                             end
+                            tile.block = false
                         else
                             if layer.floor1 then
-                                game.map:setTile(x, y, value, nil, nil, nil, true)
+                                game.map:setTile(x, y, value, nil, nil, nil, false)
                             elseif layer.floor2 then
-                                game.map:setTile(x, y, nil, value, nil, nil, true)
+                                game.map:setTile(x, y, nil, value, nil, nil, false)
                             elseif layer.object then
-                                game.map:setTile(x, y, nil, nil, value, nil, true)
+                                game.map:setTile(x, y, nil, nil, value, nil, false)
                             elseif layer.overlay then
-                                game.map:setTile(x, y, nil, nil, nil, value, true)
+                                game.map:setTile(x, y, nil, nil, nil, value, false)
                             end
                         end
                     end
