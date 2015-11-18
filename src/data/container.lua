@@ -40,6 +40,13 @@ function Container:init(id, flags, maxitems)
     self.tool = nil -- currently selected tool index
     self.box = nil -- contains inventory background draw object
     self.icon = loadIcons()
+    self:reset()
+end
+
+
+-- Note: We don't want to always reset all containers on opening since the player inventory
+-- should persist information such as which items was last selected
+function Container:reset()
     self.offset = 0 -- how many items are "above" the inventory (scrolling)
     self.cursor = 1 -- item id the cursor is centered on
     self.confirmed = false -- if they buy/sell action is in confirm state
@@ -249,7 +256,7 @@ function Container:drawHud()
     love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
     
     -- draw tool / seedbag
-    if self.tool then
+    if self.tool and self.items[self.tool] then
         local img = self.items[self.tool].icon
         if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
         local line = self.items[self.tool]:getName()
@@ -324,10 +331,9 @@ function Container:draw()
         love.graphics.line(dx + mid, dy + font:getHeight(), dx + mid, dy + self.box.img:getHeight() - 2 * C_TILE_SIZE )
         
         -- item name on the right side
-        if #self.items > 0 then
+        if #self.items > 0 and self.items[self.cursor] then
             
             local item = self.items[self.cursor]
-            
             love.graphics.print(item:getName(), dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 1, 0, 1, 1, 0, fonthalf)
             
             love.graphics.printf(item.description, dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 2, mid - C_TILE_SIZE, "left", 0, 1, 1, 0, fonthalf)
@@ -400,7 +406,7 @@ end
 
 
 function Container:confirm()
-    if self.confirmed and #self.items > 0 then
+    if self.confirmed and #self.items > 0 and self.items[self.cursor] then
         if self.flags.sell then
             inventory:addMoney(math.floor(self.items[self.cursor].price))
             self:removeAtPosition(self.cursor, false)
@@ -438,7 +444,7 @@ function Container:confirm()
             end
         end
     else
-        if #self.items > 0 then
+        if #self.items > 0 and self.items[self.cursor] then
             self.confirmed = true
             self.confirmcount = 1
         else
@@ -458,10 +464,12 @@ end
 
 
 function Container:increaseAmount()
-    if self.confirmed then
-        self.confirmcount = math.min(self.confirmcount + 1, self.items[self.cursor].count)
-    else
-        self:confirm()
+    if #self.items > 0 then
+        if self.confirmed then
+            self.confirmcount = math.min(self.confirmcount + 1, self.items[self.cursor].count)
+        else
+            self:confirm()
+        end
     end
 end
 
