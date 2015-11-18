@@ -287,8 +287,15 @@ function Container:draw()
         if self.flags.retrieve then title = "Retrieving" end
         love.graphics.print(title, dx - C_TILE_SIZE + math.floor(container_title:getWidth() * 0.5), dy - C_TILE_SIZE - math.floor(container_title:getHeight() * 0.5), 0, 1, 1, math.floor(font:getWidth(title) * 0.5), fonthalf + 2)
         
+        -- column descriptors
+        love.graphics.print("ITEMS", dx + C_TILE_SIZE * 3, dy - 10, 0, 1, 1, font:getWidth("ITEMS"))
+        local columndesc = "AMOUNT"
+        if self.flags.buy then columndesc = "PRICE" end
+        love.graphics.print(columndesc, dx + mid, dy - 10, 0, 1, 1, font:getWidth(columndesc) + 5)
+        love.graphics.print("DESCRIPTION", dx + mid + C_TILE_SIZE * 3, dy - 10)
+        
         -- list of items on the left
-        local row = 0
+        local row = 1
         self:updateRowNumber()
         for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
             local item = self.items[i]
@@ -301,11 +308,10 @@ function Container:draw()
             
             local buffer = 0
             
-            -- traders sell infinite items
-            if not self.flags.buy then
-                local amount = item.count
-                love.graphics.print(amount, dx + mid, dy + rowbuffer, 0, 1, 1, font:getWidth(amount) + math.floor(C_TILE_SIZE * 0.5))
-            end
+            local amount = item.count
+            if self.flags.buy then amount = item:getSellPrice() end
+            
+            love.graphics.print(amount, dx + mid, dy + rowbuffer, 0, 1, 1, font:getWidth(amount) + math.floor(C_TILE_SIZE * 0.5))
             love.graphics.print(item:getName(), dx, dy + rowbuffer)
             
             row = row + 1
@@ -315,14 +321,14 @@ function Container:draw()
         love.graphics.print("Money: "..inventory.money, dx, dy + dh, 0, 1, 1, 0, 0)
         
         -- separator bar
-        love.graphics.line(dx + mid, dy, dx + mid, dy + self.box.img:getHeight() - 2 * C_TILE_SIZE )
+        love.graphics.line(dx + mid, dy + font:getHeight(), dx + mid, dy + self.box.img:getHeight() - 2 * C_TILE_SIZE )
         
         -- item name on the right side
         if #self.items > 0 then
             
             local item = self.items[self.cursor]
             
-            love.graphics.print(item:getName(), dx + mid + C_TILE_SIZE, dy, 0, 1, 1, 0, fonthalf)
+            love.graphics.print(item:getName(), dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 1, 0, 1, 1, 0, fonthalf)
             
             love.graphics.printf(item.description, dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 2, mid - C_TILE_SIZE, "left", 0, 1, 1, 0, fonthalf)
             

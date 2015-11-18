@@ -59,6 +59,6 @@ function Seedbag:getCycles()
 end
 
 
-function Tool:getSellPrice()
+function Seedbag:getSellPrice()
     return self.price --todo: factor in level and durability
 end
