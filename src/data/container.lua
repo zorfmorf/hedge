@@ -361,7 +361,21 @@ function Container:draw()
                         end
                     end
                     text = text.."?"
-                    local confirmtext = "Press return to confirm"
+                    
+                    if 1 < self.confirmcount or self.confirmcount < item.count then
+                        text = text.." ("
+                        if 1 < self.confirmcount then
+                            text = text.."-: "..KEY_LEFT
+                            if self.confirmcount < item.count then text = text..", " end
+                        end
+                        if self.confirmcount < item.count then
+                            text = text.."+: "..KEY_RIGHT
+                        end
+                        text = text..")"
+                    end
+                    
+                    
+                    local confirmtext = "Press "..KEY_USE.." to confirm"
                     love.graphics.setColor(Color.GREEN)
                     if self.flags.buy and price > inventory.money then
                         confirmtext = "Not enough money"
@@ -372,9 +386,16 @@ function Container:draw()
                         love.graphics.setColor(Color.RED)
                     end
                     love.graphics.printf(confirmtext, dx + mid + C_TILE_SIZE, dy + dh, mid, "left", 0, 1, 1, 0, C_TILE_SIZE)
+                    love.graphics.setColor(Color.WHITE)
+                    love.graphics.print(text, dx + mid + C_TILE_SIZE, dy + dh, 0, 1, 1, 0, C_TILE_SIZE * 2)
+                else
+                    local action = "buy"
+                    if self.flags.sell then action = "sell" end
+                    if self.flags.store then action = "store" end
+                    if self.flags.retrieve then action = "retrieve" end
+                    local text = "Press "..KEY_USE.." to "..action
+                    love.graphics.printf(text, dx + mid + C_TILE_SIZE, dy + dh, mid, "left", 0, 1, 1, 0, C_TILE_SIZE)
                 end
-                love.graphics.setColor(Color.WHITE)
-                love.graphics.print(text, dx + mid + C_TILE_SIZE, dy + dh, 0, 1, 1, 0, C_TILE_SIZE * 2)
             end
         end
     end
