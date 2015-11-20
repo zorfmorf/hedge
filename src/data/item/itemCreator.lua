@@ -12,6 +12,7 @@ text.cabbageplant = "A large plant whose big head can be harvested."
 text.wheat = "Can be threshed to seperate the corn from chaff."
 text.corn = "Can be either planted to grow wheat or ground into flour with a mill."
 text.stone = "Used as a building material. Really heavy."
+text.wood = "Basic building material that also keeps you warm in the winter."
 
 
 function itemCreator:getAxe(level)
@@ -86,4 +87,9 @@ end
 
 function itemCreator:getStone(amount)
     return Item("Stone", amount, { produce=false, food=false, seed=false, sellable=true}, 20, text.stone)
+end
+
+
+function itemCreator:getWood(amount)
+    return Item("Wood", amount, { produce=false, food=false, seed=false, sellable=true}, 10, text.wood)
 end
