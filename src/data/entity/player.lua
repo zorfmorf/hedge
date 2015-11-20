@@ -135,12 +135,16 @@ end
 
 
 function Player:move(direction)
-    moveHandler.move(self, direction)
+    if not self.animation then
+        moveHandler.move(self, direction)
+    end
 end
 
 
 function Player:unmove(direction)
-    moveHandler.unmove(self, direction)
+    if not self.animation then
+        moveHandler.unmove(self, direction)
+    end
 end
 
 
