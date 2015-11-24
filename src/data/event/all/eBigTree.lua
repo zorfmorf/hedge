@@ -43,11 +43,13 @@ end
 local function use(tx, ty)
     local tile = game.map:getTile(tx, ty)
     
-    if tile and inventory:hasFreeSlots(3) then
-        if inventory:usesTool("Axe") then
+    if inventory:usesTool("Axe") then
+        if tile and inventory:hasFreeSlots(3) then
             local tool = inventory:getTool()
             player.animation = { timer=0, tx=tx, ty=ty, use=chopDownTreeEvent, cycles=tool:getCycles() }
         end
+    else
+        player:addFloatingText(message.noAxe, true)
     end
 end
 

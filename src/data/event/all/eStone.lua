@@ -29,11 +29,13 @@ end
 local function use(tx, ty)
     local tile = game.map:getTile(tx, ty)
     
-    if tile and inventory:hasFreeSlots() then
-        if inventory:usesTool("Pickaxe") then
+    if inventory:usesTool("Pickaxe") then
+        if tile and inventory:hasFreeSlots() then
             local tool = inventory:getTool()
             player.animation = { timer=0, tx=tx, ty=ty, use=stoneEvent, cycles=tool:getCycles() }
         end
+    else
+        player:addFloatingText(message.noPick, true)
     end
 end
 
