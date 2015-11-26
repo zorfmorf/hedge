@@ -353,7 +353,7 @@ function Container:draw()
                     if self.flags.buy or self.flags.sell then
                         if self.flags.sell then price = math.floor(item:getSellPrice() * self.confirmcount * 0.5) end
                         text = text.." for "..price
-                        if item.flags.tool then
+                        if self.flags.buy and item.flags.tool then
                             if item.level > 1 then 
                                 text = "Upgrade "..item.id.." for "..price
                             else
