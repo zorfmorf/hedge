@@ -350,7 +350,8 @@ function Container:draw()
                 if self.confirmed then
                     local price = item:getSellPrice() * self.confirmcount
                     text = text.." "..self.confirmcount
-                    if self.flags.buy or self.flags.sell then 
+                    if self.flags.buy or self.flags.sell then
+                        if self.flags.sell then price = math.floor(item:getSellPrice() * self.confirmcount * 0.5) end
                         text = text.." for "..price
                         if item.flags.tool then
                             if item.level > 1 then 
@@ -429,8 +430,10 @@ end
 function Container:confirm()
     if self.confirmed and #self.items > 0 and self.items[self.cursor] then
         if self.flags.sell then
-            inventory:addMoney(math.floor(self.items[self.cursor].price))
-            self:removeAtPosition(self.cursor, false)
+            inventory:addMoney(math.floor(self.items[self.cursor]:getSellPrice() * self.confirmcount * 0.5))
+            for i=1,self.confirmcount do
+                self:removeAtPosition(self.cursor, false)
+            end
         end
         if self.flags.buy then
             
