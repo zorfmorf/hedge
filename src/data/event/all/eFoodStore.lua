@@ -6,7 +6,7 @@ local function init()
 end
 
 
-local function walk()
+local function walk(tx, ty)
     
 end
 

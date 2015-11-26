@@ -55,6 +55,7 @@ function Dialog:advance()
             self.pos = opt.target
             if opt.func then opt.func() end
         else
+            if line.func then line.func() end
             if line.target then
                 self.pos = line.target
             else
