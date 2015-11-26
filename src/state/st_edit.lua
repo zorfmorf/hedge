@@ -276,6 +276,7 @@ function st_edit:saveSettings()
         end
         file:write(tostring(editorHandler:showWalkable()).."\n")
         file:write(tostring(editorHandler:showEvents()).."\n")
+        file:write(tostring(game.map.name).."\n")
         local isFirst = true
         for i,k in ipairs(brushHandler.getRecentBrushes()) do
             if isFirst then
@@ -310,6 +311,8 @@ function st_edit:loadSettings()
             elseif i == 3 then
                 editorHandler:setEvents(line == "true")
             elseif i == 4 then
+                st_edit:loadMap(line)
+            elseif i == 5 then
                 for k,j in ipairs(line:split(';')) do
                     table.insert(last, tonumber(j))
                 end
