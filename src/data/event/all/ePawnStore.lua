@@ -1,4 +1,4 @@
--- tool store conversation
+-- pawn store conversation
 
 local function init()
     

@@ -3,6 +3,7 @@ itemCreator = {}
 
 
 local text = {}
+text.bread = "Basic bread out of flour. Still warm."
 text.carrot = "Root vegetable that is used in many dishes and therefore high in demand."
 text.cucumberplant = "Ground vine plant that bears multiple fruits."
 text.cucumber = "Can be eaten fresh or pickled to make it last deep into winter."
@@ -92,4 +93,9 @@ end
 
 function itemCreator:getWood(amount)
     return Item("Wood", amount, { produce=false, food=false, seed=false, sellable=true}, 10, text.wood)
+end
+
+
+function itemCreator:getWheatBread(amount)
+    return Item("Wheat bread", amount, { produce=false, food=true, seed=false, sellable=true}, 20, text.bread)
 end

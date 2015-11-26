@@ -53,7 +53,7 @@ function maploader:read( path, name )
                         for k,value in ipairs(entry:split("|")) do
                             if value == "nil" then 
                                 params[k] = nil
-                            elseif value:len() == 1 then
+                            elseif value:find(",") == nil then
                                 params[k] = tonumber(value)
                             else
                                 params[k] = {}
