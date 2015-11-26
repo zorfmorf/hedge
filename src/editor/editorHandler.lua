@@ -119,8 +119,13 @@ function editorHandler:addNpc(tx, ty)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.npc then
         local npc = entityHandler.get(tile.npc)
-        npc.anim = npc.anim + 1
-        if npc.anim > 4 then npc.anim = 1 end
+        local dir = npc.dir
+        if dir == "left" then npc.dir = "up" end
+        if dir == "up" then npc.dir = "right" end
+        if dir == "right" then npc.dir = "down" end
+        if dir == "down" then npc.dir = "left" end
+        npc.defaultDir = npc.dir
+        npc:update(0)
     else
         menus.npc = { x=tx, y=ty }
     end

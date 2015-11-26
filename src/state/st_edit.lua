@@ -51,6 +51,10 @@ end
 
 function st_edit:update(dt)
     
+    for id,entity in pairs(game.map.entities) do
+        entity:update(0)
+    end
+    
     editorHandler:update(dt)
     
     -- if left mouse is pressed, set current tile to position
