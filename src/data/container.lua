@@ -174,6 +174,14 @@ function Container:removeAll(id)
 end
 
 
+function Container:hasItemWithFlag(flagToCheck)
+    for i,item in ipairs(self.items) do
+        if item.flags[flagToCheck] then return true end
+    end
+    return false
+end
+
+
 function Container:getTool()
     if self.tool and self.items[self.tool] then
         return self.items[self.tool]
