@@ -2,14 +2,15 @@
 Seedbag = Class{}
 
 
-function Seedbag:init()
+function Seedbag:init(text)
     self.flags = { tool=true }
     self.level = 0
     self.id = "Seedbag"
     self.count = 1
     self.price = 50
     self.seed = nil --item id of current seed
-    self.description = "Used when sowing a field. Has many pouches to easily distinguish between seeds."
+    self.description = "Seedbag"
+    if text then self.description = text end
     self:createIcon()
     self:nextSeed() -- select a seed of bag if any
 end
