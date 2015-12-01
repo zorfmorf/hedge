@@ -32,6 +32,7 @@ function Item:getName()
 end
 
 
+-- sell price when sold TO the player. may include other calculations in the future
 function Item:getSellPrice()
     return self.price
 end

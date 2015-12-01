@@ -111,6 +111,11 @@ function timeHandler.action()
 end
 
 
+function timeHandler.getHour()
+    return hour
+end
+
+
 function timeHandler.save()
     var.set("year", year)
     var.set("month", month)
