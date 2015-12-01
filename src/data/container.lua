@@ -18,7 +18,7 @@ local function loadIcons()
                 dat:paste(img, 0, 0, i * C_INVENTORY_SIZE, j * C_INVENTORY_SIZE, C_INVENTORY_SIZE, C_INVENTORY_SIZE)
                 if i == 0 and j == 0 then icon.backpack = love.graphics.newImage(dat) end
                 if i == 1 and j == 0 then icon.seedbag = love.graphics.newImage(dat) end
-                if i == 2 then icon["Shovel"..tostring(j)] = love.graphics.newImage(dat) end
+                if i == 2 then icon["Spade"..tostring(j)] = love.graphics.newImage(dat) end
                 if i == 3 then icon["Pickaxe"..tostring(j)] = love.graphics.newImage(dat) end
                 if i == 4 then icon["Axe"..tostring(j)] = love.graphics.newImage(dat) end
                 if i == 5 then icon["Scythe"..tostring(j)] = love.graphics.newImage(dat) end
@@ -258,15 +258,15 @@ function Container:drawHud()
         
     -- draw backpack
     love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
+    love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight() + 10)
     love.graphics.setFont(font)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
     love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    line = "Backpack ["..KEY_INVENTORY.."]"
+    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) + icon.backpack:getWidth() - 15), math.floor(font:getHeight() + icon.backpack:getHeight() * 0.5))
     
     -- draw tool / seedbag
     if self.tool and self.items[self.tool] then
-        local img = self.items[self.tool].icon
-        if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
         local line = self.items[self.tool]:getName()
         if self.items[self.tool].id == "Seedbag" then
             line = ""
@@ -275,6 +275,10 @@ function Container:drawHud()
             end
         end
         love.graphics.print(line, 5, screen.h - 1, 0, 1, 1, 0, font:getHeight())
+        local img = self.items[self.tool].icon
+        if img then love.graphics.draw(img, math.floor(font:getWidth(line) * 0.5), screen.h - font:getHeight(), 0, 1, 1, math.floor(img:getWidth() * 0.5), img:getHeight() - 10) end
+        love.graphics.print("["..KEY_PREVIOUS_TOOL.."]", 10, math.floor(screen.h - img:getHeight() * 0.5 - font:getHeight()), 0, 1, 1, 0, font:getHeight() * 0.5)
+        love.graphics.print("["..KEY_NEXT_TOOL.."]", font:getWidth(line) - 10, math.floor(screen.h - img:getHeight() * 0.5 - font:getHeight()), 0, 1, 1, 0, font:getHeight() * 0.5)
     end
 end
 

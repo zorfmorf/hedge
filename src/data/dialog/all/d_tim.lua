@@ -7,7 +7,7 @@ local function createStore()
     else
         container:add(itemCreator:getAxe(1))
     end
-    item = inventory:hasItem("Shovel")
+    item = inventory:hasItem("Spade")
     if item and item.level < 3 then
         container:add(itemCreator:getShovel(item.level + 1))
     else
