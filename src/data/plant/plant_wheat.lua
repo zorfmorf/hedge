@@ -21,7 +21,7 @@ function Plant_Wheat:update(value)
     if value and value > 0 then 
         self.days = self.days + value
         if self.state < 5 then
-            self.state = math.min(5, 1 + math.floor(self.days / 2))
+            self.state = math.min(5, 1 + math.floor(self.days / 8))
         end
     end
     

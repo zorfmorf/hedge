@@ -40,7 +40,7 @@ end
 -- handles actual events, not transition events
 function eventHandler.triggerEvent(id, walked, tx, ty)
     if events[id] then
-        log:msg("verbose", "Triggered event", events[id].name, "at", tx, ty)
+        log:msg("verbose", "Triggered event", events[id].name, "at", tx, ty, "walked =", walked)
         if walked then
             events[id].walk(tx, ty)
         else

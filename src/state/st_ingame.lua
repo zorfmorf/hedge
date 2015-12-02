@@ -4,7 +4,11 @@ st_ingame = {}
 camera = nil
 
 -- place player at specified spawnId or at first or at origin
-function st_ingame:placePlayer(spawnId)
+function st_ingame:placePlayer(spawnId, y)
+    if spawnId and y then
+        player:place(spawnId, y)
+        return
+    end
     for i,value in pairs(game.map.spawns) do
         if i == spawnId then
             player:place(value.x, value.y)
@@ -192,7 +196,7 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_ESCAPCE then self.container:unconfirm() end
         if key == KEY_RETURN then self.container:confirm() end
     else
-        if key == "g" then inventory:addMoney(100) end
+        if key == "g" then inventory:addMoney(100) end -- TODO remove
         if key == "t" then timeHandler.addTime(60) end -- TODO remove
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end

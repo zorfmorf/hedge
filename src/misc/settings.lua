@@ -55,6 +55,9 @@ CHAR_ANIM = 17 -- animation speed
 CHAR_ANIM_WORK = 8 -- work animation speed
 CHAR_MOVE_DIRCHANGE_THRESHOLD = 0.13 -- time buffer when changing direction in case it's just a direction change
 
+-- npc settings
+NPC_STROLL_CD = 4
+
 -- time settings
 C_WORK_UNIT = 10 -- amount of minutes one work unit takes
 
@@ -69,3 +72,6 @@ C_TRANS_TIME = 0.6 -- in seconds
 C_FLOAT_SPEED = 0.6
 C_FLOAT_COOLDOWN = 0.6
 C_FLOAT_TIME = 1.5
+
+-- intro
+C_LINE_TIME = 4

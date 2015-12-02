@@ -18,7 +18,7 @@ local function loadIcons()
                 dat:paste(img, 0, 0, i * C_INVENTORY_SIZE, j * C_INVENTORY_SIZE, C_INVENTORY_SIZE, C_INVENTORY_SIZE)
                 if i == 0 and j == 0 then icon.backpack = love.graphics.newImage(dat) end
                 if i == 1 and j == 0 then icon.seedbag = love.graphics.newImage(dat) end
-                if i == 2 then icon["Shovel"..tostring(j)] = love.graphics.newImage(dat) end
+                if i == 2 then icon["Spade"..tostring(j)] = love.graphics.newImage(dat) end
                 if i == 3 then icon["Pickaxe"..tostring(j)] = love.graphics.newImage(dat) end
                 if i == 4 then icon["Axe"..tostring(j)] = love.graphics.newImage(dat) end
                 if i == 5 then icon["Scythe"..tostring(j)] = love.graphics.newImage(dat) end
@@ -40,6 +40,13 @@ function Container:init(id, flags, maxitems)
     self.tool = nil -- currently selected tool index
     self.box = nil -- contains inventory background draw object
     self.icon = loadIcons()
+    self:reset()
+end
+
+
+-- Note: We don't want to always reset all containers on opening since the player inventory
+-- should persist information such as which items was last selected
+function Container:reset()
     self.offset = 0 -- how many items are "above" the inventory (scrolling)
     self.cursor = 1 -- item id the cursor is centered on
     self.confirmed = false -- if they buy/sell action is in confirm state
@@ -167,6 +174,14 @@ function Container:removeAll(id)
 end
 
 
+function Container:hasItemWithFlag(flagToCheck)
+    for i,item in ipairs(self.items) do
+        if item.flags[flagToCheck] then return true end
+    end
+    return false
+end
+
+
 function Container:getTool()
     if self.tool and self.items[self.tool] then
         return self.items[self.tool]
@@ -243,15 +258,15 @@ function Container:drawHud()
         
     -- draw backpack
     love.graphics.setColor(Color.WHITE)
-    love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight())
+    love.graphics.draw(icon.backpack, screen.w - 15, screen.h - 10, 0, 1, 1, icon.backpack:getWidth(), icon.backpack:getHeight() + 10)
     love.graphics.setFont(font)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
     love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
+    line = "Backpack ["..KEY_INVENTORY.."]"
+    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) + icon.backpack:getWidth() - 15), math.floor(font:getHeight() + icon.backpack:getHeight() * 0.5))
     
     -- draw tool / seedbag
-    if self.tool then
-        local img = self.items[self.tool].icon
-        if img then love.graphics.draw(img, 15, screen.h - font:getHeight(), 0, 1, 1, 0, img:getHeight() - 10) end
+    if self.tool and self.items[self.tool] then
         local line = self.items[self.tool]:getName()
         if self.items[self.tool].id == "Seedbag" then
             line = ""
@@ -260,6 +275,10 @@ function Container:drawHud()
             end
         end
         love.graphics.print(line, 5, screen.h - 1, 0, 1, 1, 0, font:getHeight())
+        local img = self.items[self.tool].icon
+        if img then love.graphics.draw(img, math.floor(font:getWidth(line) * 0.5), screen.h - font:getHeight(), 0, 1, 1, math.floor(img:getWidth() * 0.5), img:getHeight() - 10) end
+        love.graphics.print("["..KEY_PREVIOUS_TOOL.."]", 10, math.floor(screen.h - img:getHeight() * 0.5 - font:getHeight()), 0, 1, 1, 0, font:getHeight() * 0.5)
+        love.graphics.print("["..KEY_NEXT_TOOL.."]", font:getWidth(line) - 10, math.floor(screen.h - img:getHeight() * 0.5 - font:getHeight()), 0, 1, 1, 0, font:getHeight() * 0.5)
     end
 end
 
@@ -287,8 +306,15 @@ function Container:draw()
         if self.flags.retrieve then title = "Retrieving" end
         love.graphics.print(title, dx - C_TILE_SIZE + math.floor(container_title:getWidth() * 0.5), dy - C_TILE_SIZE - math.floor(container_title:getHeight() * 0.5), 0, 1, 1, math.floor(font:getWidth(title) * 0.5), fonthalf + 2)
         
+        -- column descriptors
+        love.graphics.print("ITEMS", dx + C_TILE_SIZE * 3, dy - 10, 0, 1, 1, font:getWidth("ITEMS"))
+        local columndesc = "AMOUNT"
+        if self.flags.buy then columndesc = "PRICE" end
+        love.graphics.print(columndesc, dx + mid, dy - 10, 0, 1, 1, font:getWidth(columndesc) + 5)
+        love.graphics.print("DESCRIPTION", dx + mid + C_TILE_SIZE * 3, dy - 10)
+        
         -- list of items on the left
-        local row = 0
+        local row = 1
         self:updateRowNumber()
         for i=1+self.offset,math.min(self.offset+self.rownumber, #self.items) do
             local item = self.items[i]
@@ -301,11 +327,10 @@ function Container:draw()
             
             local buffer = 0
             
-            -- traders sell infinite items
-            if not self.flags.buy then
-                local amount = item.count
-                love.graphics.print(amount, dx + mid, dy + rowbuffer, 0, 1, 1, font:getWidth(amount) + math.floor(C_TILE_SIZE * 0.5))
-            end
+            local amount = item.count
+            if self.flags.buy then amount = item:getSellPrice() end
+            
+            love.graphics.print(amount, dx + mid, dy + rowbuffer, 0, 1, 1, font:getWidth(amount) + math.floor(C_TILE_SIZE * 0.5))
             love.graphics.print(item:getName(), dx, dy + rowbuffer)
             
             row = row + 1
@@ -315,14 +340,13 @@ function Container:draw()
         love.graphics.print("Money: "..inventory.money, dx, dy + dh, 0, 1, 1, 0, 0)
         
         -- separator bar
-        love.graphics.line(dx + mid, dy, dx + mid, dy + self.box.img:getHeight() - 2 * C_TILE_SIZE )
+        love.graphics.line(dx + mid, dy + font:getHeight(), dx + mid, dy + self.box.img:getHeight() - 2 * C_TILE_SIZE )
         
         -- item name on the right side
-        if #self.items > 0 then
+        if #self.items > 0 and self.items[self.cursor] then
             
             local item = self.items[self.cursor]
-            
-            love.graphics.print(item:getName(), dx + mid + C_TILE_SIZE, dy, 0, 1, 1, 0, fonthalf)
+            love.graphics.print(item:getName(), dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 1, 0, 1, 1, 0, fonthalf)
             
             love.graphics.printf(item.description, dx + mid + C_TILE_SIZE, dy + C_TILE_SIZE * 2, mid - C_TILE_SIZE, "left", 0, 1, 1, 0, fonthalf)
             
@@ -338,9 +362,10 @@ function Container:draw()
                 if self.confirmed then
                     local price = item:getSellPrice() * self.confirmcount
                     text = text.." "..self.confirmcount
-                    if self.flags.buy or self.flags.sell then 
+                    if self.flags.buy or self.flags.sell then
+                        if self.flags.sell then price = math.floor(item:getSellPrice() * self.confirmcount * 0.5) end
                         text = text.." for "..price
-                        if item.flags.tool then
+                        if self.flags.buy and item.flags.tool then
                             if item.level > 1 then 
                                 text = "Upgrade "..item.id.." for "..price
                             else
@@ -349,7 +374,21 @@ function Container:draw()
                         end
                     end
                     text = text.."?"
-                    local confirmtext = "Press return to confirm"
+                    
+                    if 1 < self.confirmcount or self.confirmcount < item.count then
+                        text = text.." ("
+                        if 1 < self.confirmcount then
+                            text = text.."-: "..KEY_LEFT
+                            if self.confirmcount < item.count then text = text..", " end
+                        end
+                        if self.confirmcount < item.count then
+                            text = text.."+: "..KEY_RIGHT
+                        end
+                        text = text..")"
+                    end
+                    
+                    
+                    local confirmtext = "Press "..KEY_USE.." to confirm"
                     love.graphics.setColor(Color.GREEN)
                     if self.flags.buy and price > inventory.money then
                         confirmtext = "Not enough money"
@@ -360,9 +399,16 @@ function Container:draw()
                         love.graphics.setColor(Color.RED)
                     end
                     love.graphics.printf(confirmtext, dx + mid + C_TILE_SIZE, dy + dh, mid, "left", 0, 1, 1, 0, C_TILE_SIZE)
+                    love.graphics.setColor(Color.WHITE)
+                    love.graphics.print(text, dx + mid + C_TILE_SIZE, dy + dh, 0, 1, 1, 0, C_TILE_SIZE * 2)
+                else
+                    local action = "buy"
+                    if self.flags.sell then action = "sell" end
+                    if self.flags.store then action = "store" end
+                    if self.flags.retrieve then action = "retrieve" end
+                    local text = "Press "..KEY_USE.." to "..action
+                    love.graphics.printf(text, dx + mid + C_TILE_SIZE, dy + dh, mid, "left", 0, 1, 1, 0, C_TILE_SIZE)
                 end
-                love.graphics.setColor(Color.WHITE)
-                love.graphics.print(text, dx + mid + C_TILE_SIZE, dy + dh, 0, 1, 1, 0, C_TILE_SIZE * 2)
             end
         end
     end
@@ -394,10 +440,12 @@ end
 
 
 function Container:confirm()
-    if self.confirmed and #self.items > 0 then
+    if self.confirmed and #self.items > 0 and self.items[self.cursor] then
         if self.flags.sell then
-            inventory:addMoney(math.floor(self.items[self.cursor].price))
-            self:removeAtPosition(self.cursor, false)
+            inventory:addMoney(math.floor(self.items[self.cursor]:getSellPrice() * self.confirmcount * 0.5))
+            for i=1,self.confirmcount do
+                self:removeAtPosition(self.cursor, false)
+            end
         end
         if self.flags.buy then
             
@@ -432,7 +480,7 @@ function Container:confirm()
             end
         end
     else
-        if #self.items > 0 then
+        if #self.items > 0 and self.items[self.cursor] then
             self.confirmed = true
             self.confirmcount = 1
         else
@@ -452,10 +500,12 @@ end
 
 
 function Container:increaseAmount()
-    if self.confirmed then
-        self.confirmcount = math.min(self.confirmcount + 1, self.items[self.cursor].count)
-    else
-        self:confirm()
+    if #self.items > 0 then
+        if self.confirmed then
+            self.confirmcount = math.min(self.confirmcount + 1, self.items[self.cursor].count)
+        else
+            self:confirm()
+        end
     end
 end
 

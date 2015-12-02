@@ -20,7 +20,7 @@ function Plant_Cucumber:update(value)
     if value and value > 0 then 
         self.days = self.days + value
         if self.state < 4 then
-            self.state = math.min(4, 1 + math.floor(self.days / 2))
+            self.state = math.min(4, 1 + math.floor(self.days / 3))
         end
     end
     
@@ -46,5 +46,5 @@ end
 
 function Plant_Cucumber:harvest()
     self.state = 5
-    inventory:add(itemCreator:getCucumber(1))
+    inventory:add(itemCreator:getCucumber(4))
 end

@@ -12,7 +12,7 @@ local function handleMove(entity, direction, target)
     entity.dir = direction
     if canBeMovedTo( target.x, target.y ) then        
         game.map:removeEntity(entity.pos.x, entity.pos.y)
-        entity.pos = { x=target.x, y=target.y}
+        entity.pos = { x=target.x, y=target.y }
         entity.walking = true
         game.map:addEntity(entity.pos.x, entity.pos.y, entity.id)
     else
@@ -26,6 +26,7 @@ local function move(entity, dt, xd, yd)
     if entity.id == 1 and love.keyboard.isDown(KEY_SPRINT) then
         mod = 2
     end
+    if entity.id > 1 then mod = 0.5 end
     entity.posd.x = entity.posd.x + xd * dt * CHAR_MOVE * mod
     entity.posd.y = entity.posd.y + yd * dt * CHAR_MOVE * mod
     if (xd < 0 and entity.posd.x <= entity.pos.x) or

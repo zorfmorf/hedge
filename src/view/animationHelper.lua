@@ -3,6 +3,8 @@ local charset = {}
 charset.default = love.graphics.newImage("img/chars/charset.png")
 charset.karen = love.graphics.newImage("img/chars/karen.png")
 charset.tim = love.graphics.newImage("img/chars/tim.png")
+charset.lew = love.graphics.newImage("img/chars/lew.png")
+charset.marketwoman = love.graphics.newImage("img/chars/marketwoman.png")
 
 
 animationHelper = {}
@@ -21,10 +23,14 @@ end
 
 
 function animationHelper.draw(entity)
-    local cycle = entity.cycle + 1
-    if entity.animation then cycle = entity.animation.timer + 1 end
-    cycle = math.floor(cycle)
-    love.graphics.draw(charset[entity.charset], quads[cycle][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
+    if charset[entity.charset] then
+        local cycle = entity.cycle + 1
+        if entity.animation then cycle = entity.animation.timer + 1 end
+        cycle = math.floor(cycle)
+        love.graphics.draw(charset[entity.charset], quads[cycle][entity.anim], entity.posd.x * C_TILE_SIZE - C_CHAR_MOD_X, entity.posd.y * C_TILE_SIZE - C_CHAR_MOD_Y)
+    else
+        log:msg("error", "Missing entity tileset", entity.charset)
+    end
 end
 
 

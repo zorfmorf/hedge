@@ -20,7 +20,7 @@ function Plant_Potatoe:update(value)
     if value and value > 0 then 
         self.days = self.days + value
         if self.state < 4 then
-            self.state = math.min(4, 1 + math.floor(self.days / 2))
+            self.state = math.min(4, 1 + math.floor(self.days / 4))
         end
     end
     
@@ -46,5 +46,5 @@ end
 
 function Plant_Potatoe:harvest()
     self.state = 5
-    inventory:add(itemCreator:getPotatoe(1))
+    inventory:add(itemCreator:getPotatoe(6))
 end

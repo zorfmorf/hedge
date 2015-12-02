@@ -31,7 +31,7 @@ local function fieldEvent(tx, ty)
             end
         end
     else
-        if inventory:usesTool("Shovel") then
+        if inventory:usesTool("Spade") then
             local tool = inventory:getTool()
             tile.floor = deepcopy(texture["field.patch"])
             tile.plowed = true
@@ -54,7 +54,7 @@ local function use(tx, ty)
             end
         end
     else
-        if inventory:usesTool("Shovel") then
+        if inventory:usesTool("Spade") then
             local tool = inventory:getTool()
             player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles() }
         end

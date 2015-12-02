@@ -135,17 +135,22 @@ end
 
 
 function Player:move(direction)
-    moveHandler.move(self, direction)
+    if not self.animation then
+        moveHandler.move(self, direction)
+    end
 end
 
 
 function Player:unmove(direction)
-    moveHandler.unmove(self, direction)
+    if not self.animation then
+        moveHandler.unmove(self, direction)
+    end
 end
 
 
-function Player:addFloatingText(value)
-    table.insert(self.floats, { x=self.pos.x, y=self.pos.y, time=-1, value="+ "..value })
+function Player:addFloatingText(value, noPlus)
+    if not noPlus then value = "+ " .. value end
+    table.insert(self.floats, { x=self.pos.x, y=self.pos.y, time=-1, value=value })
 end
 
 

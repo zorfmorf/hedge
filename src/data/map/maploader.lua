@@ -53,7 +53,7 @@ function maploader:read( path, name )
                         for k,value in ipairs(entry:split("|")) do
                             if value == "nil" then 
                                 params[k] = nil
-                            elseif value:len() == 1 then
+                            elseif value:find(",") == nil then
                                 params[k] = tonumber(value)
                             else
                                 params[k] = {}
@@ -90,7 +90,10 @@ function maploader:read( path, name )
     -- load up entities and set their directions
     map:loadEntities()
     for npc,dir in pairs(animations) do
-        if map.entities[npc] and not (map.entities[npc].id == 1) then map.entities[npc].dir = dir end
+        if map.entities[npc] and not (map.entities[npc].id == 1) then 
+            map.entities[npc].dir = dir
+            map.entities[npc].defaultDir = dir
+        end
     end
     return map
 end

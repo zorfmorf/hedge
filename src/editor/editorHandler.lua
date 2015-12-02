@@ -119,8 +119,13 @@ function editorHandler:addNpc(tx, ty)
     local tile = game.map:getTile(tx, ty)
     if tile and tile.npc then
         local npc = entityHandler.get(tile.npc)
-        npc.anim = npc.anim + 1
-        if npc.anim > 4 then npc.anim = 1 end
+        local dir = npc.dir
+        if dir == "left" then npc.dir = "up" end
+        if dir == "up" then npc.dir = "right" end
+        if dir == "right" then npc.dir = "down" end
+        if dir == "down" then npc.dir = "left" end
+        npc.defaultDir = npc.dir
+        npc:update(0)
     else
         menus.npc = { x=tx, y=ty }
     end
@@ -966,15 +971,16 @@ function editorHandler:mousepressed(x, y, button)
                             elseif layer.overlay and not tile.overlay then
                                 tile.overlay = value
                             end
+                            tile.block = false
                         else
                             if layer.floor1 then
-                                game.map:setTile(x, y, value, nil, nil, nil, true)
+                                game.map:setTile(x, y, value, nil, nil, nil, false)
                             elseif layer.floor2 then
-                                game.map:setTile(x, y, nil, value, nil, nil, true)
+                                game.map:setTile(x, y, nil, value, nil, nil, false)
                             elseif layer.object then
-                                game.map:setTile(x, y, nil, nil, value, nil, true)
+                                game.map:setTile(x, y, nil, nil, value, nil, false)
                             elseif layer.overlay then
-                                game.map:setTile(x, y, nil, nil, nil, value, true)
+                                game.map:setTile(x, y, nil, nil, nil, value, false)
                             end
                         end
                     end

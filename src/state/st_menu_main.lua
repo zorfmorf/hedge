@@ -47,7 +47,7 @@ function st_menu_main:update(dt)
         else
             if Gui.Button{text = "Play"} then 
                 saveHandler.newGame()
-                Gamestate.switch(st_ingame)
+                Gamestate.switch(st_intro)
             end
             if saveslots then 
                 if Gui.Button{text = "Load"} then

@@ -46,5 +46,5 @@ end
 
 function Plant_Carrot:harvest()
     self.state = 5
-    inventory:add(itemCreator:getCarrot(1))
+    inventory:add(itemCreator:getCarrot(2))
 end

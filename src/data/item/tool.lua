@@ -54,3 +54,8 @@ end
 function Tool:getSellPrice()
     return self.price --todo: factor in level and durability
 end
+
+
+function Tool:getCopy(amount)
+    return self
+end

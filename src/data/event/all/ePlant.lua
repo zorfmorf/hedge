@@ -14,7 +14,7 @@ local function plantEvent(tx, ty)
     local tile = game.map:getTile(tx, ty)
     for i,plant in pairs(game.plants) do
         if plant.map == game.map.name and plant.tx == tx and plant.ty == ty then
-            if plant:isHarvested() and inventory:usesTool("Shovel") then
+            if plant:isHarvested() and inventory:usesTool("Spade") then
                 tile.block = false
                 tile.object = nil
                 tile.plantable = true
@@ -53,7 +53,7 @@ local function use(tx, ty)
     local tile = game.map:getTile(tx, ty)
     for i,plant in pairs(game.plants) do
         if plant.map == game.map.name and plant.tx == tx and plant.ty == ty then
-            if plant:isHarvested() and inventory:usesTool("Shovel") then
+            if plant:isHarvested() and inventory:usesTool("Spade") then
                 local tool = inventory:getTool()
                 timeHandler.addTime(tool:getCycles() * C_WORK_UNIT)
                 player.animation = { timer=0, tx=tx, ty=ty, use=plantEvent, cycles=tool:getCycles() }

@@ -39,6 +39,8 @@ end
 
 
 function timeHandler.addTime(minutes)
+    local hourbeforeDawn = hour < 5
+    local currentDay = day
     minute = minute + minutes
     while minute > 59 do
         minute = minute - 60
@@ -47,6 +49,11 @@ function timeHandler.addTime(minutes)
             hour = 0
             timeHandler.advanceDay(1)
         end
+    end
+    
+    -- if the player is up until 5am, start the dialog event
+    if currentDay == day and hourbeforeDawn and hour >= 5 then
+        st_ingame:startDialog("d_tired", 1, player.pos.x, player.pos.y)
     end
 end
 
@@ -87,6 +94,13 @@ function timeHandler.sleep()
 end
 
 
+function timeHandler.oversleep()
+    timeHandler.sleep()
+    hour = hour + 3
+end
+
+
+
 function timeHandler.transition()
     timeHandler.addTime(60)
 end
@@ -94,6 +108,11 @@ end
 
 function timeHandler.action()
     timeHandler.addTime(10)
+end
+
+
+function timeHandler.getHour()
+    return hour
 end
 
 
