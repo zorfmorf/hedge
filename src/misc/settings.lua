@@ -72,3 +72,6 @@ C_TRANS_TIME = 0.6 -- in seconds
 C_FLOAT_SPEED = 0.6
 C_FLOAT_COOLDOWN = 0.6
 C_FLOAT_TIME = 1.5
+
+-- intro
+C_LINE_TIME = 4
