@@ -61,7 +61,7 @@ function eventHandler.walkedOnTile(pos)
                         game.map = maploader:read(C_MAP_CURRENT, tile.event[1]..C_MAP_SUFFIX)
                         st_ingame:placePlayer(tile.event[2])
                         if applyTime and game.map:getSetting("transition_time") then
-                          timeHandler.addTime(60)
+                          timeHandler.addTime(C_TRANSITION_TIME)
                         end
                         game:updatePlants()
                     end)

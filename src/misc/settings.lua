@@ -60,6 +60,7 @@ NPC_STROLL_CD = 4
 
 -- time settings
 C_WORK_UNIT = 10 -- amount of minutes one work unit takes
+C_TRANSITION_TIME = 60 -- time that elapses for costly map transitions
 
 -- dialog settings
 C_DIALOG_LINE_TIME = 1 -- time it takes until a dialog line is displayed
