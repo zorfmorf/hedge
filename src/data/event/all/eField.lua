@@ -20,8 +20,8 @@ local function fieldEvent(tx, ty)
             if tool and tool.id == "Seedbag" then
                 local seed = tool:use()
                 if seed then
-                    if seed == "Potatoes"  then table.insert(game.plants, Plant_Potatoe(tx, ty)) end
-                    if seed == "Corn"  then table.insert(game.plants, Plant_Wheat(tx, ty)) end
+                    if seed == "Potatoes" then table.insert(game.plants, Plant_Potatoe(tx, ty)) end
+                    if seed == "Corn" then table.insert(game.plants, Plant_Wheat(tx, ty)) end
                     if seed == "Cucumber seeds" then table.insert(game.plants, Plant_Cucumber(tx, ty)) end
                     if seed == "Carrot seeds" then table.insert(game.plants, Plant_Carrot(tx, ty)) end
                     if seed == "Cabbage seeds" then table.insert(game.plants, Plant_Cabbage(tx, ty)) end
@@ -46,11 +46,8 @@ local function use(tx, ty)
     if tile.plowed then
         if tile.plantable and not tile.object then
             local tool = inventory:getTool()
-            if tool and tool.id == "Seedbag" then
-                local seed = tool:use()
-                if seed then
-                    player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles() }
-                end
+            if tool and tool.id == "Seedbag" and tool.seed then
+                player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles() }
             end
         end
     else

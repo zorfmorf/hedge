@@ -48,6 +48,7 @@ function Seedbag:use()
         local seedsLeft = inventory:remove(seed.id, 1)
         if not seedsLeft then 
             self.seed = nil
+            self:nextSeed()
         end
         return seed.id
     end

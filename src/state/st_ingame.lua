@@ -153,10 +153,10 @@ function st_ingame:draw()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
-    inventory:drawHud()
-    
     if self.container then
         self.container:draw()
+    else
+        inventory:drawHud()
     end
     
     if self.dialog then
@@ -172,7 +172,7 @@ function st_ingame:draw()
     -- draw hud
     Gui.core.draw()
     
-    drawHelper:drawFPS()
+    if C_DEBUG then drawHelper:drawFPS() end
 end
 
 
@@ -196,8 +196,10 @@ function st_ingame:keypressed(key, isrepeat)
         if key == KEY_ESCAPCE then self.container:unconfirm() end
         if key == KEY_RETURN then self.container:confirm() end
     else
-        if key == "g" then inventory:addMoney(100) end -- TODO remove
-        if key == "t" then timeHandler.addTime(60) end -- TODO remove
+        if C_DEBUG then
+          if key == "g" then inventory:addMoney(100) end
+          if key == "t" then timeHandler.addTime(60) end
+        end
         if key == KEY_LEFT and not isrepeat then player:move("left") end
         if key == KEY_RIGHT and not isrepeat then player:move("right") end
         if key == KEY_DOWN and not isrepeat then player:move("down") end

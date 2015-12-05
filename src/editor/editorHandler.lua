@@ -640,6 +640,13 @@ local function settingsmenu()
             game.map:setSetting("simulate_day", true)
         end
     end
+    if Gui.Checkbox{ checked = game.map:getSetting("transition_time"), text = "Apply transition time" } then 
+        if game.map:getSetting("transition_time") then
+            game.map:setSetting("transition_time", nil)
+        else
+            game.map:setSetting("transition_time", true)
+        end
+    end
     Gui.group.pop{}
 end
 
