@@ -20,6 +20,8 @@ local function requireDirectory( dir )
     end
 end
 
+
+requireDirectory( 'error' )
 requireDirectory( 'misc' )
 requireDirectory( 'data' )
 requireDirectory( 'data/dialog' )
