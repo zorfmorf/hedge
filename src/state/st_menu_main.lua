@@ -63,7 +63,7 @@ function st_menu_main:update(dt)
                 settings:save()
                 love.event.push("quit")
             end
-            if Gui.Button{text = "Crash"} then
+            if C_DEBUG and Gui.Button{text = "Crash"} then
                 print(makaber.schokolade.mal.abst)
             end
         end
