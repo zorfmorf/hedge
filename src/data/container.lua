@@ -383,11 +383,16 @@ function Container:draw()
                         text = text..")"
                     end
                     
+                    if self.flags.sell and item.flags.tool then text = "" end
                     
                     local confirmtext = "Press "..KEY_USE.." to confirm"
                     love.graphics.setColor(Color.GREEN)
                     if self.flags.buy and price > inventory.money then
                         confirmtext = "Not enough money"
+                        love.graphics.setColor(Color.RED)
+                    end
+                    if self.flags.sell and item.flags.tool then
+                        confirmtext = "The merchant doesn't want to buy this"
                         love.graphics.setColor(Color.RED)
                     end
                     if (self.flags.buy or self.flags.retrieve) and not inventory:hasFreeSlots(self.confirmcount, true) then
@@ -437,7 +442,7 @@ end
 
 function Container:confirm()
     if self.confirmed and #self.items > 0 and self.items[self.cursor] then
-        if self.flags.sell then
+        if self.flags.sell and not (self.items[self.cursor].flags.tool) then
             inventory:addMoney(math.floor(self.items[self.cursor]:getSellPrice() * self.confirmcount * 0.5))
             for i=1,self.confirmcount do
                 self:removeAtPosition(self.cursor, false)
