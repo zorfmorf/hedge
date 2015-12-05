@@ -4,7 +4,7 @@ local function createStore()
     container:add(itemCreator:getCucumberSeeds(99))
     container:add(itemCreator:getCarrotSeeds(99))
     container:add(itemCreator:getCabbageSeeds(99))
-    container:add(itemCreator:getCorn(99))
+    --container:add(itemCreator:getCorn(99)) currently removed because wheat is buggy
     container:add(itemCreator:getPotatoe(99))
     container:add(itemCreator:getSeedbag())
     st_ingame.container = container
