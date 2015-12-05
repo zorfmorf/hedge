@@ -90,10 +90,10 @@ end
 function Container:update(dt)
     if not self.box or not (self.box.w == screen.w and self.box.h == screen.h) then
         self.box = { w=screen.w, h=screen.h}
-        local w = math.floor(screen.w * 0.6)
+        local w = math.floor(screen.w * 0.9)
         local rest = w % C_TILE_SIZE
         if rest > 0 then w = w + (C_TILE_SIZE - rest) end
-        local h = math.floor(screen.h * 0.6)
+        local h = math.floor(screen.h * 0.8)
         rest = h % C_TILE_SIZE
         if rest > 0 then h = h + (C_TILE_SIZE - rest) end
         self.box.img = drawHelper:createGuiBox(w, h)
@@ -262,14 +262,12 @@ function Container:drawHud()
     love.graphics.setFont(font)
     local line = tostring(self.count).."/"..tostring(self.maxitems)
     love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) / 2), font:getHeight())
-    line = "Backpack ["..KEY_INVENTORY.."]"
-    love.graphics.print(line, screen.w - (16 + icon.backpack:getWidth() / 2), screen.h - 1, 0, 1, 1, math.floor(font:getWidth(line) + icon.backpack:getWidth() - 15), math.floor(font:getHeight() + icon.backpack:getHeight() * 0.5))
     
     -- draw tool / seedbag
     if self.tool and self.items[self.tool] then
         local line = self.items[self.tool]:getName()
         if self.items[self.tool].id == "Seedbag" then
-            line = ""
+            line = "No seeds selected"
             if self.items[self.tool].seed then
                 line = self.items[self.items[self.tool].seed].id
             end
@@ -277,8 +275,6 @@ function Container:drawHud()
         love.graphics.print(line, 5, screen.h - 1, 0, 1, 1, 0, font:getHeight())
         local img = self.items[self.tool].icon
         if img then love.graphics.draw(img, math.floor(font:getWidth(line) * 0.5), screen.h - font:getHeight(), 0, 1, 1, math.floor(img:getWidth() * 0.5), img:getHeight() - 10) end
-        love.graphics.print("["..KEY_PREVIOUS_TOOL.."]", 10, math.floor(screen.h - img:getHeight() * 0.5 - font:getHeight()), 0, 1, 1, 0, font:getHeight() * 0.5)
-        love.graphics.print("["..KEY_NEXT_TOOL.."]", font:getWidth(line) - 10, math.floor(screen.h - img:getHeight() * 0.5 - font:getHeight()), 0, 1, 1, 0, font:getHeight() * 0.5)
     end
 end
 
@@ -287,8 +283,8 @@ function Container:draw()
     
     if self.box then
         
-        local dx = math.floor(screen.w * 0.2) + C_TILE_SIZE
-        local dy = math.floor(screen.h * 0.2) + C_TILE_SIZE
+        local dx = math.floor(screen.w * 0.05) + C_TILE_SIZE
+        local dy = math.floor(screen.h * 0.1) + C_TILE_SIZE
         local mid = math.floor((self.box.img:getWidth() - C_TILE_SIZE * 2) * 0.5)
         local dh = self.box.img:getHeight() - C_TILE_SIZE * 2
         local fonthalf = math.floor(font:getHeight() / 2)

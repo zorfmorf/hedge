@@ -153,10 +153,10 @@ function st_ingame:draw()
     
     if game.map:getSetting("simulate_day") then drawHelper:dayCycle() end
     
-    inventory:drawHud()
-    
     if self.container then
         self.container:draw()
+    else
+        inventory:drawHud()
     end
     
     if self.dialog then
