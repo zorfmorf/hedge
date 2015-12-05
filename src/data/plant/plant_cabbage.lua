@@ -27,7 +27,7 @@ function Plant_Cabbage:update(value)
     if game.map.name == self.map then
         local tile = game.map:getTile(self.tx, self.ty)
         if tile then
-            tile.object = deepcopy(texture["plant.cabagge."..self.state])
+            tile.object = deepcopy(texture["plant.cabbage."..self.state])
             tile.block = self.state > 1 and self.state < 5
         end
     end
