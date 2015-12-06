@@ -37,6 +37,9 @@ layer.object = true
 layer.overlay = true
 layer.block = false
 
+-- last tile that was placed via the single tile selector
+local lastTile
+
 -- currently selected tile atlas
 local currentatlas = 1
 
@@ -935,6 +938,49 @@ function editorHandler:mouseIsOnMenu()
 end
 
 
+local function placeSingleTile(tx, ty)
+    
+    local value = nil
+    
+    if tx and ty then
+        value = {currentatlas, tx, ty}
+        lastTile = deepcopy(value)
+    else
+        value = lastTile
+    end
+    
+    local x = singletiletarget.x
+    local y = singletiletarget.y
+    
+    local tile = game.map:getTile(x, y)
+    
+    -- now place tile on lowest possible unset tile, ignoring
+    -- inactive layers
+    if tile then
+        if layer.floor1 and not tile.floor then
+            tile.floor = value
+        elseif layer.floor2 and not tile.floor2 then
+            tile.floor2 = value
+        elseif layer.object and not tile.object then
+            tile.object = value
+        elseif layer.overlay and not tile.overlay then
+            tile.overlay = value
+        end
+        tile.block = false
+    else
+        if layer.floor1 then
+            game.map:setTile(x, y, value, nil, nil, nil, false)
+        elseif layer.floor2 then
+            game.map:setTile(x, y, nil, value, nil, nil, false)
+        elseif layer.object then
+            game.map:setTile(x, y, nil, nil, value, nil, false)
+        elseif layer.overlay then
+            game.map:setTile(x, y, nil, nil, nil, value, false)
+        end
+    end
+end
+
+
 function editorHandler:mousepressed(x, y, button)
     
     -- if in tileselection mode
@@ -958,38 +1004,7 @@ function editorHandler:mousepressed(x, y, button)
                     -- check if atlas tile is valid
                     local atlas = brushHandler.getAtlanti()[currentatlas].img
                     if tx >= 0 and ty >= 0 and tx * C_TILE_SIZE < atlas:getWidth() and ty * C_TILE_SIZE < atlas:getHeight() then
-                            
-                        local value = {currentatlas, tx, ty}
-                        
-                        local x = singletiletarget.x
-                        local y = singletiletarget.y
-                        
-                        local tile = game.map:getTile(x, y)
-                        
-                        -- now place tile on lowest possible unset tile, ignoring
-                        -- inactive layers
-                        if tile then
-                            if layer.floor1 and not tile.floor then
-                                tile.floor = value
-                            elseif layer.floor2 and not tile.floor2 then
-                                tile.floor2 = value
-                            elseif layer.object and not tile.object then
-                                tile.object = value
-                            elseif layer.overlay and not tile.overlay then
-                                tile.overlay = value
-                            end
-                            tile.block = false
-                        else
-                            if layer.floor1 then
-                                game.map:setTile(x, y, value, nil, nil, nil, false)
-                            elseif layer.floor2 then
-                                game.map:setTile(x, y, nil, value, nil, nil, false)
-                            elseif layer.object then
-                                game.map:setTile(x, y, nil, nil, value, nil, false)
-                            elseif layer.overlay then
-                                game.map:setTile(x, y, nil, nil, nil, value, false)
-                            end
-                        end
+                        placeSingleTile(tx, ty)
                     end
                     singletiletarget = nil
                     menus.tiles = false
@@ -1110,6 +1125,12 @@ function editorHandler:catchKey(key, isrepeat)
     end
     if menus.tiles and key == "down" then
         atlaspos[2] = atlaspos[2] - C_TILE_SIZE * 8
+        return true
+    end
+    if menus.tiles and key == "r" and lastTile then
+        placeSingleTile()
+        singletiletarget = nil
+        menus.tiles = false
         return true
     end
     
