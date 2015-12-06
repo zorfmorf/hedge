@@ -703,18 +703,23 @@ end
 
 local function transitionselector()
     Gui.group.push{ grow = "down", spacing = 10 }
-    Gui.group.push{ grow = "right", spacing = 10 }
-    for name,map in pairs(st_edit.maps) do
-        for key,value in pairs(map.spawns) do
-            if Gui.Button{ text = (name..": "..key), size = { buttonWidth(name..": "..key) } } then
-                transitiontarget = { name=name, key=key}
-                menus.transition = false
-            end
-        end
-        Gui.group.pop{}
+        local amount = 0
         Gui.group.push{ grow = "right", spacing = 10 }
-    end
-    Gui.group.pop{}
+            for name,map in pairs(st_edit.maps) do
+                for key,value in pairs(map.spawns) do
+                    if Gui.Button{ text = (name..": "..key), size = { buttonWidth(name..": "..key) } } then
+                        transitiontarget = { name=name, key=key}
+                        menus.transition = false
+                    end
+                    amount = amount + 1
+                    if amount > 6 then
+                        amount = 0
+                        Gui.group.pop{}
+                        Gui.group.push{ grow = "right", spacing = 10 }
+                    end
+                end
+            end
+        Gui.group.pop{}
     Gui.group.pop{}
 end
 
