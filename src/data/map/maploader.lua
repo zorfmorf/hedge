@@ -119,86 +119,107 @@ function maploader:save(map, path)
     
     -- writing file content
     file:write( "# Tiles\n" )
-    local blkcntr = 0
+    
+    -- first find bounding block indices
+    local minx = 0
+    local miny = 0
+    local maxx = 0
+    local maxy = 0
     for i,row in pairs(map.blocks) do
         for j,entry in pairs(row) do
-            file:write( "# Block " .. i .. " " .. j .. "\n" )
-            blkcntr = blkcntr + 1
-            for x = 0, C_BLOCK_SIZE - 1 do
-                for y = 0, C_BLOCK_SIZE - 1 do
-                    
-                    local tile = entry.tiles[x][y]
-                    
-                    -- floor tiles
-                    if tile.floor then 
-                        file:write( tile.floor[1] .."," )
-                        file:write( tile.floor[2] .."," )
-                        file:write( tile.floor[3] )
-                    else
-                        file:write( "nil" )
-                    end
-                    file:write( "|" )
-                    
-                    -- floor2 tiles
-                    if tile.floor2 then 
-                        file:write( tile.floor2[1] .."," )
-                        file:write( tile.floor2[2] .."," )
-                        file:write( tile.floor2[3] )
-                    else
-                        file:write( "nil" )
-                    end
-                    file:write( "|" )
-                    
-                    -- object tiles
-                    if tile.object then 
-                        file:write( tile.object[1] .."," )
-                        file:write( tile.object[2] .."," )
-                        file:write( tile.object[3] )
-                    else
-                        file:write( "nil" )
-                    end
-                    file:write( "|" )
-                    
-                    -- overlay tiles
-                    if tile.overlay then 
-                        file:write( tile.overlay[1] .."," )
-                        file:write( tile.overlay[2] .."," )
-                        file:write( tile.overlay[3] )
-                    else
-                        file:write( "nil" )
-                    end
-                    file:write( "|" )
-                    
-                    -- walkable
-                    if tile.block then 
-                        file:write( 1 )
-                    else
-                        file:write( 0 )
-                    end
-                    file:write( "|" )
-                    
-                    -- event number
-                    if tile.event then
-                        if type(tile.event) == "table" then
-                            file:write( tile.event[1]..','..tostring(tile.event[2]) )
-                        else
-                            file:write( tile.event )
+            if i < minx then minx = i end
+            if i > maxx then maxx = i end
+            if j < miny then miny = j end
+            if j > maxy then maxy = j end
+        end
+    end
+    
+    local blkcntr = 0
+    for i=minx,maxx,1 do
+        local row = map.blocks[i]
+        if row then
+            for j=miny,maxy,1 do
+                local entry = row[j]
+                if entry then
+                    file:write( "# Block " .. i .. " " .. j .. "\n" )
+                    blkcntr = blkcntr + 1
+                    for x = 0, C_BLOCK_SIZE - 1 do
+                        for y = 0, C_BLOCK_SIZE - 1 do
+                            
+                            local tile = entry.tiles[x][y]
+                            
+                            -- floor tiles
+                            if tile.floor then 
+                                file:write( tile.floor[1] .."," )
+                                file:write( tile.floor[2] .."," )
+                                file:write( tile.floor[3] )
+                            else
+                                file:write( "nil" )
+                            end
+                            file:write( "|" )
+                            
+                            -- floor2 tiles
+                            if tile.floor2 then 
+                                file:write( tile.floor2[1] .."," )
+                                file:write( tile.floor2[2] .."," )
+                                file:write( tile.floor2[3] )
+                            else
+                                file:write( "nil" )
+                            end
+                            file:write( "|" )
+                            
+                            -- object tiles
+                            if tile.object then 
+                                file:write( tile.object[1] .."," )
+                                file:write( tile.object[2] .."," )
+                                file:write( tile.object[3] )
+                            else
+                                file:write( "nil" )
+                            end
+                            file:write( "|" )
+                            
+                            -- overlay tiles
+                            if tile.overlay then 
+                                file:write( tile.overlay[1] .."," )
+                                file:write( tile.overlay[2] .."," )
+                                file:write( tile.overlay[3] )
+                            else
+                                file:write( "nil" )
+                            end
+                            file:write( "|" )
+                            
+                            -- walkable
+                            if tile.block then 
+                                file:write( 1 )
+                            else
+                                file:write( 0 )
+                            end
+                            file:write( "|" )
+                            
+                            -- event number
+                            if tile.event then
+                                if type(tile.event) == "table" then
+                                    file:write( tile.event[1]..','..tostring(tile.event[2]) )
+                                else
+                                    file:write( tile.event )
+                                end
+                            else
+                                file:write( "nil" )
+                            end
+                            file:write( "|" )
+                            
+                            -- npc number
+                            if tile.npc and map.entities[tile.npc] then
+                                file:write( tile.npc..","..map.entities[tile.npc].dir )
+                            else
+                                file:write( "nil" )
+                            end
+                            
+                            file:write( ";" )
                         end
-                    else
-                        file:write( "nil" )
+                        file:write( "\n" )
                     end
-                    file:write( "|" )
-                    
-                    -- npc number
-                    if tile.npc and map.entities[tile.npc] then
-                        file:write( tile.npc..","..map.entities[tile.npc].dir )
-                    else
-                        file:write( "nil" )
-                    end
-                    
-                    file:write( ";" )
                 end
-                file:write( "\n" )
             end
         end
     end
