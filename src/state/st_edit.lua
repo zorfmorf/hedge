@@ -222,15 +222,11 @@ function st_edit:keypressed(key, isrepeat)
         if key == "right" then camera:move(C_CAM_SPEED, 0) end
         if key == "down" then camera:move(0, C_CAM_SPEED) end
         if key == "escape" then Gamestate.switch(st_menu_main) end
-        if tonumber(key) then
-            local number = tonumber(key)
-            if love.keyboard.isDown("lctrl") then
-                number = number * (-1)
-            end
-            if brushHandler.getBrush(number) or (number < 0 and number > -8) then
-                brushHandler.selectBrush(number)
-            end
-        end
+        local layer = editorHandler:getLayerToggles()
+        if key == "1" then layer.floor1 = not layer.floor1 end
+        if key == "2" then layer.floor2 = not layer.floor2 end
+        if key == "3" then layer.object = not layer.object end
+        if key == "4" then layer.overlay = not layer.overlay end
     end
 end
 
