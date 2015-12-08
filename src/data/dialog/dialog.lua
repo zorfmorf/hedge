@@ -27,6 +27,14 @@ end
 function Dialog:ready(id)
     self.pos = 1
     if id then self.pos = id end
+    
+    -- Advance lines until current line has no condition or a condition that is fulfilled
+    local line = self:current()
+    while line and line.cond and not line.cond() do
+        self.pos = self.pos + 1
+        line = self:current()
+    end
+    
     self.timer = 0
     self:prepareCurrentLine()
 end
@@ -163,6 +171,10 @@ function Dialog:draw()
             if rest > 0 then height = height + (C_TILE_SIZE - rest) end
             local sx, sy = drawHelper:screenCoords(self.x, self.y)
             
+            if line.player then
+                sx, sy = drawHelper:screenCoords(player.pos.x, player.pos.y)
+            end
+            
             local dox = sx - width * 0.5
             local doy = sy - height - C_TILE_SIZE * 2
             
@@ -171,8 +183,10 @@ function Dialog:draw()
             local namebuffer = 0
             
             if line.name then
+                local v = player.name
+                if type(line.name) == "string" then v = line.name end
                 love.graphics.setColor(Color.RED_HARD)
-                love.graphics.print(line.name, dox, doy)
+                love.graphics.print(v, dox, doy)
                 namebuffer = namebuffer + font:getHeight()
             end
             

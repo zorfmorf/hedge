@@ -5,7 +5,7 @@ Player = Class{}
 
 function Player:init()
     self.id = 1 -- player always has id 1, only one player allowed at all times
-    self.name = "Player"
+    self.name = "Laurel"
     self.charset = "default"
     
     -- pos/draw information
