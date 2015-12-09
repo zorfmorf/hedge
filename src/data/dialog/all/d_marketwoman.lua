@@ -1,6 +1,6 @@
 
 local name = "Market woman"
-local varname = "t_marketwoman"
+local varname = "marketwoman_met"
 
 local messages = {}
 messages[1] = "What a nice day at the market"
@@ -14,6 +14,6 @@ lines[1] = { name = name, cond = function() return var.get(varname) end, text = 
     return messages[math.max(1, timeHandler.getDay() % #messages)] end, target=-1 }
 lines[2] = { name = name, text = function() return "I have never seen you before. Are you new in town?" end }
 lines[3] = { name = true, text = function() return "Yes, I've just arrived last night. I inherited the old Mason estate." end, player = true }
-lines[4] = { name = name, text = function() return "Oh, is that so? Well you got your work cut out for you." end, func = function() var.set(varname, 1)   end }
+lines[4] = { name = name, text = function() return "Oh, is that so? Well you got your work cut out for you." end, func = function() var.set(varname, 1) end }
 
 return lines

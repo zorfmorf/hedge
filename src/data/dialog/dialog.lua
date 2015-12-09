@@ -28,13 +28,6 @@ function Dialog:ready(id)
     self.pos = 1
     if id then self.pos = id end
     
-    -- Advance lines until current line has no condition or a condition that is fulfilled
-    local line = self:current()
-    while line and line.cond and not line.cond() do
-        self.pos = self.pos + 1
-        line = self:current()
-    end
-    
     self.timer = 0
     self:prepareCurrentLine()
 end
@@ -79,6 +72,14 @@ end
 
 
 function Dialog:prepareCurrentLine()
+    
+    -- Advance lines until current line has no condition or a condition that is fulfilled
+    local line = self:current()
+    while line and line.cond and not line.cond() do
+        self.pos = self.pos + 1
+        line = self:current()
+    end
+    
     if not self:isFinished() then
         self.timer = 0
         self.cursor = 1
@@ -152,7 +153,8 @@ function Dialog:draw()
         
         love.graphics.setFont(font)
         
-        local text = line.text()
+        local text = nil
+        if line.text then text = line.text() end
         
         if text then
             
