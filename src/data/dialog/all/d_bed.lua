@@ -1,7 +1,7 @@
 
 local lines = {}
 
-lines[1] = { text = function() return "Do you want to go to sleep?" end, 
+lines[1] = { text = function() return "Do you want to go to sleep?" end,
                 options={ 
                     { target=-1, text="Sleep until tomorrow", func=function() 
                             st_ingame.transition = Transition("fade_out", function() 

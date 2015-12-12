@@ -116,6 +116,7 @@ function Dialog:down()
     end
 end
 
+
 local function drawBubble(dox, doy, width, height, sx, sy, think)
     local img = speech
     if think then img = thought end
@@ -145,6 +146,7 @@ local function drawBubble(dox, doy, width, height, sx, sy, think)
     end
 end
 
+
 function Dialog:draw()
     
     local line = self:current()
@@ -166,9 +168,9 @@ function Dialog:draw()
             
             local width = 320
             local lwidth, lines = font:getWrap(text, width)
-            lines = math.max(2, lines - 1)
+            lines = math.max(2, lines)
             if line.name then lines = lines + 1 end
-            local height = lines * font:getHeight()
+            local height = math.floor(0.9 * lines * font:getHeight())
             local rest = height % C_TILE_SIZE
             if rest > 0 then height = height + (C_TILE_SIZE - rest) end
             local sx, sy = drawHelper:screenCoords(self.x, self.y)

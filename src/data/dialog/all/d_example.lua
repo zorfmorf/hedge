@@ -11,6 +11,7 @@ local lines = {}
             cond = [function]           : If defined, line will be ignored if function returns nil or false. If this is the case, dialog will just skip to the next line(s) until it finds a valid line or dialog is finished
             func = [function]           : Evaluated after this line has been displayed. Overwritten bei options.option func
             target = [number]           : Line number to jump to after this line is finished. If the target is -1, the dialog will end
+            think = [boolean]           : If set, the bubble will be drawn in the style of a thought bubble
             options = [table]           : A table with a set of options  for the player to select, an option has the form {target=[number],text*=[string],func=[function]}, the func is only executed if+after the option has been selected. Note that this overrides the line function (if any)
           }
 --]]--
