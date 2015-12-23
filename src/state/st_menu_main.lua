@@ -9,13 +9,14 @@ function st_menu_main:enter()
     
     Gui.group.default.spacing = 5
     
-    saveslots = nil
+    saveslots = {}
     local files = love.filesystem.getDirectoryItems(C_MAP_SAVEGAMES)
     if files then
         for i,file in pairs(files) do
             if love.filesystem.isDirectory( C_MAP_SAVEGAMES..file ) then
-                if not saveslots then saveslots = {} end
-                saveslots[file] = true
+                local name = file
+                if not (name == "auto") then name = tonumber(name) end
+                saveslots[name] = true
             end
         end
     end
@@ -23,11 +24,21 @@ function st_menu_main:enter()
 end
 
 
+local function loadSlot(slot)
+    showLoad = false
+    saveHandler.loadGame(slot)
+    Gamestate.switch(st_ingame)
+end
+
+
 local function loadMenu()
-    for slot,bool in pairs(saveslots) do
-        if Gui.Button{text = slot} then
+    if saveslots.auto and Gui.Button{text = message.autosave} then
+        loadSlot("auto")
+    end
+    for i,bool in ipairs(saveslots) do
+        if Gui.Button{text = message.saveslot..i} then
             showLoad = false
-            saveHandler.loadGame(slot)
+            saveHandler.loadGame(i)
             Gamestate.switch(st_ingame)
         end
     end
@@ -49,7 +60,7 @@ function st_menu_main:update(dt)
                 saveHandler.newGame()
                 Gamestate.switch(st_intro)
             end
-            if saveslots then 
+            if saveslots and #saveslots > 0 then 
                 if Gui.Button{text = "Load"} then
                     showLoad = true
                 end

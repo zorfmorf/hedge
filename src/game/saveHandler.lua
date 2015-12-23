@@ -71,7 +71,7 @@ end
 -- load a game
 function saveHandler.loadGame(name)
     deleteFolderContents(C_MAP_CURRENT)
-    copyFiles(C_MAP_SAVEGAMES..name..'/', C_MAP_CURRENT)
+    copyFiles(C_MAP_SAVEGAMES..tostring(name)..'/', C_MAP_CURRENT)
     dialogHandler.load()
     entityHandler.load()
     var.load()
