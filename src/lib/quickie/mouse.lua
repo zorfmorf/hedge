@@ -63,8 +63,8 @@ local function beginFrame()
 	x,y = _M.getMousePosition()
 	downLast = down
 	down = false
-	for _,btn in ipairs{'l', 'm', 'r'} do
-		down = down or (love.mouse.isDown(btn) and btn)
+	for i=1,3 do
+		down = down or love.mouse.isDown(i)
 	end
 end
 

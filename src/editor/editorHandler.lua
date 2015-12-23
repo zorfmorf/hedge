@@ -992,7 +992,7 @@ function editorHandler:mousepressed(x, y, button)
     if menus.tiles then
         
         -- select tile based on current atlas
-        if button == "l" then
+        if button == 1 then
             
             local tx = math.floor((x - atlaspos[1]) / C_TILE_SIZE)
             local ty = math.floor((y - atlaspos[2]) / C_TILE_SIZE)
@@ -1088,7 +1088,7 @@ function editorHandler:mousepressed(x, y, button)
     end
     
     if not editorHandler:menuOpen() then
-        if button == "r" then
+        if button == 2 then
             local mx, my = camera:mousepos()
             local tx = math.floor(mx / C_TILE_SIZE)
             local ty = math.floor(my / C_TILE_SIZE)

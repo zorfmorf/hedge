@@ -58,7 +58,7 @@ function st_edit:update(dt)
     editorHandler:update(dt)
     
     -- if left mouse is pressed, set current tile to position
-    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not editorHandler:mouseIsOnMenu() and love.mouse.getX() < screen.w - 85 then
+    if love.mouse.isDown(1) and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not editorHandler:mouseIsOnMenu() and love.mouse.getX() < screen.w - 85 then
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
@@ -198,8 +198,8 @@ end
 
 -- released instead of pressed to avoid an issue where
 -- gui elements where clicked that appeared after the click
-function st_edit:mousereleased(x, y, button)
-    editorHandler:mousepressed(x, y, button)
+function st_edit:mousereleased(x, y, button, istouch)
+    editorHandler:mousepressed(x, y, button, istouch)
 end
 
 
@@ -207,10 +207,17 @@ end
 -- -> released is used as can be seen above
 -- however, mousewheel has no released action so we need to 
 -- handle them extra
-function st_edit:mousepressed(x, y, button)
+function st_edit:mousepressed(x, y, button, istouch)
     lastTile = {-1000, -1000} -- so that we can repeatedly click the last tile
-    if button == "wd" or button == "wu" then
-        editorHandler:mousepressed(x, y, button)
+end
+
+
+function st_edit:wheelmoved( x, y )
+    if not (y == 0) then
+        local mx, my = love.mouse.getPosition()
+        local button = "wu"
+        if y < 0 then button = "wd" end
+        editorHandler:mousepressed(mx, my, button, false)
     end
 end
 

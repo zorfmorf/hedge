@@ -10,7 +10,6 @@ function settings:read()
     self.settings.height = h
     self.settings.modes = love.window.getFullscreenModes()
     self.settings.modeindex = 1
-    self.settings.fsaa = self.settings.mode.fsaa
     table.sort(self.settings.modes, 
         function(a, b) return a.width*a.height < b.width*b.height end)
     for i,mode in pairs(self.settings.modes) do
@@ -56,28 +55,6 @@ function settings:show()
                 self.settings.mode.borderless = true
             end
         end
-        Gui.group.push{ grow="right" }
-            Gui.Label{ text="Anti-Aliasing"}
-            if Gui.Button{ text=" - ", size={'tight'} } then
-                self.settings.fsaa = self.settings.fsaa / 2
-                if self.settings.fsaa == 0 then
-                    self.settings.fsaa = 16
-                end
-                if self.settings.fsaa < 1 then
-                    self.settings.fsaa = 0
-                end
-            end
-            Gui.Label{ text=' '..self.settings.fsaa..' ', size={'tight'}}
-            if Gui.Button{ text=" + ", size={'tight'} } then
-                self.settings.fsaa = self.settings.fsaa * 2
-                if self.settings.fsaa == 0 then
-                    self.settings.fsaa = 1
-                end
-                if self.settings.fsaa > 16 then
-                    self.settings.fsaa = 0
-                end
-            end
-        Gui.group.pop{}
         if Gui.Checkbox{ checked=self.settings.mode.vsync, text="V-Sync"} then
             self.settings.mode.vsync = not self.settings.mode.vsync
         end
@@ -101,7 +78,6 @@ function settings:show()
                 end
                 self.settings.width = self.settings.modes[self.settings.modeindex].width
                 self.settings.height = self.settings.modes[self.settings.modeindex].height
-                self.settings.mode.fsaa = self.settings.fsaa
                 love.window.setMode( self.settings.width, self.settings.height, self.settings.mode )
                 if newResolution and game.atlas then
                     screen:update()
