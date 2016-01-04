@@ -176,9 +176,9 @@ function st_ingame:draw()
 end
 
 
-function st_ingame:keypressed(key, isrepeat)
+function st_ingame:keypressed(key, scancode, isrepeat)
     if self.menu:isOpen() then
-        self.menu:keypressed(key, isrepeat)
+        self.menu:keypressed(key, scancode, isrepeat)
     elseif self.transition then
     
     elseif self.dialog then

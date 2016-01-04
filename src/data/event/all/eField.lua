@@ -47,7 +47,7 @@ local function use(tx, ty)
         if tile.plantable and not tile.object then
             local tool = inventory:getTool()
             if tool and tool.id == "Seedbag" and tool.seed then
-                player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles() }
+                player.animation = { timer=0, tx=tx, ty=ty, use=fieldEvent, cycles=tool:getCycles(), handsFree=true }
             end
         end
     else

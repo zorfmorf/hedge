@@ -123,7 +123,7 @@ function Menu:draw()
 end
 
 
-function Menu:keypressed(key, isrepeat)
+function Menu:keypressed(key, scancode, isrepeat)
     if key == "escape" then 
         if self.current == "default" then
             self.active = false

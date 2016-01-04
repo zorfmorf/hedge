@@ -89,7 +89,7 @@ function st_menu_main:draw()
 end
 
 
-function st_menu_main:keypressed(key, isrepeat)
+function st_menu_main:keypressed(key, scancode, isrepeat)
     if key == "escape" then 
         if showLoad then
             showLoad = false

@@ -222,7 +222,7 @@ function st_edit:wheelmoved( x, y )
 end
 
 
-function st_edit:keypressed(key, isrepeat)    
+function st_edit:keypressed(key, scancode, isrepeat)    
     if not editorHandler:catchKey(key, isrepeat) then
         if key == "left" then camera:move(-C_CAM_SPEED, 0) end
         if key == "up" then camera:move(0, -C_CAM_SPEED) end

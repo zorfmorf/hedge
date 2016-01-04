@@ -168,7 +168,7 @@ function Dialog:draw()
             
             local width = 320
             local lwidth, lines = font:getWrap(text, width)
-            lines = math.max(2, lines)
+            lines = math.max(2, #lines)
             if line.name then lines = lines + 1 end
             local height = math.floor(0.9 * lines * font:getHeight())
             local rest = height % C_TILE_SIZE

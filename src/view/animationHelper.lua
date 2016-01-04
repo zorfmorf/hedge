@@ -56,6 +56,7 @@ function animationHelper.update(entity, dt)
         if entity.dir == "left" then entity.anim = 14 end
         if entity.dir == "down" then entity.anim = 15 end
         if entity.dir == "right" then entity.anim = 16 end
+        if entity.animation.handsFree then entity.anim = entity.anim - 8 end
         if entity.animation.timer >= 6 then
             entity.animation.timer = entity.animation.timer - 6
             entity.animation.cycles = entity.animation.cycles - 1

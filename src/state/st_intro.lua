@@ -36,9 +36,9 @@ function st_intro:draw()
         local v = math.max(maxtime - (i - 1) * C_LINE_TIME - timer, 0)
         love.graphics.setColor(255, 255, 255, math.floor(255 * math.min(v, C_LINE_TIME) / C_LINE_TIME))
         local width = math.floor(screen.w * 0.8)
-        local w,l = font:getWrap(line, width)
+        local w,ltab = font:getWrap(line, width)
         love.graphics.printf(line, math.floor(screen.w * 0.5), 50 + buffer, width, "center", 0, 1, 1, math.floor(w * 0.5))
-        buffer = buffer + (l + 1) * font:getHeight()
+        buffer = buffer + (#ltab + 1) * font:getHeight()
     end
     
     if timer <= 0 then
@@ -49,7 +49,7 @@ function st_intro:draw()
 end
 
 
-function st_intro:keypressed(key, isrepeat)
+function st_intro:keypressed(key, scancode, isrepeat)
     if not isrepeat then
         if (key == KEY_RETURN and timer > 0) then
             timer = 0
