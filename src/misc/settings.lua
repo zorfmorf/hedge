@@ -48,6 +48,7 @@ KEY_CYCLE_SEED = "w"
 KEY_USE = "return"
 KEY_EXIT = "escape"
 KEY_INVENTORY = "i"
+KEY_EDITOR_DELETE = "d"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second

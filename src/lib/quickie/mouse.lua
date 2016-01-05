@@ -62,10 +62,7 @@ local function beginFrame()
 	hot = nil
 	x,y = _M.getMousePosition()
 	downLast = down
-	down = false
-	for i=1,3 do
-		down = down or love.mouse.isDown(i)
-	end
+	down = love.mouse.isDown(1, 2)
 end
 
 local function endFrame()

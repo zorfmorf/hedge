@@ -788,7 +788,7 @@ local function tools()
         if Gui.Button{ id = "tool_place", text = "Place tiles without a brush", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.tile, nil, brushHandler.currentBrushId() == -8) } then
             brushHandler.selectBrush(-8)
         end
-        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, brushHandler.currentBrushId() == -1) } then
+        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, (brushHandler.currentBrushId() == -1) or love.keyboard.isDown(KEY_EDITOR_DELETE)) } then
             brushHandler.selectBrush(-1)
         end
         if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay/npc/event", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, brushHandler.currentBrushId() == -7) } then

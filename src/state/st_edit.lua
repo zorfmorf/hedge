@@ -64,7 +64,7 @@ function st_edit:update(dt)
         local ty = math.floor(my / C_TILE_SIZE)
         if isNewTile(tx, ty) then
             local brush = brushHandler.currentBrushId()
-            if brush == -1 then
+            if brush == -1 or love.keyboard.isDown(KEY_EDITOR_DELETE) then
                 game.map:deleteTile(tx, ty)
             elseif brush == -2 then
                 game.map:toggleWalkable(tx, ty)
