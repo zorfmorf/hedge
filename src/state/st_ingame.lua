@@ -67,6 +67,11 @@ function st_ingame:update(dt)
         return
     end
     
+    -- help screen is open, don't update anything
+    if self.help then
+        return
+    end
+    
     -- transition effects block everything else
     if self.transition then
         self.transition:update(dt)
@@ -167,6 +172,8 @@ function st_ingame:draw()
     
     if self.transition then self.transition:draw() end
     
+    if self.help then drawHelper:drawHelp() end
+    
     if self.menu:isOpen() then self.menu:draw() end
         
     -- draw hud
@@ -179,6 +186,8 @@ end
 function st_ingame:keypressed(key, scancode, isrepeat)
     if self.menu:isOpen() then
         self.menu:keypressed(key, scancode, isrepeat)
+    elseif self.help then
+        self.help = not self.help
     elseif self.transition then
     
     elseif self.dialog then
@@ -212,6 +221,7 @@ function st_ingame:keypressed(key, scancode, isrepeat)
             inventory.flags = {}
             self.container = inventory
         end
+        if key == KEY_HELP then self.help = not self.help end
         if key == KEY_EXIT then
             self.menu:open()
         end
@@ -221,6 +231,8 @@ end
 
 function st_ingame:keyreleased(key)
     if self.menu:isOpen() then
+        
+    elseif self.help then
         
     elseif self.transition then
     

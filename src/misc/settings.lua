@@ -47,6 +47,7 @@ KEY_PREVIOUS_TOOL = "q"
 KEY_CYCLE_SEED = "w"
 KEY_USE = "return"
 KEY_EXIT = "escape"
+KEY_HELP = "f1"
 KEY_INVENTORY = "i"
 KEY_EDITOR_DELETE = "d"
 
