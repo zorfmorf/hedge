@@ -14,6 +14,7 @@ for i=0,2,1 do
 end
 
 drawHelper = {}
+drawHelper.currentTimeFactor = 0
 
 -- convert screen coordinates to tile coordinates
 function drawHelper:tileCoords(x, y)

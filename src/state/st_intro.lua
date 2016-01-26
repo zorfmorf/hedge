@@ -3,13 +3,13 @@ st_intro = {}
 
 local timer = 0
 local maxtime = 20
-local font = love.graphics.newFont("font/alagard.ttf", 40)
+local font = love.graphics.newFont("font/alagard.ttf", 30)
 
 local lines = {
-                "Fandel is a small border town, untouched by the war so far.",
-                "To the west lies an abandoned farmstead, slowly deteriorating with every passing year.",
-                "But one day a foreign woman arrives, claiming to be the sole heir to the estate."
-            }
+                "Fandel is a small agricultural border town",
+                "For years an old hut is slowly deteriorating in a nearby forest clearing",
+                "One peaceful night, a foreigner arrived at just this very glade"
+              }
 local endline = "Press [any key] to start the game"
 
 function st_intro:enter()
@@ -55,6 +55,9 @@ function st_intro:keypressed(key, scancode, isrepeat)
             timer = 0
         else
             Gamestate.switch(st_ingame)
+            player.dir = "up"
+            player:place(2, 5)
+            player:use()
         end
     end
 end

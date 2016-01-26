@@ -6,14 +6,14 @@ end
 
 
 local function walk(tx, ty)
-    if not var.get("tutorial_finished") then
-        
-    end
+    
 end
 
 
 local function use(tx, ty)
-    
+    if var.get("tutorial") == 0 then
+        st_ingame:startDialog("d_init", 1, tx, ty+1)
+    end
 end
 
 
