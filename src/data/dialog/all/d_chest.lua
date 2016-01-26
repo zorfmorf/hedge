@@ -33,10 +33,9 @@ end
 
 local lines = {}
 
-lines[1] = { text = function() return nil end, 
-                    options={ 
-                        { target=-1, text="Store items", func=function() storeItems() end }, 
-                        { target=-1, text="Retrieve items", func=function() retrieveItems() end}
-                    }
+lines[1] = { options={ 
+                    { target=-1, text="Store items", func=function() storeItems() end }, 
+                    { target=-1, text="Retrieve items", func=function() retrieveItems() end}
                 }
+            }
 return lines

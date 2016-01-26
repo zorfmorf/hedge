@@ -58,13 +58,13 @@ function st_edit:update(dt)
     editorHandler:update(dt)
     
     -- if left mouse is pressed, set current tile to position
-    if love.mouse.isDown("l") and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not editorHandler:mouseIsOnMenu() and love.mouse.getX() < screen.w - 85 then
+    if love.mouse.isDown(1) and love.mouse.getY() > G_TOPBAR_HEIGHT + 2 * G_TOPBAR_PAD and not editorHandler:mouseIsOnMenu() and love.mouse.getX() < screen.w - 85 then
         local mx, my = camera:mousepos()
         local tx = math.floor(mx / C_TILE_SIZE)
         local ty = math.floor(my / C_TILE_SIZE)
         if isNewTile(tx, ty) then
             local brush = brushHandler.currentBrushId()
-            if brush == -1 then
+            if brush == -1 or love.keyboard.isDown(KEY_EDITOR_DELETE) then
                 game.map:deleteTile(tx, ty)
             elseif brush == -2 then
                 game.map:toggleWalkable(tx, ty)
@@ -82,6 +82,8 @@ function st_edit:update(dt)
                 editorHandler:singleTilePlacement(tx, ty)
             elseif brush == -9 then
                 editorHandler:selection(tx, ty)
+            elseif brush == -10 then
+                editorHandler:elevate(tx, ty)
             else
                 local brush = brushHandler.getCurrentBrush()
                 if brush then 
@@ -198,8 +200,8 @@ end
 
 -- released instead of pressed to avoid an issue where
 -- gui elements where clicked that appeared after the click
-function st_edit:mousereleased(x, y, button)
-    editorHandler:mousepressed(x, y, button)
+function st_edit:mousereleased(x, y, button, istouch)
+    editorHandler:mousepressed(x, y, button, istouch)
 end
 
 
@@ -207,30 +209,33 @@ end
 -- -> released is used as can be seen above
 -- however, mousewheel has no released action so we need to 
 -- handle them extra
-function st_edit:mousepressed(x, y, button)
+function st_edit:mousepressed(x, y, button, istouch)
     lastTile = {-1000, -1000} -- so that we can repeatedly click the last tile
-    if button == "wd" or button == "wu" then
-        editorHandler:mousepressed(x, y, button)
+end
+
+
+function st_edit:wheelmoved( x, y )
+    if not (y == 0) then
+        local mx, my = love.mouse.getPosition()
+        local button = "wu"
+        if y < 0 then button = "wd" end
+        editorHandler:mousepressed(mx, my, button, false)
     end
 end
 
 
-function st_edit:keypressed(key, isrepeat)    
+function st_edit:keypressed(key, scancode, isrepeat)    
     if not editorHandler:catchKey(key, isrepeat) then
         if key == "left" then camera:move(-C_CAM_SPEED, 0) end
         if key == "up" then camera:move(0, -C_CAM_SPEED) end
         if key == "right" then camera:move(C_CAM_SPEED, 0) end
         if key == "down" then camera:move(0, C_CAM_SPEED) end
         if key == "escape" then Gamestate.switch(st_menu_main) end
-        if tonumber(key) then
-            local number = tonumber(key)
-            if love.keyboard.isDown("lctrl") then
-                number = number * (-1)
-            end
-            if brushHandler.getBrush(number) or (number < 0 and number > -8) then
-                brushHandler.selectBrush(number)
-            end
-        end
+        local layer = editorHandler:getLayerToggles()
+        if key == "1" then layer.floor1 = not layer.floor1 end
+        if key == "2" then layer.floor2 = not layer.floor2 end
+        if key == "3" then layer.object = not layer.object end
+        if key == "4" then layer.overlay = not layer.overlay end
     end
 end
 

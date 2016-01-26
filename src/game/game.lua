@@ -21,7 +21,7 @@ function game:init(editmode)
         self.mapping = tilesetPacker.read( C_MAP_CURRENT..C_MAP_GAME_ATLAS_MAPPING )
     end
     
-    if var.get("current_map") then
+    if not tonumber(var.get("current_map")) then
         self.map = maploader:read(path, var.get("current_map")..C_MAP_SUFFIX)
     else
         self.map = maploader:read(path, C_MAP_NAME_DEFAULT)

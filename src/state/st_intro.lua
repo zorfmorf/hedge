@@ -3,13 +3,13 @@ st_intro = {}
 
 local timer = 0
 local maxtime = 20
-local font = love.graphics.newFont("font/alagard.ttf", 40)
+local font = love.graphics.newFont("font/alagard.ttf", 30)
 
 local lines = {
-                "Fandel is a small border town, untouched by the war so far.",
-                "To the west lies an abandoned farmstead, slowly deteriorating with every passing year.",
-                "But one day a foreign woman arrives, claiming to be the sole heir to the estate."
-            }
+                "Fandel is a small agricultural border town",
+                "For years an old hut is slowly deteriorating in a nearby forest clearing",
+                "One peaceful night, a foreigner arrived at just this very glade"
+              }
 local endline = "Press [any key] to start the game"
 
 function st_intro:enter()
@@ -36,9 +36,9 @@ function st_intro:draw()
         local v = math.max(maxtime - (i - 1) * C_LINE_TIME - timer, 0)
         love.graphics.setColor(255, 255, 255, math.floor(255 * math.min(v, C_LINE_TIME) / C_LINE_TIME))
         local width = math.floor(screen.w * 0.8)
-        local w,l = font:getWrap(line, width)
+        local w,ltab = font:getWrap(line, width)
         love.graphics.printf(line, math.floor(screen.w * 0.5), 50 + buffer, width, "center", 0, 1, 1, math.floor(w * 0.5))
-        buffer = buffer + (l + 1) * font:getHeight()
+        buffer = buffer + (#ltab + 1) * font:getHeight()
     end
     
     if timer <= 0 then
@@ -49,12 +49,15 @@ function st_intro:draw()
 end
 
 
-function st_intro:keypressed(key, isrepeat)
+function st_intro:keypressed(key, scancode, isrepeat)
     if not isrepeat then
         if (key == KEY_RETURN and timer > 0) then
             timer = 0
         else
             Gamestate.switch(st_ingame)
+            player.dir = "up"
+            player:place(2, 4)
+            st_ingame.transition = Transition("fade_in", function() player:use() end)
         end
     end
 end

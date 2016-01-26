@@ -70,7 +70,7 @@ function tilesetPacker.create()
     end
     
     -- create game atlas files
-    texture:encode( C_MAP_MASTER..C_MAP_GAME_ATLAS )
+    texture:encode( "png", C_MAP_MASTER..C_MAP_GAME_ATLAS )
     file:close()
 end
 

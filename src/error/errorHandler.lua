@@ -54,7 +54,7 @@ function love.errhand(msg)
  
 	local err = {}
  
-	table.insert(err, "Woops. Something wrent wrong. Really wrong.\n")
+	table.insert(err, "Woops. Something went wrong. Really wrong.\n")
   table.insert(err, "Please send me a description of what you were doing when this crash happened and include either screenshot of this screen or the crashdump located in:\n")
   table.insert(err, "    Linux: ~/.local/share/love/hedge/\n")
   table.insert(err, "    Windows: {home folder}/Application Data/love/hedge/\n")

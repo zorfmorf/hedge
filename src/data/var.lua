@@ -48,10 +48,11 @@ function var.get(key)
         if tonumber(value) then return tonumber(value) end
         return value
     end
-    return nil
+    return 0
 end
 
 
 function var.set(key, value)
+    if tonumber(value) and tonumber(value) == 0 then return end
     vars[key] = value
 end

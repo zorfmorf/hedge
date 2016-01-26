@@ -7,7 +7,7 @@ C_FOLDER_TILES = 'img/tiles/'
 C_MAP_MASTER = 'master/' -- contains all master files
 C_MAP_SAVEGAMES = 'savegames/' -- subfolder for savegames
 C_MAP_SAVEGAME_DEFAULT = 'auto'
-C_MAP_NAME_DEFAULT = 'init.map' -- the map loaded on first startup
+C_MAP_NAME_DEFAULT = 'farm.map' -- the map loaded on first startup
 C_MAP_CURRENT = 'current/' -- currently played game is here
 C_MAP_SUFFIX = '.map' -- file name of maps
 C_MAP_VAR = 'var.file' -- contains game variables
@@ -47,7 +47,9 @@ KEY_PREVIOUS_TOOL = "q"
 KEY_CYCLE_SEED = "w"
 KEY_USE = "return"
 KEY_EXIT = "escape"
+KEY_HELP = "f1"
 KEY_INVENTORY = "i"
+KEY_EDITOR_DELETE = "d"
 
 -- entity setting
 CHAR_MOVE = 4 -- tile movement per second

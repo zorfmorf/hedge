@@ -15,7 +15,8 @@ local icon = {
     transition = love.graphics.newImage("img/icon/transition.png"),
     delobj = love.graphics.newImage("img/icon/delobj.png"),
     tile = love.graphics.newImage("img/icon/tile.png"),
-    selection = love.graphics.newImage("img/icon/selection.png")
+    selection = love.graphics.newImage("img/icon/selection.png"),
+    elevate = love.graphics.newImage("img/icon/elevate.png")
 }
 
 -- list of all menu dialogs
@@ -36,6 +37,9 @@ layer.floor2 = true
 layer.object = true
 layer.overlay = true
 layer.block = false
+
+-- last tile that was placed via the single tile selector
+local lastTile
 
 -- currently selected tile atlas
 local currentatlas = 1
@@ -112,6 +116,24 @@ end
 
 function editorHandler:addEvent(tx, ty)
     game.map:changeEvent(tx, ty, eventtarget)
+end
+
+
+function editorHandler:elevate(tx, ty)
+    local tile = game.map:getTile(tx, ty)
+    if tile then
+        if tile.overlay then return end -- can't move up most upper level
+        if tile.object then
+            tile.overlay = tile.object
+            tile.object = nil
+        elseif tile.floor2 then
+            tile.object = tile.floor2
+            tile.floor2 = nil
+        elseif tile.floor then
+            tile.floor2 = tile.floor
+            tile.floor = nil
+        end
+    end
 end
 
 
@@ -683,15 +705,17 @@ end
 local function eventselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
-    for i,event in pairs(eventHandler:getEvents()) do
+    local i = 1
+    for name,event in pairs(eventHandler:getEvents()) do
         if Gui.Button{ text = event.name, size = { buttonWidth(event.name) } } then
-            eventtarget = i
+            eventtarget = name
             menus.event = false
         end
         if i % 5 == 0 then
             Gui.group.pop{}
             Gui.group.push{ grow = "right", spacing = 10 }
         end
+        i = i + 1
     end
     Gui.group.pop{}
     Gui.group.pop{}
@@ -700,18 +724,23 @@ end
 
 local function transitionselector()
     Gui.group.push{ grow = "down", spacing = 10 }
-    Gui.group.push{ grow = "right", spacing = 10 }
-    for name,map in pairs(st_edit.maps) do
-        for key,value in pairs(map.spawns) do
-            if Gui.Button{ text = (name..": "..key), size = { buttonWidth(name..": "..key) } } then
-                transitiontarget = { name=name, key=key}
-                menus.transition = false
-            end
-        end
-        Gui.group.pop{}
+        local amount = 0
         Gui.group.push{ grow = "right", spacing = 10 }
-    end
-    Gui.group.pop{}
+            for name,map in pairs(st_edit.maps) do
+                for key,value in pairs(map.spawns) do
+                    if Gui.Button{ text = (name..": "..key), size = { buttonWidth(name..": "..key) } } then
+                        transitiontarget = { name=name, key=key}
+                        menus.transition = false
+                    end
+                    amount = amount + 1
+                    if amount > 6 then
+                        amount = 0
+                        Gui.group.pop{}
+                        Gui.group.push{ grow = "right", spacing = 10 }
+                    end
+                end
+            end
+        Gui.group.pop{}
     Gui.group.pop{}
 end
 
@@ -780,7 +809,7 @@ local function tools()
         if Gui.Button{ id = "tool_place", text = "Place tiles without a brush", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.tile, nil, brushHandler.currentBrushId() == -8) } then
             brushHandler.selectBrush(-8)
         end
-        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, brushHandler.currentBrushId() == -1) } then
+        if Gui.Button{ id = "tool_delete", text = "Delete tile", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.broom, nil, (brushHandler.currentBrushId() == -1) or love.keyboard.isDown(KEY_EDITOR_DELETE)) } then
             brushHandler.selectBrush(-1)
         end
         if Gui.Button{ id = "tool_delete_obj", text = "Delete object/overlay/npc/event", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.delobj, nil, brushHandler.currentBrushId() == -7) } then
@@ -805,6 +834,9 @@ local function tools()
         end
         if Gui.Button{ id = "tool_selection", text = "Create brush from selection", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.selection, nil, brushHandler.currentBrushId() == -9)} then
             brushHandler.selectBrush(-9)
+        end
+                if Gui.Button{ id = "tool_elevate", text = "Elevate/lower the uppermost tile layer if possible", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.elevate, nil, brushHandler.currentBrushId() == -10)} then
+            brushHandler.selectBrush(-10)
         end
         
         Gui.Label{ text = "Brushes:", size = {60} }
@@ -846,6 +878,7 @@ local function tools()
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     if Gui.mouse.isHot("tool_delete_obj") then drawTooltip("Delete object & overlay & event of tile") end
     if Gui.mouse.isHot("tool_selection") then drawTooltip("Create a new brush by selecting an area on the map") end
+    if Gui.mouse.isHot("tool_elevate") then drawTooltip("Elevate/lower the uppermost tile layer if possible") end
     for i,brush in ipairs(brushHandler.getBrushes()) do
         if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end
@@ -935,13 +968,56 @@ function editorHandler:mouseIsOnMenu()
 end
 
 
+local function placeSingleTile(tx, ty)
+    
+    local value = nil
+    
+    if tx and ty then
+        value = {currentatlas, tx, ty}
+        lastTile = deepcopy(value)
+    else
+        value = lastTile
+    end
+    
+    local x = singletiletarget.x
+    local y = singletiletarget.y
+    
+    local tile = game.map:getTile(x, y)
+    
+    -- now place tile on lowest possible unset tile, ignoring
+    -- inactive layers
+    if tile then
+        if layer.floor1 and not tile.floor then
+            tile.floor = value
+        elseif layer.floor2 and not tile.floor2 then
+            tile.floor2 = value
+        elseif layer.object and not tile.object then
+            tile.object = value
+        elseif layer.overlay and not tile.overlay then
+            tile.overlay = value
+        end
+        tile.block = false
+    else
+        if layer.floor1 then
+            game.map:setTile(x, y, value, nil, nil, nil, false)
+        elseif layer.floor2 then
+            game.map:setTile(x, y, nil, value, nil, nil, false)
+        elseif layer.object then
+            game.map:setTile(x, y, nil, nil, value, nil, false)
+        elseif layer.overlay then
+            game.map:setTile(x, y, nil, nil, nil, value, false)
+        end
+    end
+end
+
+
 function editorHandler:mousepressed(x, y, button)
     
     -- if in tileselection mode
     if menus.tiles then
         
         -- select tile based on current atlas
-        if button == "l" then
+        if button == 1 then
             
             local tx = math.floor((x - atlaspos[1]) / C_TILE_SIZE)
             local ty = math.floor((y - atlaspos[2]) / C_TILE_SIZE)
@@ -958,38 +1034,7 @@ function editorHandler:mousepressed(x, y, button)
                     -- check if atlas tile is valid
                     local atlas = brushHandler.getAtlanti()[currentatlas].img
                     if tx >= 0 and ty >= 0 and tx * C_TILE_SIZE < atlas:getWidth() and ty * C_TILE_SIZE < atlas:getHeight() then
-                            
-                        local value = {currentatlas, tx, ty}
-                        
-                        local x = singletiletarget.x
-                        local y = singletiletarget.y
-                        
-                        local tile = game.map:getTile(x, y)
-                        
-                        -- now place tile on lowest possible unset tile, ignoring
-                        -- inactive layers
-                        if tile then
-                            if layer.floor1 and not tile.floor then
-                                tile.floor = value
-                            elseif layer.floor2 and not tile.floor2 then
-                                tile.floor2 = value
-                            elseif layer.object and not tile.object then
-                                tile.object = value
-                            elseif layer.overlay and not tile.overlay then
-                                tile.overlay = value
-                            end
-                            tile.block = false
-                        else
-                            if layer.floor1 then
-                                game.map:setTile(x, y, value, nil, nil, nil, false)
-                            elseif layer.floor2 then
-                                game.map:setTile(x, y, nil, value, nil, nil, false)
-                            elseif layer.object then
-                                game.map:setTile(x, y, nil, nil, value, nil, false)
-                            elseif layer.overlay then
-                                game.map:setTile(x, y, nil, nil, nil, value, false)
-                            end
-                        end
+                        placeSingleTile(tx, ty)
                     end
                     singletiletarget = nil
                     menus.tiles = false
@@ -1068,7 +1113,7 @@ function editorHandler:mousepressed(x, y, button)
     end
     
     if not editorHandler:menuOpen() then
-        if button == "r" then
+        if button == 2 then
             local mx, my = camera:mousepos()
             local tx = math.floor(mx / C_TILE_SIZE)
             local ty = math.floor(my / C_TILE_SIZE)
@@ -1110,6 +1155,12 @@ function editorHandler:catchKey(key, isrepeat)
     end
     if menus.tiles and key == "down" then
         atlaspos[2] = atlaspos[2] - C_TILE_SIZE * 8
+        return true
+    end
+    if menus.tiles and key == "r" and lastTile then
+        placeSingleTile()
+        singletiletarget = nil
+        menus.tiles = false
         return true
     end
     

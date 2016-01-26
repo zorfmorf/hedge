@@ -8,14 +8,23 @@ function Menu:init()
 end
 
 
+function Menu:loadSave(index)
+    local filepath = C_MAP_SAVEGAMES..tostring(index)
+    if love.filesystem.isDirectory( filepath ) then
+        local file = love.filesystem.newFile( filepath )
+        if file then self.slots[index] = file end
+    end
+end
+
+
 function Menu:readSaveFolders()
     self.slots = {}
     local files = love.filesystem.getDirectoryItems(C_MAP_SAVEGAMES)
+    
     if files then
-        for i,file in pairs(files) do
-            if love.filesystem.isDirectory( C_MAP_SAVEGAMES..file ) then
-                table.insert(self.slots, file)
-            end
+        self:loadSave("auto")
+        for i=1,10 do
+            self:loadSave(i)
         end
     end
 end
@@ -61,13 +70,18 @@ function Menu:update(dt)
             end
         end
         if self.current == "load" then
+            if self.slots.auto and Gui.Button{text = message.autosave } then
+                saveHandler.loadGame("auto")
+                self.active = false
+                love.mouse.setVisible(false)
+                st_ingame:enter()
+            end
             for i,slot in ipairs(self.slots) do
-                if Gui.Button{text = slot} then
-                    saveHandler.loadGame(slot)
+                if Gui.Button{text = message.saveslot..tostring(i)} then
+                    saveHandler.loadGame(i)
                     self.active = false
                     love.mouse.setVisible(false)
                     st_ingame:enter()
-                    return
                 end
             end
             Gui.Label{text=""}
@@ -77,15 +91,13 @@ function Menu:update(dt)
         end
         if self.current == "save" then
             for i,slot in ipairs(self.slots) do
-                if not (slot == "auto") then
-                    if Gui.Button{text = slot} then
-                        saveHandler.saveGame(slot)
-                        self.active = false
-                        love.mouse.setVisible(false)
-                    end
+                if Gui.Button{text = message.saveslot..tostring(i)} then
+                    saveHandler.saveGame(slot)
+                    self.active = false
+                    love.mouse.setVisible(false)
                 end
             end
-            if Gui.Button{text = "New"} then
+            if Gui.Button{text = message.newsave} then
                 local slotnumber = tonumber(#self.slots)
                 if not slotnumber then slotnumber = 0 end
                 for i,slot in ipairs(self.slots) do
@@ -111,7 +123,7 @@ function Menu:draw()
 end
 
 
-function Menu:keypressed(key, isrepeat)
+function Menu:keypressed(key, scancode, isrepeat)
     if key == "escape" then 
         if self.current == "default" then
             self.active = false

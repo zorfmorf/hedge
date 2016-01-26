@@ -29,11 +29,13 @@ function timeHandler.load()
     day = var.get("day")
     hour = var.get("hour")
     minute = var.get("minute")
-    if not year then year = 1 end
-    if not month then month = 1 end
-    if not day then day = 1 end
-    if not hour then hour = 8 end
-    if not minute then minute = 1 end
+    if year == 0 and month == 0 and day == 0 and hour == 0 and minute == 0 then
+        year = 1
+        month = 1
+        day = 1
+        hour = 8
+        minute = 1
+    end
     log:msg("verbose", "Initiated timeHandler.", year, month, day, hour)
 end
 
@@ -113,6 +115,11 @@ end
 
 function timeHandler.getHour()
     return hour
+end
+
+
+function timeHandler.getDay()
+    return day
 end
 
 

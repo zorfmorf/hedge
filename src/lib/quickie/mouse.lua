@@ -62,10 +62,7 @@ local function beginFrame()
 	hot = nil
 	x,y = _M.getMousePosition()
 	downLast = down
-	down = false
-	for _,btn in ipairs{'l', 'm', 'r'} do
-		down = down or (love.mouse.isDown(btn) and btn)
-	end
+	down = love.mouse.isDown(1, 2)
 end
 
 local function endFrame()

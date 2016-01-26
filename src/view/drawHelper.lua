@@ -14,6 +14,7 @@ for i=0,2,1 do
 end
 
 drawHelper = {}
+drawHelper.currentTimeFactor = 0
 
 -- convert screen coordinates to tile coordinates
 function drawHelper:tileCoords(x, y)
@@ -189,4 +190,26 @@ function drawHelper:printfColor(color1, color2, text, x, y, limit, align, r, sx,
     love.graphics.printf(text, x, y, limit, align, r, sx, sy, ox, oy, kx, ky)
     love.graphics.setColor(color2)
     love.graphics.printf(text, x+1, y+1, limit, align, r, sx, sy, ox, oy, kx, ky)
+end
+
+
+local help = {}
+table.insert(help, {"Arrow keys", "Move player"})
+table.insert(help, {"Lshift", "Sprint"})
+table.insert(help, {"Return", "Accept/use"})
+table.insert(help, {"Q/E", "Cycle tools"})
+table.insert(help, {"W", "Cycle seeds"})
+table.insert(help, {"Escape", "Close window/open menu"})
+table.insert(help, {"F1", "Show this help"})
+
+
+-- draw a help window to the screen
+function drawHelper:drawHelp()
+    love.graphics.setColor(Color.GREY)
+    love.graphics.rectangle("fill", 0, 0, screen.w, screen.h)
+    love.graphics.setColor(Color.WHITE)
+    for i,entry in ipairs(help) do
+        love.graphics.print(entry[1], 30, 30 + i * font:getHeight())
+        love.graphics.print(entry[2], 150, 30 + i * font:getHeight())
+    end
 end
