@@ -11,13 +11,13 @@ local function loadEvents()
     for k, ents in ipairs(entities) do
         local name = string.gsub( ents, ".lua", "")
         local event = require(dir .. "/" .. name)
-        if not events[event.id] then
-            event.name = name
+        event.name = name
+        if not events[event.name] then
             event.init()
-            events[event.id] = event
-            log:msg("verbose", "Read event: "..event.id..", "..event.name)
+            events[event.name] = event
+            log:msg("verbose", "Read event: "..event.name)
         else
-            log:msg("error", "Loading event error, id exists: "..event.id)
+            log:msg("error", "Loading event error, name already exists: "..event.name)
         end
     end
 end
@@ -46,6 +46,8 @@ function eventHandler.triggerEvent(id, walked, tx, ty)
         else
             events[id].use(tx, ty)
         end
+    else
+        log:msg("error", "eventHandler - event not found:", "id="..id, "walked="..walked, "tx="..tx, "ty="..ty)
     end
 end
 

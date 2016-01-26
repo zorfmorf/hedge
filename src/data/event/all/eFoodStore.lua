@@ -20,7 +20,6 @@ end
 
 
 return {
-        id = 11,
         init = init,
         use = use,
         walk = walk

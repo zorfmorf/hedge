@@ -1,32 +1,5 @@
 # Settings
 # Tiles
-# Block 0 0
-12,0,3|13,3,3|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|village,3|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|12,4,8|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-# Block 0 -1
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,1,12|nil|nil|1|nil|nil;22,1,5|12,9,3|nil|nil|1|nil|nil;22,4,15|22,10,14|nil|nil|1|nil|nil;12,0,3|12,9,2|nil|nil|0|nil|nil;12,0,3|nil|nil|13,3,2|0|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,1,12|nil|nil|1|nil|nil;22,1,5|12,10,3|nil|nil|1|nil|nil;22,5,15|22,10,14|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,14,12|nil|nil|1|nil|nil;22,1,5|22,14,13|nil|nil|1|nil|nil;22,5,15|22,11,14|12,14,0|nil|1|nil|nil;12,0,3|12,14,1|nil|nil|1|nil|nil;12,0,3|12,14,2|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-# Block -1 0
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-12,0,3|13,2,3|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
-12,0,3|13,3,3|nil|nil|1|8|nil;12,1,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
 # Block -1 -1
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
@@ -36,5 +9,32 @@ nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;ni
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,12,12|nil|nil|1|nil|nil;22,1,5|22,12,13|nil|nil|1|nil|nil;22,3,15|22,9,14|nil|nil|1|nil|nil;12,0,3|12,0,10|12,6,0|nil|0|nil|nil;12,0,3|nil|nil|13,2,2|0|nil|nil;
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,1,12|nil|nil|1|nil|nil;22,1,5|12,9,0|nil|nil|1|nil|nil;22,3,15|22,10,14|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|13,3,2|0|nil|4,down;
+# Block -1 0
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+12,0,3|13,2,3|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+12,0,3|13,3,3|nil|nil|1|eToolStore|nil;12,1,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+# Block 0 -1
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,1,12|nil|nil|1|nil|nil;22,1,5|12,9,3|nil|nil|1|nil|nil;22,4,15|22,10,14|nil|nil|1|nil|nil;12,0,3|12,9,2|nil|nil|0|nil|nil;12,0,3|nil|nil|13,3,2|0|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,1,12|nil|nil|1|nil|nil;22,1,5|12,10,3|nil|nil|1|nil|nil;22,5,15|22,10,14|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;22,1,5|22,14,12|nil|nil|1|nil|nil;22,1,5|22,14,13|nil|nil|1|nil|nil;22,5,15|22,11,14|12,14,0|nil|1|nil|nil;12,0,3|12,14,1|nil|nil|1|nil|nil;12,0,3|12,14,2|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+# Block 0 0
+12,0,3|13,3,3|nil|nil|1|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|village,3|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+12,0,3|nil|nil|nil|0|nil|nil;12,0,3|nil|nil|nil|0|nil|nil;12,0,3|12,4,8|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
 # Spawns
 1;0;3

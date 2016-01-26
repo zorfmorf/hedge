@@ -60,7 +60,6 @@ end
 
 
 return {
-        id = 4,
         init = init,
         use = use,
         walk = walk

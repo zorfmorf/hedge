@@ -705,15 +705,17 @@ end
 local function eventselector()
     Gui.group.push{ grow = "down", spacing = 10 }
     Gui.group.push{ grow = "right", spacing = 10 }
-    for i,event in pairs(eventHandler:getEvents()) do
+    local i = 1
+    for name,event in pairs(eventHandler:getEvents()) do
         if Gui.Button{ text = event.name, size = { buttonWidth(event.name) } } then
-            eventtarget = i
+            eventtarget = name
             menus.event = false
         end
         if i % 5 == 0 then
             Gui.group.pop{}
             Gui.group.push{ grow = "right", spacing = 10 }
         end
+        i = i + 1
     end
     Gui.group.pop{}
     Gui.group.pop{}

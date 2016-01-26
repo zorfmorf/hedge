@@ -41,7 +41,6 @@ end
 
 
 return {
-        id = 1,
         init = init,
         use = use,
         walk = walk
