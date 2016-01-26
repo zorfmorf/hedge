@@ -56,8 +56,8 @@ function st_intro:keypressed(key, scancode, isrepeat)
         else
             Gamestate.switch(st_ingame)
             player.dir = "up"
-            player:place(2, 5)
-            player:use()
+            player:place(2, 4)
+            st_ingame.transition = Transition("fade_in", function() player:use() end)
         end
     end
 end

@@ -1,6 +1,6 @@
 # Settings
-transition_time;true
 simulate_day;true
+transition_time;true
 # Tiles
 # Block -2 -2
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
@@ -75,12 +75,12 @@ nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;ni
 1,21,5|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|1,25,12|0|nil|nil;1,23,5|nil|nil|1,25,13|0|nil|nil;1,22,3|1,26,19|1,25,14|nil|1|nil|nil;1,21,5|1,26,20|nil|nil|0|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,22,5|nil|nil|nil|0|nil|nil;
 1,21,5|nil|nil|nil|0|nil|nil;1,22,5|nil|nil|1,26,12|0|nil|nil;1,23,5|nil|nil|1,26,13|0|nil|nil;1,23,11|1,27,19|nil|1,26,14|0|nil|nil;1,22,3|1,27,20|nil|nil|0|nil|nil;1,22,5|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,22,5|nil|nil|nil|0|nil|nil;
 # Block 0 0
-2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,22,5|nil|nil|17,7,0|0|nil|nil;1,23,5|nil|nil|17,7,1|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
-2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,23,2|nil|nil|0|nil|nil;2,16,3|2,23,3|nil|nil|0|nil|nil;2,16,3|2,23,3|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
-2,16,3|2,21,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|eGameStart|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
-2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,21,2|nil|nil|0|nil|nil;2,16,3|2,21,3|nil|nil|0|nil|nil;2,16,3|2,21,3|nil|nil|0|nil|nil;2,16,3|2,21,3|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
-2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,21,5|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,21,5|nil|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
-2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,22,5|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|17,5,0|0|nil|nil;1,22,5|nil|nil|17,5,1|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
+2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,22,5|nil|nil|17,7,0|0|eGameStart|nil;1,23,5|nil|nil|17,7,1|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
+2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,23,2|nil|nil|0|nil|nil;2,16,3|2,23,3|nil|nil|0|eGameStart|nil;2,16,3|2,23,3|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
+2,16,3|2,21,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|eGameStart|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|eGameStart|nil;2,16,3|nil|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
+2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,21,2|nil|nil|0|nil|nil;2,16,3|2,21,3|nil|nil|0|nil|nil;2,16,3|2,21,3|nil|nil|0|eGameStart|nil;2,16,3|2,21,3|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
+2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,21,5|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|eGameStart|nil;1,21,5|nil|nil|nil|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
+2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,22,5|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|17,5,0|0|eGameStart|nil;1,22,5|nil|nil|17,5,1|0|village,5|nil;nil|nil|nil|nil|1|nil|nil;
 2,16,3|2,22,4|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|2,22,2|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,22,5|nil|nil|17,6,0|0|nil|nil;1,22,3|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
 2,16,3|2,23,0|nil|nil|0|nil|nil;2,16,3|2,21,4|nil|nil|0|nil|nil;2,16,3|2,21,2|nil|nil|0|nil|nil;2,16,3|2,23,1|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|17,6,0|0|nil|nil;1,21,11|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
 # Block 1 -2

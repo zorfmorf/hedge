@@ -99,7 +99,7 @@ end
 
 
 function Dialog:isFinished()
-    return self.pos == -1 or self.pos > #self.lines
+    return self.pos == -1 or self.lines[self.pos] == nil
 end
 
 
