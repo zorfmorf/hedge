@@ -1,6 +1,6 @@
 # Settings
-simulate_day;true
 transition_time;true
+simulate_day;true
 # Tiles
 # Block -2 -2
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;
@@ -98,9 +98,9 @@ nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;ni
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,21,5|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,16,3|1,22,0|nil|nil|0|nil|nil;
 nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,17,5|1,22,0|nil|nil|0|nil|nil;1,16,3|1,23,3|nil|nil|0|nil|nil;1,16,3|1,23,4|nil|nil|0|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,17,5|1,23,3|nil|nil|0|nil|nil;1,16,3|1,23,4|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,17,5|nil|nil|nil|0|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,16,3|nil|nil|23,2,7|0|nil|nil;1,16,3|nil|nil|23,2,8|0|nil|nil;
-nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,16,3|1,21,3|nil|nil|0|nil|nil;1,17,5|1,21,3|nil|nil|0|nil|nil;1,16,3|1,21,3|nil|23,3,7|0|nil|nil;1,16,3|1,21,3|nil|23,3,8|0|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,17,5|1,23,3|nil|nil|0|farm,2|nil;1,16,3|1,23,4|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,17,5|nil|nil|nil|0|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,16,3|nil|nil|nil|0|farm,2|nil;1,16,3|nil|nil|nil|0|nil|nil;1,16,3|nil|nil|23,2,7|0|nil|nil;1,16,3|nil|nil|23,2,8|0|nil|nil;
+nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;1,16,3|1,21,3|nil|nil|0|farm,2|nil;1,17,5|1,21,3|nil|nil|0|nil|nil;1,16,3|1,21,3|nil|23,3,7|0|nil|nil;1,16,3|1,21,3|nil|23,3,8|0|nil|nil;
 # Block 0 -1
 1,22,5|nil|nil|nil|0|nil|nil;1,23,5|nil|nil|nil|0|nil|nil;1,21,5|nil|nil|nil|0|nil|nil;1,16,3|1,22,0|nil|nil|0|nil|nil;1,17,5|1,23,4|nil|nil|0|nil|nil;1,17,5|nil|nil|nil|0|nil|nil;1,17,5|nil|nil|nil|0|nil|nil;1,16,5|nil|nil|nil|0|nil|nil;
 1,22,3|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,22,3|nil|nil|nil|0|nil|nil;1,16,3|1,22,4|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;1,16,3|nil|nil|nil|0|nil|nil;
@@ -131,7 +131,7 @@ nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;ni
 # Block 0 2
 2,17,5|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,22,2|nil|nil|0|nil|nil;2,23,5|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,23,5|nil|nil|nil|0|nil|nil;
 2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,22,2|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;
-2,16,3|11,1,2|nil|nil|0|nil|6,down;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,23,2|nil|nil|0|nil|nil;2,16,3|1,22,1|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;
+2,16,3|11,1,2|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|6,down;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,23,2|nil|nil|0|nil|nil;2,16,3|1,22,1|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;
 2,16,3|11,2,2|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;1,17,5|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,22,2|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;
 2,16,3|11,2,2|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;1,17,5|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,22,2|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;2,22,3|nil|nil|nil|0|nil|nil;
 2,16,3|11,2,2|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|nil|nil|nil|0|nil|nil;2,16,3|1,22,2|nil|nil|0|nil|nil;2,22,5|nil|nil|nil|0|nil|nil;2,22,5|nil|nil|nil|0|nil|nil;
@@ -277,3 +277,4 @@ nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;nil|nil|nil|nil|1|nil|nil;ni
 2;-7;-3
 3;9;-5
 4;22;-1
+5;6;-12

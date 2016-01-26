@@ -82,6 +82,8 @@ function st_edit:update(dt)
                 editorHandler:singleTilePlacement(tx, ty)
             elseif brush == -9 then
                 editorHandler:selection(tx, ty)
+            elseif brush == -10 then
+                editorHandler:elevate(tx, ty)
             else
                 local brush = brushHandler.getCurrentBrush()
                 if brush then 

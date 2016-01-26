@@ -15,7 +15,8 @@ local icon = {
     transition = love.graphics.newImage("img/icon/transition.png"),
     delobj = love.graphics.newImage("img/icon/delobj.png"),
     tile = love.graphics.newImage("img/icon/tile.png"),
-    selection = love.graphics.newImage("img/icon/selection.png")
+    selection = love.graphics.newImage("img/icon/selection.png"),
+    elevate = love.graphics.newImage("img/icon/elevate.png")
 }
 
 -- list of all menu dialogs
@@ -115,6 +116,24 @@ end
 
 function editorHandler:addEvent(tx, ty)
     game.map:changeEvent(tx, ty, eventtarget)
+end
+
+
+function editorHandler:elevate(tx, ty)
+    local tile = game.map:getTile(tx, ty)
+    if tile then
+        if tile.overlay then return end -- can't move up most upper level
+        if tile.object then
+            tile.overlay = tile.object
+            tile.object = nil
+        elseif tile.floor2 then
+            tile.object = tile.floor2
+            tile.floor2 = nil
+        elseif tile.floor then
+            tile.floor2 = tile.floor
+            tile.floor = nil
+        end
+    end
 end
 
 
@@ -814,6 +833,9 @@ local function tools()
         if Gui.Button{ id = "tool_selection", text = "Create brush from selection", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.selection, nil, brushHandler.currentBrushId() == -9)} then
             brushHandler.selectBrush(-9)
         end
+                if Gui.Button{ id = "tool_elevate", text = "Elevate/lower the uppermost tile layer if possible", size = {C_TILE_SIZE, C_TILE_SIZE}, draw = icon_func(icon.elevate, nil, brushHandler.currentBrushId() == -10)} then
+            brushHandler.selectBrush(-10)
+        end
         
         Gui.Label{ text = "Brushes:", size = {60} }
         if Gui.Button{ id = "tool_brush_add", text = "+", size = {C_TILE_SIZE, C_TILE_SIZE} } then
@@ -854,6 +876,7 @@ local function tools()
     if Gui.mouse.isHot("toggle_event") then drawTooltip("Toggle display of events") end
     if Gui.mouse.isHot("tool_delete_obj") then drawTooltip("Delete object & overlay & event of tile") end
     if Gui.mouse.isHot("tool_selection") then drawTooltip("Create a new brush by selecting an area on the map") end
+    if Gui.mouse.isHot("tool_elevate") then drawTooltip("Elevate/lower the uppermost tile layer if possible") end
     for i,brush in ipairs(brushHandler.getBrushes()) do
         if Gui.mouse.isHot("tool_brush_"..i) then drawTooltip(brush.name) end
     end
