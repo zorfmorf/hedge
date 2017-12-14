@@ -1,6 +1,6 @@
 function love.conf(t)
     t.identity = "hedge"               -- The name of the save directory (string)
-    t.version = "0.10.0"                -- The LÖVE version this game was made for (string)
+    t.version = "0.10.2"                -- The LÖVE version this game was made for (string)
     t.console = false                  -- Attach a console (boolean, Windows only)
 
     t.window.title = "Hedge 0.2.0"     -- The window title (string)
